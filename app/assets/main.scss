@@ -1,3 +1,4 @@
+@use "_font-loading.scss";
 @use "grid.scss";
 @use "typo.scss";
 
@@ -19,6 +20,48 @@
   --button-color: var(--color-accent);
   --button-text: var(--color-on-accent);
 
+  // JAT palette, sampled from the home mockup (AccueilJAT).
+  --color-jat-mint: #97fbe9;
+  --color-jat-violet: #6e1fcc;
+  --color-jat-lime: #dfeac1;
+  --color-jat-sand: #dacfc4;
+  --color-jat-peach: #f3c197;
+  --color-jat-bordeaux: #72121f;
+
+  // Page themes: each top-level section of the site has its own vertical
+  // gradient (header background) and the text color that reads on it.
+  // Picked per route by app/utils/pageTheme.ts.
+  --theme-home-gradient: linear-gradient(#b8e9d8, #00432e);
+  --theme-home-text: var(--color-jat-mint);
+  --theme-news-gradient: linear-gradient(#00f7ac, #d2cbea);
+  --theme-news-text: var(--color-jat-violet);
+  --theme-training-gradient: linear-gradient(#6c12c9, #e8acba);
+  --theme-training-text: var(--color-jat-lime);
+  --theme-school-gradient: linear-gradient(#deb0a6, #590e1f);
+  --theme-school-text: var(--color-jat-sand);
+  --theme-concerts-gradient: linear-gradient(#ffe0c2, #fa9b17);
+  --theme-concerts-text: var(--color-jat-violet);
+  --theme-spaces-gradient: linear-gradient(#f3c29c, var(--color-jat-bordeaux));
+  --theme-spaces-text: var(--color-jat-sand);
+
+  // Anchors bar under the nav: a solid color taken from the theme gradient.
+  --theme-home-anchors-background: #00432e;
+  --theme-home-anchors-text: var(--color-jat-mint);
+  --theme-news-anchors-background: #d2cbea;
+  --theme-news-anchors-text: var(--color-jat-violet);
+  --theme-training-anchors-background: #6c12c9;
+  --theme-training-anchors-text: var(--color-jat-lime);
+  --theme-school-anchors-background: #590e1f;
+  --theme-school-anchors-text: var(--color-jat-sand);
+  --theme-concerts-anchors-background: #fa9b17;
+  --theme-concerts-anchors-text: var(--color-jat-violet);
+  --theme-spaces-anchors-background: var(--color-jat-bordeaux);
+  --theme-spaces-anchors-text: var(--color-jat-sand);
+
+  // Sticky bars: sections scroll to just below both.
+  --navigation-menu-height: 86px;
+  --anchors-height: 48px;
+
   // Spacing scale
   --spacing-xxs: 4px;
   --spacing-xs: 8px;
@@ -34,8 +77,8 @@
   --spacing-7xl: 96px;
 
   // Fonts
-  --font-heading: system-ui, sans-serif;
-  --font-body: system-ui, sans-serif;
+  --font-heading: 'Animo', system-ui, sans-serif;
+  --font-body: 'ES Rebond Grotesque', system-ui, sans-serif;
 
   // Radii
   --radius-s: var(--spacing-xs);
@@ -47,6 +90,20 @@
 
   // --gutter and --block-spacing live in grid.scss (base value + their own
   // responsive override, kept together in one file).
+}
+
+// .u-theme--<theme> (class from usePageTheme()) maps the current page theme
+// onto generic --theme-* variables, so a themed component reads one set of
+// names whatever the page.
+$page-themes: home, news, training, school, concerts, spaces;
+
+@each $theme in $page-themes {
+  .u-theme--#{$theme} {
+    --theme-gradient: var(--theme-#{$theme}-gradient);
+    --theme-text: var(--theme-#{$theme}-text);
+    --theme-anchors-background: var(--theme-#{$theme}-anchors-background);
+    --theme-anchors-text: var(--theme-#{$theme}-anchors-text);
+  }
 }
 
 *,
@@ -70,6 +127,8 @@ body {
   background: var(--color-background);
   color: var(--color-text);
   font-family: var(--font-body);
+  // Never fake a missing weight/style (Animo only has a regular).
+  font-synthesis: none;
   -webkit-font-smoothing: antialiased;
 }
 

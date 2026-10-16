@@ -138,6 +138,17 @@ export interface KqlOpeningHours {
   hours: string
 }
 
+export interface KqlTransport {
+  travelTime: string
+  lines: string
+}
+
+export interface KqlReferent {
+  name: string
+  /** "mailto:…" or "tel:…" (Kirby link field). */
+  contact: string | null
+}
+
 export interface KqlLink {
   label: string
   href: string
@@ -149,6 +160,8 @@ export interface KqlSiteInfo {
   email: string | null
   phone: string | null
   openingHours: KqlOpeningHours[]
+  transports: KqlTransport[]
+  disabilityReferents: KqlReferent[]
   footerPages: KqlNavItem[]
   /** Only the networks with a URL filled in. */
   socialLinks: KqlLink[]

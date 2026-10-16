@@ -23,7 +23,10 @@ withDefaults(defineProps<{
   border-top: 2px solid currentColor;
 }
 
+// Small label, set in the body font rather than the heading one.
 .ui-aside-box__title {
+  font-family: var(--font-body);
+  font-weight: 700;
   font-size: 16px;
   text-transform: uppercase;
   letter-spacing: 0.04em;

@@ -1,10 +1,10 @@
 <template>
   <div class="v-app u-flex u-flex--column">
-    <TheHeader />
+    <NavigationMenu />
     <main>
       <NuxtPage />
     </main>
-    <TheFooter />
+    <Footer />
   </div>
 </template>
 

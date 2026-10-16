@@ -1,4 +1,5 @@
 <template>
+  <Anchors :blocks="page.blocks" />
   <article class="v-page-default">
     <header class="v-page-default__header u-block">
       <h1>{{ page.title }}</h1>

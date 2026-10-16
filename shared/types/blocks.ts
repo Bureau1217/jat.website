@@ -14,6 +14,8 @@ export type RawBlocks = string | unknown[]
 export type RawToggle = 'true' | 'false' | boolean | ''
 
 export interface SectionContent {
+  /** Section name, shown in the anchors bar ("" → not listed). */
+  heading: string
   body: RawBlocks
 }
 

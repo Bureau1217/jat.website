@@ -1,4 +1,4 @@
-import type { KqlAddress, KqlLink, KqlNavItem, KqlOpeningHours, KqlSiteInfo } from '~~/shared/types/kql'
+import type { KqlAddress, KqlLink, KqlNavItem, KqlOpeningHours, KqlSiteInfo, KqlTransport } from '~~/shared/types/kql'
 
 interface RawSiteInfos {
   /** Kirby object field — [] when never filled in. */
@@ -6,6 +6,8 @@ interface RawSiteInfos {
   email: string | null
   phone: string | null
   openingHours: KqlOpeningHours[] | null
+  transports: Array<{ travel_time: string, lines: string }> | null
+  disabilityReferents: Array<{ referent_name: string, contact: string }> | null
   footerPages: KqlNavItem[] | null
   socialInstagram: string | null
   socialFacebook: string | null
@@ -34,6 +36,8 @@ const EMPTY: KqlSiteInfo = {
   email: null,
   phone: null,
   openingHours: [],
+  transports: [],
+  disabilityReferents: [],
   footerPages: [],
   socialLinks: [],
   legalLinks: [],
@@ -42,7 +46,8 @@ const EMPTY: KqlSiteInfo = {
 
 /**
  * Everything editors manage from "Informations générales" (jat.cms
- * `informations` template): contact details, opening hours, footer pages,
+ * `informations` template): contact details, opening hours, transports,
+ * disability referents, footer pages,
  * social networks, legal links and the accessibility text.
  */
 export default defineEventHandler(async (): Promise<KqlSiteInfo> => {
@@ -56,6 +61,14 @@ export default defineEventHandler(async (): Promise<KqlSiteInfo> => {
       openingHours: {
         query: 'page.opening_hours.toStructure',
         select: { days: true, hours: true }
+      },
+      transports: {
+        query: 'page.transports.toStructure',
+        select: { travel_time: true, lines: true }
+      },
+      disabilityReferents: {
+        query: 'page.disability_referents.toStructure',
+        select: { referent_name: true, contact: true }
       },
       footerPages: {
         query: 'page.footer_pages.toPages',
@@ -96,6 +109,8 @@ export default defineEventHandler(async (): Promise<KqlSiteInfo> => {
     email: page.email || null,
     phone: page.phone || null,
     openingHours: page.openingHours ?? [],
+    transports: (page.transports ?? []).map((row): KqlTransport => ({ travelTime: row.travel_time, lines: row.lines })),
+    disabilityReferents: (page.disabilityReferents ?? []).map(row => ({ name: row.referent_name, contact: row.contact || null })),
     footerPages: page.footerPages ?? [],
     socialLinks: toLinks(SOCIAL_LINKS),
     legalLinks: toLinks(LEGAL_LINKS),
