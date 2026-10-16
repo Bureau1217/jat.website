@@ -1,0 +1,8 @@
+// Build-time SCSS constants — values that must be known at compile time,
+// like a breakpoint inside a @media query (which can't read a CSS custom
+// property). Anything that CAN live as a runtime CSS variable belongs in
+// main.scss's :root instead.
+// Auto-injected into every component via Nuxt's vite scss additionalData
+// (see nuxt.config.ts) — reference it directly, no @use/@import needed.
+
+$breakpoint-mobile: 900px;

@@ -1,0 +1,108 @@
+@use "_params" as *;
+
+// Layout utility classes: instead of every component writing its own
+// `display: flex; flex-direction: column; gap: ...;`, it adds a couple of
+// `.u-flex*` classes in its template. A component still writes its own
+// scoped rule for anything genuinely one-off (a width, colors, positioning).
+
+.u-flex {
+  display: flex;
+}
+
+.u-inline-flex {
+  display: inline-flex;
+}
+
+.u-flex--column {
+  flex-direction: column;
+}
+
+.u-flex--wrap {
+  flex-wrap: wrap;
+}
+
+.u-flex--align-start {
+  align-items: flex-start;
+}
+
+.u-flex--align-center {
+  align-items: center;
+}
+
+.u-flex--align-end {
+  align-items: flex-end;
+}
+
+.u-flex--justify-center {
+  justify-content: center;
+}
+
+.u-flex--justify-end {
+  justify-content: flex-end;
+}
+
+.u-flex--justify-between {
+  justify-content: space-between;
+}
+
+// Gap scale — mirrors --spacing-* one-to-one (see main.scss).
+.u-gap-0 { gap: 0; }
+.u-gap-xxs { gap: var(--spacing-xxs); }
+.u-gap-xs { gap: var(--spacing-xs); }
+.u-gap-s { gap: var(--spacing-s); }
+.u-gap-m { gap: var(--spacing-m); }
+.u-gap-l { gap: var(--spacing-l); }
+.u-gap-xl { gap: var(--spacing-xl); }
+.u-gap-2xl { gap: var(--spacing-2xl); }
+.u-gap-3xl { gap: var(--spacing-3xl); }
+.u-gap-4xl { gap: var(--spacing-4xl); }
+.u-gap-5xl { gap: var(--spacing-5xl); }
+
+// Page gutter (left/right inset used by every top-level block).
+:root {
+  --gutter: var(--spacing-6xl);
+}
+
+@media (max-width: $breakpoint-mobile) {
+  :root {
+    --gutter: var(--spacing-xl);
+  }
+}
+
+// Vertical padding of a top-level block. A container rendering nested
+// blocks (Section, Accordion, columns) overrides it locally and every block
+// inside picks it up — no per-block edits.
+:root {
+  --block-spacing: var(--spacing-5xl);
+}
+
+@media (max-width: $breakpoint-mobile) {
+  :root {
+    --block-spacing: var(--spacing-3xl);
+  }
+}
+
+// Nested-block reset: blocks inside a column or an accordion are already
+// inset by their container, so they drop the page gutter.
+.u-nested {
+  --gutter: 0px;
+  --block-spacing: var(--spacing-xl);
+}
+
+.u-gutter-x {
+  padding-inline: var(--gutter);
+}
+
+.u-block {
+  padding-block: var(--block-spacing);
+  padding-inline: var(--gutter);
+}
+
+.u-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

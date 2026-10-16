@@ -1,0 +1,87 @@
+@use "grid.scss";
+@use "typo.scss";
+
+:root {
+  // Colors — placeholders until the JAT design system is defined. Blocks
+  // only read the semantic tokens below (--color-background, --color-text,
+  // --color-accent…), never a raw brand color.
+  --color-brand-00: #ffffff;
+  --color-brand-01: #111111;
+  --color-brand-02: #f2f0eb;
+  --color-brand-03: #1f4bd8;
+
+  --color-background: var(--color-brand-00);
+  --color-text: var(--color-brand-01);
+  --color-surface: var(--color-brand-02);
+  --color-accent: var(--color-brand-03);
+  --color-on-accent: var(--color-brand-00);
+
+  --button-color: var(--color-accent);
+  --button-text: var(--color-on-accent);
+
+  // Spacing scale
+  --spacing-xxs: 4px;
+  --spacing-xs: 8px;
+  --spacing-s: 12px;
+  --spacing-m: 16px;
+  --spacing-l: 20px;
+  --spacing-xl: 24px;
+  --spacing-2xl: 32px;
+  --spacing-3xl: 40px;
+  --spacing-4xl: 48px;
+  --spacing-5xl: 64px;
+  --spacing-6xl: 80px;
+  --spacing-7xl: 96px;
+
+  // Fonts
+  --font-heading: system-ui, sans-serif;
+  --font-body: system-ui, sans-serif;
+
+  // Radii
+  --radius-s: var(--spacing-xs);
+  --radius-m: var(--spacing-m);
+  --radius-pill: var(--spacing-7xl);
+
+  // Max width of running text (paragraphs, quotes…)
+  --content-max-width: 760px;
+
+  // --gutter and --block-spacing live in grid.scss (base value + their own
+  // responsive override, kept together in one file).
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scrollbar-gutter: stable;
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font: inherit;
+}

@@ -1,0 +1,55 @@
+@use "_params" as *;
+
+// Bare tag defaults — the type scale of the site. Components only override
+// a tag locally when the design genuinely differs.
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+h1 {
+  font-size: 56px;
+
+  @media (max-width: $breakpoint-mobile) {
+    font-size: 36px;
+  }
+}
+
+h2 {
+  font-size: 40px;
+
+  @media (max-width: $breakpoint-mobile) {
+    font-size: 28px;
+  }
+}
+
+h3 {
+  font-size: 28px;
+
+  @media (max-width: $breakpoint-mobile) {
+    font-size: 22px;
+  }
+}
+
+h4 {
+  font-size: 20px;
+}
+
+p {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.5;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
