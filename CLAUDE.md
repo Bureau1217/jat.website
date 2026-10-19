@@ -20,7 +20,7 @@ Front Nuxt 4 headless du CMS Kirby jat.cms. Conventions reprises de jav.website.
 
 ## Blocks
 
-- Un block jat.cms = un fichier `app/components/blocks/<PascalType>.global.vue` (`columns-2` → `Columns2.global.vue`, rendu par `components/blocks.vue`).
+- Un block jat.cms = un fichier `app/components/blocks/<PascalType>.global.vue` (`related-events` → `RelatedEvents.global.vue`, rendu par `components/blocks.vue`).
 - Props d'un block : `block: KqlBlock<XxxContent>`, plus `files?: KqlFile[]` et `pages?: KqlPageRefs` s'il résout des refs. Ajouter le type `XxxContent` dans `shared/types/blocks.ts`.
 - Blocks imbriqués : `parseKqlBlocks()` puis `<Blocks :blocks :files :pages />`, dans un conteneur `u-nested`.
 - Refs : `resolveKqlFile(s)()` pour `file://`, `resolvePageRefs()` / `resolveKirbyLink()` pour `page://` et champs link, `isKirbyTrue()` pour les toggles.
@@ -36,7 +36,7 @@ Front Nuxt 4 headless du CMS Kirby jat.cms. Conventions reprises de jav.website.
 - Couleurs, espacements, rayons : uniquement les variables de `assets/main.scss` (`--color-*`, `--spacing-*`, `--radius-*`), jamais de valeur en dur répétée.
 - Breakpoint : `$breakpoint-mobile` (injecté automatiquement, `assets/_params.scss`).
 - Typo des balises nues dans `assets/typo.scss` ; ne surcharger localement que si le design diffère.
-- Factoriser dans un `Ui*` dès qu'un rendu apparaît dans deux blocks (ex. `UiEventCard`, `UiGallery`, `UiAsideBox`).
+- Factoriser dans un `Ui*` dès qu'un rendu apparaît dans deux blocks (ex. `UiEventCard`, `UiGallery`, `UiAsideBox`, `UiAsideGallery`, `UiThreeColumns`).
 
 ## Code
 

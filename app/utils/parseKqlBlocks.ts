@@ -1,7 +1,7 @@
 import type { KqlBlock } from '~~/shared/types/kql'
 
 /**
- * Blocks nested inside a block (Section body, columns, accordion items) are
+ * Blocks nested inside a block (Section body, accordion sub-sections) are
  * stored double-encoded: the outer blocks field is JSON, so a blocks field
  * nested inside it stays a raw JSON string instead of being decoded like
  * the top-level one. Hidden blocks are dropped here once for every caller.

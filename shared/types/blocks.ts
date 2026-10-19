@@ -19,18 +19,28 @@ export interface SectionContent {
   body: RawBlocks
 }
 
-export type HeadingLevel = 'h1' | 'h2' | 'h3' | 'h4'
-
+/** Titre block: the level is chosen by the front, editors only type the text. */
 export interface HeadingContent {
-  level: HeadingLevel
   text: string
 }
 
-export interface AccordionContent {
-  items: Array<{ heading: string, body: RawBlocks }>
+/** "Simple": blocks only · "3 colonnes": Sommaire · blocks · Contenus liés. */
+export type AccordionItemLayout = 'single' | 'three_columns'
+
+/** One "Sous-section" of an Accordion block, each with its own optional theme. */
+export interface AccordionItemContent {
+  heading: string
+  layout: AccordionItemLayout
+  body: RawBlocks
+  /** "Contenus liés", only used by the "three_columns" layout. */
+  aside: RawBlocks
   has_theme: RawToggle
   background_color: string
   text_color: string
+}
+
+export interface AccordionContent {
+  items: AccordionItemContent[]
 }
 
 export interface ParagraphContent {
@@ -51,18 +61,13 @@ export interface ButtonContent {
   link_file: KirbyFileRef[]
 }
 
-export interface NewsContent {
-  size: 's' | 'l'
-}
-
 export interface BenefitsContent {
   items: Array<{ pictogram: KirbyFileRef[], heading: string }>
 }
 
-export type TeamScope = 'all' | 'admin' | 'teaching'
-
 export interface TeamContent {
-  scope: TeamScope
+  /** Teams to show — every team when empty. */
+  teams: KirbyPageRef[]
 }
 
 export interface MapContent {
@@ -87,16 +92,6 @@ export interface ImageContent {
   images: KirbyFileRef[]
   is_cover: RawToggle
   caption: string
-}
-
-export interface Columns2Content {
-  column_1: RawBlocks
-  column_2: RawBlocks
-}
-
-export interface Columns3Content {
-  body: RawBlocks
-  aside: RawBlocks
 }
 
 export interface GalleryContent {

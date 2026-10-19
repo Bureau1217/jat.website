@@ -7,7 +7,7 @@ interface RawPage {
   template: string
   files: KqlFile[]
   blocks: KqlBlock[] | null
-  asideBlocks: KqlBlock[] | null
+  gallery: KqlFile[] | null
   text: string | null
   startDate: string | null
   endDate: string | null
@@ -19,8 +19,8 @@ interface RawPage {
 
 /**
  * Same select for every page template: fields absent from a template just
- * come back empty. `body` holds the blocks of `default` pages, `aside` the
- * "Contenus liés" of `event` pages.
+ * come back empty. `body` holds the blocks of `default` pages, `gallery` the
+ * "Galerie photos" of `event` pages.
  */
 const PAGE_SELECT = {
   id: true,
@@ -35,9 +35,9 @@ const PAGE_SELECT = {
     query: 'page.body.toBlocks',
     select: BLOCK_SELECT
   },
-  asideBlocks: {
-    query: 'page.aside.toBlocks',
-    select: BLOCK_SELECT
+  gallery: {
+    query: 'page.gallery.toFiles',
+    select: FILE_SELECT
   },
   text: 'page.text',
   ...EVENT_SELECT
@@ -58,7 +58,6 @@ export async function fetchPage(id: string): Promise<KqlPage | null> {
   }
 
   const blocks = raw.blocks ?? []
-  const asideBlocks = raw.asideBlocks ?? []
 
   const event: KqlEventFields | null = raw.template === 'event'
     ? {
@@ -69,7 +68,7 @@ export async function fetchPage(id: string): Promise<KqlPage | null> {
         categories: raw.categories ?? [],
         cover: raw.cover,
         text: raw.text || null,
-        asideBlocks
+        gallery: raw.gallery ?? []
       }
     : null
 
@@ -79,7 +78,7 @@ export async function fetchPage(id: string): Promise<KqlPage | null> {
     title: raw.title,
     template: raw.template,
     files: raw.files ?? [],
-    pages: await fetchPageRefs(blocks, asideBlocks),
+    pages: await fetchPageRefs(blocks),
     blocks,
     event
   }

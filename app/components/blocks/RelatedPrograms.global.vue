@@ -13,7 +13,7 @@
 import type { RelatedProgramsContent } from '~~/shared/types/blocks'
 import type { KqlBlock, KqlPageRefs } from '~~/shared/types/kql'
 
-/** "Contenus liés" box of the columns-3 block. */
+/** "Contenus liés" box of an Accordion "3 colonnes" sub-section. */
 const props = defineProps<{
   block: KqlBlock<RelatedProgramsContent>
   pages?: KqlPageRefs

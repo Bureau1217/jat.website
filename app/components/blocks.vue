@@ -16,7 +16,7 @@ import type { KqlBlock, KqlFile, KqlPageRefs } from '~~/shared/types/kql'
 
 /**
  * Renders a list of Kirby blocks: each block type maps to
- * components/blocks/<PascalType>.global.vue ("columns-2" → BlocksColumns2).
+ * components/blocks/<PascalType>.global.vue ("related-events" → BlocksRelatedEvents).
  * Global registration lets the name be resolved from a string at runtime.
  * `files` and `pages` are passed down unchanged so nested blocks can
  * resolve their own file:// and page:// refs.

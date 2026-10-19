@@ -1,21 +1,18 @@
 <template>
   <div class="v-block-heading u-block">
-    <component :is="level" :id="block.id" class="v-block-heading__title">{{ block.content.text }}</component>
+    <h2 :id="block.id" class="v-block-heading__title">{{ block.content.text }}</h2>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { HeadingContent, HeadingLevel } from '~~/shared/types/blocks'
+import type { HeadingContent } from '~~/shared/types/blocks'
 import type { KqlBlock } from '~~/shared/types/kql'
 
-const LEVELS: HeadingLevel[] = ['h1', 'h2', 'h3', 'h4']
-
-const props = defineProps<{
+// Always an h2: editors no longer pick the level (the page title is the h1).
+// The block id doubles as the anchor targeted by the "3 colonnes" Sommaire.
+defineProps<{
   block: KqlBlock<HeadingContent>
 }>()
-
-// The block id doubles as the anchor targeted by the columns-3 "Sommaire".
-const level = computed(() => LEVELS.find(tag => tag === props.block.content.level) ?? 'h2')
 </script>
 
 <style lang="scss" scoped>

@@ -7,7 +7,7 @@
 
 <script setup lang="ts">
 /**
- * Shell of a "Contenus liés" box (columns-3 block, event page): a small
+ * Shell of a "Contenus liés" box (Accordion "3 colonnes", event page): a small
  * title over its own content, separated from the next box by a rule.
  */
 withDefaults(defineProps<{

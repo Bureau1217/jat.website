@@ -1,33 +1,34 @@
-import type { KqlFile, KqlTeam, KqlTeamType } from '~~/shared/types/kql'
+import type { KqlFile, KqlTeam } from '~~/shared/types/kql'
 
 interface RawTeam {
+  uuid: string
   id: string
   title: string
-  teamType: string
   members: Array<{
     id: string
     title: string
     firstName: string
     lastName: string
     role: string
-    contact: string
+    email: string
+    phone: string
+    instrument: string
+    websiteUrl: string
     photo: KqlFile | null
   }>
 }
 
-const TEAM_TYPES: KqlTeamType[] = ['admin', 'teaching']
-
 /**
  * Every published team (jat.cms `team` template) with its published
- * members, in Panel order — the Team block filters them by `teamType`.
+ * members, in Panel order — the Team block filters them by the teams it picks.
  */
 export default defineEventHandler(async (): Promise<KqlTeam[]> => {
   const teams = await kqlFetch<RawTeam[]>({
     query: 'site.index.filterBy("intendedTemplate", "team")',
     select: {
+      uuid: 'page.uuid',
       id: true,
       title: true,
-      teamType: 'page.team_type',
       members: {
         query: 'page.children.filterBy("intendedTemplate", "team_member")',
         select: {
@@ -36,7 +37,10 @@ export default defineEventHandler(async (): Promise<KqlTeam[]> => {
           firstName: 'page.first_name',
           lastName: 'page.last_name',
           role: 'page.role',
-          contact: 'page.contact',
+          email: 'page.email',
+          phone: 'page.phone',
+          instrument: 'page.instrument',
+          websiteUrl: 'page.website_url',
           photo: {
             query: 'page.photo.toFile',
             select: FILE_SELECT
@@ -47,13 +51,14 @@ export default defineEventHandler(async (): Promise<KqlTeam[]> => {
   })
 
   return (teams ?? []).map(team => ({
-    id: team.id,
-    title: team.title,
-    teamType: TEAM_TYPES.find(type => type === team.teamType) ?? null,
+    ...team,
     members: team.members.map(member => ({
       ...member,
       role: member.role || null,
-      contact: member.contact || null
+      email: member.email || null,
+      phone: member.phone || null,
+      instrument: member.instrument || null,
+      websiteUrl: member.websiteUrl || null
     }))
   }))
 })

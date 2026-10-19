@@ -12,7 +12,7 @@
 import type { RelatedEventsContent } from '~~/shared/types/blocks'
 import type { KqlBlock, KqlPageRefs } from '~~/shared/types/kql'
 
-/** "Contenus liés" box (columns-3 block, event page). */
+/** "Contenus liés" box of an Accordion "3 colonnes" sub-section. */
 const props = defineProps<{
   block: KqlBlock<RelatedEventsContent>
   pages?: KqlPageRefs

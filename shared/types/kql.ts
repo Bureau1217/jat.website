@@ -65,7 +65,7 @@ export interface KqlPage {
   template: string
   /** Every file of the page — block file refs are resolved against it by uuid. */
   files: KqlFile[]
-  /** Pages referenced anywhere in `blocks` / `asideBlocks`. */
+  /** Pages referenced anywhere in `blocks`. */
   pages: KqlPageRefs
   /** `default` template: `body` field. */
   blocks: KqlBlock[]
@@ -82,8 +82,8 @@ export interface KqlEventFields {
   cover: KqlFile | null
   /** Writer HTML. */
   text: string | null
-  /** "Contenus liés" (`aside` field). */
-  asideBlocks: KqlBlock[]
+  /** "Galerie photos" (3 photos max). */
+  gallery: KqlFile[]
 }
 
 /** One event of the Agenda, as listed by the News block. */
@@ -97,9 +97,9 @@ export interface KqlEvent {
   location: string | null
   categories: string[]
   cover: KqlFile | null
+  /** "Mis en avant" in the Panel. */
+  isFeatured: boolean
 }
-
-export type KqlTeamType = 'admin' | 'teaching'
 
 export interface KqlTeamMember {
   id: string
@@ -107,15 +107,20 @@ export interface KqlTeamMember {
   firstName: string
   lastName: string
   role: string | null
-  /** "mailto:…" or "tel:…" (Kirby link field). */
-  contact: string | null
+  email: string | null
+  phone: string | null
+  /** Teaching staff only. */
+  instrument: string | null
+  /** Teaching staff only: personal website. */
+  websiteUrl: string | null
   photo: KqlFile | null
 }
 
 export interface KqlTeam {
+  /** Kirby UUID with its "page://" prefix — matches the refs picked in the Team block. */
+  uuid: string
   id: string
   title: string
-  teamType: KqlTeamType | null
   members: KqlTeamMember[]
 }
 

@@ -29,7 +29,7 @@ npm run dev            # http://localhost:3000 — jat.cms doit tourner (compose
 app/
   pages/[...slug].vue        route unique → PagesDefault (template `default`) ou PagesEvent (template `event`)
   components/
-    blocks.vue               rend une liste de blocks Kirby (type "columns-2" → BlocksColumns2)
+    blocks.vue               rend une liste de blocks Kirby (type "related-events" → BlocksRelatedEvents)
     blocks/*.global.vue      un composant par block jat.cms
     pages/                   un composant par template de page
     ui/                      composants réutilisables (UiButton, UiImage, UiRichText…)

@@ -13,7 +13,7 @@
 import type { TestimonialContent } from '~~/shared/types/blocks'
 import type { KqlBlock } from '~~/shared/types/kql'
 
-/** "Contenus liés" box of the columns-3 block. */
+/** "Contenus liés" box of an Accordion "3 colonnes" sub-section. */
 defineProps<{
   block: KqlBlock<TestimonialContent>
 }>()

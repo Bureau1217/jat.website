@@ -6,8 +6,11 @@
           <UiImage v-if="member.photo" :file="member.photo" cover />
         </div>
         <h4>{{ member.title }}</h4>
-        <p v-if="member.role" class="v-block-team__role">{{ member.role }}</p>
-        <a v-if="member.contact" :href="member.contact" class="v-block-team__contact">{{ contactLabel(member.contact) }}</a>
+        <p v-if="member.role" class="v-block-team__detail">{{ member.role }}</p>
+        <p v-if="member.instrument" class="v-block-team__detail">{{ member.instrument }}</p>
+        <a v-if="member.email" :href="`mailto:${member.email}`" class="v-block-team__detail">{{ member.email }}</a>
+        <a v-if="member.phone" :href="`tel:${member.phone.replace(/\s/g, '')}`" class="v-block-team__detail">{{ member.phone }}</a>
+        <a v-if="member.websiteUrl" :href="member.websiteUrl" target="_blank" rel="noopener" class="v-block-team__detail">Site personnel</a>
       </li>
     </ul>
   </div>
@@ -17,23 +20,18 @@
 import type { TeamContent } from '~~/shared/types/blocks'
 import type { KqlBlock } from '~~/shared/types/kql'
 
-/**
- * Members of every published team, or only the teams whose "Type d'équipe"
- * (jat.cms `team_type`) matches the block's scope.
- */
+/** Members of the teams picked in the block, or of every published team when none is picked. */
 const props = defineProps<{
   block: KqlBlock<TeamContent>
 }>()
 
 const { data: teams } = await useTeams()
-const members = computed(() => (teams.value ?? [])
-  .filter(team => props.block.content.scope === 'all' || team.teamType === props.block.content.scope)
-  .flatMap(team => team.members))
-
-/** "mailto:a@b.ch" → "a@b.ch", "tel:+41…" → "+41…". */
-function contactLabel(contact: string): string {
-  return contact.replace(/^(mailto|tel):/, '')
-}
+const members = computed(() => {
+  const picked = props.block.content.teams ?? []
+  return (teams.value ?? [])
+    .filter(team => picked.length === 0 || picked.includes(team.uuid))
+    .flatMap(team => team.members)
+})
 </script>
 
 <style lang="scss" scoped>
@@ -51,8 +49,7 @@ function contactLabel(contact: string): string {
   overflow: hidden;
 }
 
-.v-block-team__role,
-.v-block-team__contact {
+.v-block-team__detail {
   font-size: 16px;
 }
 </style>

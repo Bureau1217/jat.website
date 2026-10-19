@@ -1,11 +1,25 @@
 <template>
-  <div class="v-block-accordion u-block" :class="{ 'v-block-accordion--themed': theme }" :style="theme">
-    <details v-for="(item, index) in items" :key="index" class="v-block-accordion__item">
+  <div class="v-block-accordion u-block">
+    <details
+      v-for="(item, index) in items"
+      :key="index"
+      class="v-block-accordion__item"
+      :class="{ 'v-block-accordion__item--themed': item.theme }"
+      :style="item.theme"
+    >
       <summary class="v-block-accordion__summary u-flex u-flex--align-center u-flex--justify-between u-gap-xl">
         <h3 class="v-block-accordion__title">{{ item.heading }}</h3>
         <span class="v-block-accordion__icon" aria-hidden="true" />
       </summary>
-      <div class="v-block-accordion__content u-nested">
+      <UiThreeColumns
+        v-if="item.isThreeColumns"
+        class="v-block-accordion__content"
+        :body="item.blocks"
+        :aside="item.aside"
+        :files="files"
+        :pages="pages"
+      />
+      <div v-else class="v-block-accordion__content u-nested">
         <Blocks :blocks="item.blocks" :files="files" :pages="pages" />
       </div>
     </details>
@@ -13,8 +27,10 @@
 </template>
 
 <script setup lang="ts">
-import type { AccordionContent } from '~~/shared/types/blocks'
+import type { AccordionContent, AccordionItemContent } from '~~/shared/types/blocks'
 import type { KqlBlock, KqlFile, KqlPageRefs } from '~~/shared/types/kql'
+
+/** Sous-sections, each with its own layout ("Simple" / "3 colonnes") and optional theme. */
 
 const props = defineProps<{
   block: KqlBlock<AccordionContent>
@@ -24,13 +40,16 @@ const props = defineProps<{
 
 const items = computed(() => (props.block.content.items ?? []).map(item => ({
   heading: item.heading,
-  blocks: parseKqlBlocks(item.body)
+  isThreeColumns: item.layout === 'three_columns',
+  blocks: parseKqlBlocks(item.body),
+  aside: parseKqlBlocks(item.aside),
+  theme: itemTheme(item)
 })))
 
 // "Thème" toggle on: the editor's background/text colors, applied as CSS
 // variables so nested blocks (buttons included) follow them.
-const theme = computed(() => {
-  const { has_theme: hasTheme, background_color: background, text_color: text } = props.block.content
+function itemTheme(item: AccordionItemContent): Record<string, string> | undefined {
+  const { has_theme: hasTheme, background_color: background, text_color: text } = item
   if (!isKirbyTrue(hasTheme) || !background || !text) return undefined
   return {
     '--accordion-background': background,
@@ -38,11 +57,11 @@ const theme = computed(() => {
     '--button-color': text,
     '--button-text': background
   }
-})
+}
 </script>
 
 <style lang="scss" scoped>
-.v-block-accordion--themed {
+.v-block-accordion__item--themed {
   background: var(--accordion-background);
   color: var(--accordion-text);
 }

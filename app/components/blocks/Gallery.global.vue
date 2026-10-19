@@ -1,14 +1,12 @@
 <template>
-  <UiAsideBox v-if="images.length" title="Galerie photos">
-    <UiGallery :images="images" layout="stack" />
-  </UiAsideBox>
+  <UiAsideGallery :images="images" />
 </template>
 
 <script setup lang="ts">
 import type { GalleryContent } from '~~/shared/types/blocks'
 import type { KqlBlock, KqlFile } from '~~/shared/types/kql'
 
-/** "Contenus liés" box (columns-3 block, event page). */
+/** "Contenus liés" box of an Accordion "3 colonnes" sub-section. */
 const props = defineProps<{
   block: KqlBlock<GalleryContent>
   files?: KqlFile[]

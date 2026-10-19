@@ -9,18 +9,16 @@
 </template>
 
 <script setup lang="ts">
-import type { NewsContent } from '~~/shared/types/blocks'
-import type { KqlBlock } from '~~/shared/types/kql'
+/** The block has no options: always one row of cards. */
+const EVENT_COUNT = 3
 
-/** Number of events shown per block size ("S" / "L" in the Panel). */
-const SIZE_COUNTS: Record<NewsContent['size'], number> = { s: 3, l: 9 }
-
-const props = defineProps<{
-  block: KqlBlock<NewsContent>
-}>()
-
+// "Mis en avant" events come first, each group keeping the Agenda order
+// (most recent first, see /api/events).
 const { data: allEvents } = await useEvents()
-const events = computed(() => (allEvents.value ?? []).slice(0, SIZE_COUNTS[props.block.content.size] ?? SIZE_COUNTS.s))
+const events = computed(() => {
+  const all = allEvents.value ?? []
+  return [...all.filter(event => event.isFeatured), ...all.filter(event => !event.isFeatured)].slice(0, EVENT_COUNT)
+})
 </script>
 
 <style lang="scss" scoped>

@@ -70,7 +70,7 @@
 }
 
 // Vertical padding of a top-level block. A container rendering nested
-// blocks (Section, Accordion, columns) overrides it locally and every block
+// blocks (Section, Accordion) overrides it locally and every block
 // inside picks it up — no per-block edits.
 :root {
   --block-spacing: var(--spacing-5xl);

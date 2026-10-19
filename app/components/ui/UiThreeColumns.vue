@@ -1,49 +1,44 @@
 <template>
-  <div class="v-block-columns-3 u-block">
-    <nav v-if="summary.length" class="v-block-columns-3__summary" aria-label="Sommaire">
+  <div class="ui-three-columns">
+    <nav v-if="summary.length" class="ui-three-columns__summary" aria-label="Sommaire">
       <ol class="u-flex u-flex--column u-gap-s">
-        <li v-for="heading in summary" :key="heading.id" :class="`v-block-columns-3__summary-item--${heading.level}`">
+        <li v-for="heading in summary" :key="heading.id">
           <a :href="`#${heading.id}`">{{ heading.text }}</a>
         </li>
       </ol>
     </nav>
-    <div class="v-block-columns-3__main u-nested">
+    <div class="ui-three-columns__main u-nested">
       <Blocks :blocks="body" :files="files" :pages="pages" />
     </div>
-    <aside v-if="aside.length" class="v-block-columns-3__aside u-nested" aria-label="Contenus liés">
+    <aside v-if="aside.length" class="ui-three-columns__aside u-nested" aria-label="Contenus liés">
       <Blocks :blocks="aside" :files="files" :pages="pages" />
     </aside>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { Columns3Content, HeadingContent } from '~~/shared/types/blocks'
+import type { HeadingContent } from '~~/shared/types/blocks'
 import type { KqlBlock, KqlFile, KqlPageRefs } from '~~/shared/types/kql'
 
 /**
- * Sommaire (generated) · Contenu principal · Contenus liés. The summary
- * links to every Titre block of the main content, anchored by block id
- * (see Heading.global.vue).
+ * "3 colonnes" layout of an Accordion sub-section: Sommaire (generated) ·
+ * content · Contenus liés. The summary links to every Titre block of the
+ * content, anchored by block id (see Heading.global.vue).
  */
 const props = defineProps<{
-  block: KqlBlock<Columns3Content>
+  body: KqlBlock[]
+  aside: KqlBlock[]
   files?: KqlFile[]
   pages?: KqlPageRefs
 }>()
 
-const body = computed(() => parseKqlBlocks(props.block.content.body))
-const aside = computed(() => parseKqlBlocks(props.block.content.aside))
-
-const summary = computed(() => body.value
+const summary = computed(() => props.body
   .filter(block => block.type === 'heading')
-  .map((block) => {
-    const { text, level } = block.content as unknown as HeadingContent
-    return { id: block.id, text, level }
-  }))
+  .map(block => ({ id: block.id, text: (block.content as unknown as HeadingContent).text })))
 </script>
 
 <style lang="scss" scoped>
-.v-block-columns-3 {
+.ui-three-columns {
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
   grid-template-areas: "summary main aside";
@@ -57,7 +52,7 @@ const summary = computed(() => body.value
   }
 }
 
-.v-block-columns-3__summary {
+.ui-three-columns__summary {
   grid-area: summary;
   position: sticky;
   top: var(--spacing-5xl);
@@ -77,17 +72,12 @@ const summary = computed(() => body.value
   }
 }
 
-.v-block-columns-3__summary-item--h3,
-.v-block-columns-3__summary-item--h4 {
-  padding-left: var(--spacing-m);
-}
-
-.v-block-columns-3__main {
+.ui-three-columns__main {
   grid-area: main;
   min-width: 0;
 }
 
-.v-block-columns-3__aside {
+.ui-three-columns__aside {
   grid-area: aside;
   min-width: 0;
 }

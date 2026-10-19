@@ -6,7 +6,7 @@
       <UiRichText v-if="page.event.text" :html="page.event.text" />
     </div>
 
-    <aside class="v-page-event__aside u-nested" aria-label="Informations et contenus liés">
+    <aside class="v-page-event__aside u-nested" aria-label="Informations pratiques et galerie">
       <UiAsideBox title="Informations pratiques">
         <dl class="v-page-event__infos u-flex u-flex--column u-gap-s">
           <div v-if="page.event.startDate">
@@ -27,7 +27,7 @@
           </div>
         </dl>
       </UiAsideBox>
-      <Blocks :blocks="page.event.asideBlocks" :files="page.files" :pages="page.pages" />
+      <UiAsideGallery :images="page.event.gallery" />
     </aside>
   </article>
 </template>
@@ -38,7 +38,7 @@ import type { KqlPage } from '~~/shared/types/kql'
 /**
  * Agenda entry (jat.cms `event` template), same split as its Panel view:
  * main content (cover, title, text) on the left, practical information and
- * "Contenus liés" on the right.
+ * the optional photo gallery on the right.
  */
 defineProps<{
   page: KqlPage
