@@ -16,6 +16,15 @@ export type RawToggle = 'true' | 'false' | boolean | ''
 export interface SectionContent {
   /** Section name, shown in the anchors bar ("" → not listed). */
   heading: string
+  /** « Afficher le nom en bandeau »: the name also opens the section as a hero. */
+  show_hero: RawToggle
+  /** Named fill of the hero (app/utils/fills.ts), "" → the page theme's. */
+  fill: string
+  /** « Inverser le dégradé » of the hero. */
+  fill_reverse?: RawToggle
+  /** « Fond des barres »: title bars and accordion bars of the section. */
+  bar_fill?: string
+  bar_fill_reverse?: RawToggle
   body: RawBlocks
 }
 
@@ -27,16 +36,17 @@ export interface HeadingContent {
 /** "Simple": blocks only · "3 colonnes": Sommaire · blocks · Contenus liés. */
 export type AccordionItemLayout = 'single' | 'three_columns'
 
-/** One "Sous-section" of an Accordion block, each with its own optional theme. */
+/** One "Sous-section" of an Accordion block, each with its own optional fill. */
 export interface AccordionItemContent {
   heading: string
   layout: AccordionItemLayout
   body: RawBlocks
   /** "Contenus liés", only used by the "three_columns" layout. */
   aside: RawBlocks
-  has_theme: RawToggle
-  background_color: string
-  text_color: string
+  /** Named fill of its bar (app/utils/fills.ts), "" → the section's / page theme's. */
+  fill: string
+  /** « Inverser le dégradé » of its bar. */
+  fill_reverse?: RawToggle
 }
 
 export interface AccordionContent {
@@ -51,14 +61,11 @@ export interface ParagraphContent {
   image: KirbyFileRef[]
 }
 
-export type ButtonLinkType = 'page' | 'url' | 'file'
 
 export interface ButtonContent {
   button_label: string
-  link_type: ButtonLinkType
-  link_page: KirbyPageRef[]
-  link_url: string
-  link_file: KirbyFileRef[]
+  /** Kirby link field: page://…, file://…, https://…, mailto:… or tel:… */
+  link: string
 }
 
 export interface BenefitsContent {
@@ -116,4 +123,9 @@ export interface TestimonialContent {
   /** Writer HTML. */
   text: string
   author: string
+}
+
+export interface NewsContent {
+  /** Kirby toggle: « Afficher les événements passés » (on when never set). */
+  show_past?: RawToggle
 }

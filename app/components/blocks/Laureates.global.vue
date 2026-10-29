@@ -3,7 +3,7 @@
     <ul class="u-flex u-flex--column u-gap-m">
       <li v-for="(laureate, index) in laureates" :key="index" class="v-block-laureates__item u-flex u-flex--align-center u-gap-m">
         <div class="v-block-laureates__photo">
-          <UiImage v-if="laureate.photo" :file="laureate.photo" cover />
+          <UiImage v-if="laureate.photo" :file="laureate.photo" cover sizes="4rem" />
         </div>
         <span class="v-block-laureates__name">{{ laureate.heading }}</span>
       </li>
@@ -34,15 +34,14 @@ const ctaHref = computed(() => resolveKirbyLink(props.block.content.cta?.cta_lin
 <style lang="scss" scoped>
 .v-block-laureates__photo {
   flex-shrink: 0;
-  width: 56px;
-  height: 56px;
+  width: rem(56px);
+  height: rem(56px);
   background: var(--color-surface);
   border-radius: 50%;
   overflow: hidden;
 }
 
 .v-block-laureates__name {
-  font-size: 18px;
-  font-weight: 600;
+  @include t-small-bold;
 }
 </style>

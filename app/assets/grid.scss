@@ -1,5 +1,34 @@
 @use "_params" as *;
 
+// ---------------------------------------------------------------------
+// Grid and vertical rhythm of the mockup (1440px): 40px side margins,
+// 4 columns of 292px separated by 64px (1360px of content). Margins and
+// gaps are fluid but stay close to their mockup value; the section padding
+// shrinks more on small screens.
+// ---------------------------------------------------------------------
+:root {
+  --gutter: #{fluid(16px, 40px)};
+  --grid-gap: #{fluid(16px, 64px)};
+
+  // Between two blocks inside a column or a sub-section (mockup: 32px).
+  --space-stack: #{scaled(32px)};
+  // Title bar → its content (mockup: 40px).
+  --space-bar: #{scaled(40px)};
+  // Top and bottom padding of a page section (mockup: 184px).
+  --space-section: #{fluid(64px, 184px)};
+  // Height of the title bars (Titre block, accordion) (mockup: 119px).
+  --bar-height: #{fluid(72px, 119px)};
+
+  // Vertical padding of a top-level block: two text blocks end up 86px
+  // apart, as in the mockup (Taxe d’apprentissage → Mécénat). Under a title
+  // bar or a full-width photo the block doubles it (see blocks.vue). A
+  // container rendering nested blocks (Section, Accordion) overrides it
+  // locally and every block inside picks it up — no per-block edits.
+  --block-spacing: #{fluid(24px, 43px)};
+  // Padding around a page-level quote (mockup accueil: 224px).
+  --space-quote: #{fluid(80px, 224px)};
+}
+
 // Layout utility classes: instead of every component writing its own
 // `display: flex; flex-direction: column; gap: ...;`, it adds a couple of
 // `.u-flex*` classes in its template. A component still writes its own
@@ -57,36 +86,13 @@
 .u-gap-3xl { gap: var(--spacing-3xl); }
 .u-gap-4xl { gap: var(--spacing-4xl); }
 .u-gap-5xl { gap: var(--spacing-5xl); }
-
-// Page gutter (left/right inset used by every top-level block).
-:root {
-  --gutter: var(--spacing-6xl);
-}
-
-@media (max-width: $breakpoint-mobile) {
-  :root {
-    --gutter: var(--spacing-xl);
-  }
-}
-
-// Vertical padding of a top-level block. A container rendering nested
-// blocks (Section, Accordion) overrides it locally and every block
-// inside picks it up — no per-block edits.
-:root {
-  --block-spacing: var(--spacing-5xl);
-}
-
-@media (max-width: $breakpoint-mobile) {
-  :root {
-    --block-spacing: var(--spacing-3xl);
-  }
-}
+.u-gap-stack { gap: var(--space-stack); }
 
 // Nested-block reset: blocks inside a column or an accordion are already
-// inset by their container, so they drop the page gutter.
+// inset by their container, so they drop the page gutter and stack closer.
 .u-nested {
   --gutter: 0px;
-  --block-spacing: var(--spacing-xl);
+  --block-spacing: calc(var(--space-stack) / 2);
 }
 
 .u-gutter-x {

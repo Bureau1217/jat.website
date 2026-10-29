@@ -1,50 +1,43 @@
 @use "_params" as *;
 
-// Bare tag defaults — the type scale of the site. Components only override
-// a tag locally when the design genuinely differs.
+// Bare tags and utility classes of the type scale. The styles themselves
+// are the t-* mixins of _typography.scss (one per style of the Figma board
+// « Typographies — tableau final »); components include the mixins, plain
+// HTML (rich text) gets the tag defaults below, and .t-* classes apply a
+// style to any element from a template.
 
 h1,
 h2,
 h3,
-h4 {
+h4,
+p,
+blockquote,
+figure {
   margin: 0;
-  font-family: var(--font-heading);
+}
+
+h1 { @include t-h1; }
+h2 { @include t-h2; }
+h3 { @include t-h3; }
+h4 { @include t-h4; }
+
+strong,
+b {
+  font-weight: 700;
+}
+
+// Emphasis switches to Gaya italic, at the size of the surrounding text.
+em,
+i {
+  font-family: var(--font-serif);
+  font-style: italic;
   font-weight: 400;
-  line-height: 1.1;
 }
 
-h1 {
-  font-size: 56px;
-
-  @media (max-width: $breakpoint-mobile) {
-    font-size: 36px;
-  }
-}
-
-h2 {
-  font-size: 40px;
-
-  @media (max-width: $breakpoint-mobile) {
-    font-size: 28px;
-  }
-}
-
-h3 {
-  font-size: 28px;
-
-  @media (max-width: $breakpoint-mobile) {
-    font-size: 22px;
-  }
-}
-
-h4 {
-  font-size: 20px;
-}
-
-p {
-  margin: 0;
-  font-size: 18px;
-  line-height: 1.5;
+a {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+  text-decoration-thickness: 1px;
 }
 
 ul,
@@ -53,3 +46,24 @@ ol {
   padding: 0;
   list-style: none;
 }
+
+$text-styles: display, h1, h2, h3, h4, label, signature, accroche, exergue, citation, lead, p, p-medium, link, small, small-bold, nav-alt, newsletter;
+
+.t-display { @include t-display; }
+.t-h1 { @include t-h1; }
+.t-h2 { @include t-h2; }
+.t-h3 { @include t-h3; }
+.t-h4 { @include t-h4; }
+.t-label { @include t-label; }
+.t-signature { @include t-signature; }
+.t-accroche { @include t-accroche; }
+.t-exergue { @include t-exergue; }
+.t-citation { @include t-citation; }
+.t-lead { @include t-lead; }
+.t-p { @include t-p; }
+.t-p-medium { @include t-p-medium; }
+.t-link { @include t-link; }
+.t-small { @include t-small; }
+.t-small-bold { @include t-small-bold; }
+.t-nav-alt { @include t-nav-alt; }
+.t-newsletter { @include t-newsletter; }

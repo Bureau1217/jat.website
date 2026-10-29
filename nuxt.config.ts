@@ -5,12 +5,14 @@ export default defineNuxtConfig({
   app: {
     head: {
       htmlAttrs: { lang: 'fr' },
-      title: 'JAT',
-      titleTemplate: '%s - JAT',
+      title: 'Jazz à Tours',
+      // Each page builds its complete title itself (usePageSeo.ts): no
+      // template on top.
+      titleTemplate: '%s',
       meta: [
-        { name: 'description', content: 'JAT' },
+        { name: 'description', content: 'Jazz à Tours — école de jazz et de musiques actuelles à Tours.' },
         { property: 'og:type', content: 'website' },
-        { property: 'og:site_name', content: 'JAT' }
+        { property: 'og:site_name', content: 'Jazz à Tours' }
       ]
     }
   },
@@ -27,9 +29,21 @@ export default defineNuxtConfig({
     }
   },
   runtimeConfig: {
+    public: {
+      // Canonical public origin (e.g. "https://www.jazzatours.com") for the
+      // canonical URLs, Open Graph and the sitemap — NUXT_PUBLIC_SITE_URL.
+      // Empty: falls back to the host the request came in on.
+      siteUrl: ''
+    },
     // Server-only (never sent to the browser) — see server/utils/kql.ts.
     apiUrl: '',
     apiAuthEmail: '',
-    apiAuthPassword: ''
+    apiAuthPassword: '',
+    // Newsletter (server/api/newsletter.post.ts): NUXT_MAILCHIMP_API_KEY /
+    // NUXT_MAILCHIMP_LIST_ID. Empty: the form answers that sign-up isn't open yet.
+    mailchimp: {
+      apiKey: '',
+      listId: ''
+    }
   }
 })

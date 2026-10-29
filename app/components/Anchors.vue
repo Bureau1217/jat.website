@@ -1,13 +1,11 @@
 <template>
   <nav v-if="anchors.length" class="v-anchors u-gutter-x" :class="`u-theme--${theme}`" aria-label="Sections de la page">
-    <ul class="v-anchors__list u-flex u-flex--align-center u-gap-2xl">
+    <ul class="v-anchors__list u-flex u-flex--align-center">
       <li v-for="anchor in anchors" :key="anchor.id">
-        <a
-          :href="`#${anchor.id}`"
-          class="v-anchors__link"
-          :class="{ 'is-active': anchor.id === activeId }"
-          :aria-current="anchor.id === activeId ? 'location' : undefined"
-        >{{ anchor.label }}</a>
+        <!-- Mockup « Menu-Repères »: ○ + section name, ● on the current one. -->
+        <UiDotItem :href="`#${anchor.id}`" :active="anchor.id === activeId" class="v-anchors__link">
+          {{ anchor.label }}
+        </UiDotItem>
       </li>
     </ul>
   </nav>
@@ -30,9 +28,8 @@ let observer: IntersectionObserver | null = null
 
 function observeSections(): void {
   observer?.disconnect()
-  const offset = getComputedStyle(document.documentElement)
-  const barsHeight = parseFloat(offset.getPropertyValue('--navigation-menu-height'))
-    + parseFloat(offset.getPropertyValue('--anchors-height'))
+  // The heights are rem / clamp() values: resolve them to px for rootMargin.
+  const barsHeight = Math.round(cssLengthToPx('calc(var(--navigation-menu-height) + var(--anchors-height))'))
 
   observer = new IntersectionObserver((entries) => {
     for (const entry of entries) {
@@ -61,25 +58,46 @@ onBeforeUnmount(() => observer?.disconnect())
   color: var(--theme-anchors-text);
 }
 
-// Too many sections for the width: scroll sideways rather than wrap.
+// Centered on the page, 40px apart. Too many sections for the width:
+// scroll sideways rather than wrap.
 .v-anchors__list {
   height: var(--anchors-height);
+  // « safe »: when the entries overflow, start from the left instead of
+  // cutting the first ones off.
+  justify-content: safe center;
+  gap: var(--spacing-3xl);
   overflow-x: auto;
   scrollbar-width: none;
   white-space: nowrap;
+
+  // Scrolling list: start from the left so the first entries stay reachable.
+  @media (max-width: $breakpoint-mobile) {
+    justify-content: flex-start;
+  }
 }
 
+// Dot + name, no underline; the other entries are slightly dimmed.
 .v-anchors__link {
-  font-size: 16px;
-  font-weight: 600;
-  text-decoration: none;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  @include t-small-bold;
+  align-items: center;
+  gap: var(--spacing-xs);
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+
+  // Mockup: 16px dot for 16px text.
+  :deep(.ui-dot-item__dot) {
+    width: 1em;
+    height: 1em;
+    margin-top: 0;
+  }
 
   &:hover,
   &.is-active {
-    text-decoration: underline;
-    text-underline-offset: 0.3em;
+    opacity: 1;
+  }
+
+  &:hover :deep(.ui-dot-item__label) {
+    text-decoration: none;
   }
 }
 </style>

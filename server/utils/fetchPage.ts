@@ -1,10 +1,19 @@
-import type { KqlBlock, KqlEventFields, KqlFile, KqlPage } from '~~/shared/types/kql'
+import type { KqlArticleFields, KqlBlock, KqlEventFields, KqlFile, KqlPage } from '~~/shared/types/kql'
 
 interface RawPage {
   id: string
   uri: string
   title: string
   template: string
+  theme: string | null
+  headerFill: string | null
+  headerFillReverse: boolean | null
+  heroFill: string | null
+  heroFillReverse: boolean | null
+  barFill: string | null
+  barFillReverse: boolean | null
+  seoTitle: string | null
+  seoDescription: string | null
   files: KqlFile[]
   blocks: KqlBlock[] | null
   gallery: KqlFile[] | null
@@ -15,18 +24,32 @@ interface RawPage {
   location: string | null
   categories: string[] | null
   cover: KqlFile | null
+  subtitle: string | null
+  publishedAt: string | null
 }
 
 /**
  * Same select for every page template: fields absent from a template just
  * come back empty. `body` holds the blocks of `default` pages, `gallery` the
- * "Galerie photos" of `event` pages.
+ * "Galerie photos" of `event` and `article` pages.
  */
 const PAGE_SELECT = {
   id: true,
   uri: 'page.uri',
   title: true,
   template: 'page.intendedTemplate',
+  theme: 'page.theme',
+  // « Couleurs » (default template): fills overriding the theme's.
+  headerFill: 'page.header_fill',
+  headerFillReverse: 'page.header_fill_reverse.toBool',
+  heroFill: 'page.hero_fill',
+  heroFillReverse: 'page.hero_fill_reverse.toBool',
+  barFill: 'page.bar_fill',
+  barFillReverse: 'page.bar_fill_reverse.toBool',
+  // « SEO » tab (jat.cms: tabs/seo.yml) — both optional, see
+  // app/composables/usePageSeo.ts for the fallbacks.
+  seoTitle: 'page.seo_title',
+  seoDescription: 'page.seo_description',
   files: {
     query: 'page.files',
     select: FILE_SELECT
@@ -40,7 +63,8 @@ const PAGE_SELECT = {
     select: FILE_SELECT
   },
   text: 'page.text',
-  ...EVENT_SELECT
+  ...EVENT_SELECT,
+  ...ARTICLE_SELECT
 }
 
 /**
@@ -72,14 +96,37 @@ export async function fetchPage(id: string): Promise<KqlPage | null> {
       }
     : null
 
+  const article: KqlArticleFields | null = raw.template === 'article'
+    ? {
+        subtitle: raw.subtitle || null,
+        publishedAt: raw.publishedAt || null,
+        categories: raw.categories ?? [],
+        cover: raw.cover,
+        text: raw.text || null,
+        gallery: raw.gallery ?? []
+      }
+    : null
+
   return {
     id: raw.id,
     uri: raw.uri,
     title: raw.title,
     template: raw.template,
-    files: raw.files ?? [],
+    theme: raw.theme || null,
+    colors: {
+      header: raw.headerFill || null,
+      headerReverse: raw.headerFillReverse === true,
+      hero: raw.heroFill || null,
+      heroReverse: raw.heroFillReverse === true,
+      bar: raw.barFill || null,
+      barReverse: raw.barFillReverse === true
+    },
+    seoTitle: raw.seoTitle || null,
+    seoDescription: raw.seoDescription || null,
+    files: (raw.files ?? []).map(file => ({ ...file, caption: file.caption || null })),
     pages: await fetchPageRefs(blocks),
     blocks,
-    event
+    event,
+    article
   }
 }

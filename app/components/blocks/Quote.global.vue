@@ -1,6 +1,9 @@
 <template>
-  <figure class="v-block-quote u-block u-flex u-flex--column u-gap-m" :class="`v-block-quote--${alignment}`">
-    <blockquote class="v-block-quote__text" v-html="block.content.text" />
+  <figure
+    class="v-block-quote u-flex u-flex--column u-gap-m"
+    :class="[`v-block-quote--${alignment}`, { 'v-block-quote--nested': isNested, 'u-block': !isNested }]"
+  >
+    <blockquote class="v-block-quote__text" v-html="text" />
     <figcaption v-if="block.content.author" class="v-block-quote__author">{{ block.content.author }}</figcaption>
   </figure>
 </template>
@@ -13,12 +16,20 @@ const props = defineProps<{
   block: KqlBlock<QuoteContent>
 }>()
 
+// Inline writer: Enter / Shift + Enter both give a <br>, kept as is.
+const text = computed(() => frenchSpacing(props.block.content.text))
 const alignment = computed(() => (props.block.content.alignment === 'right' ? 'right' : 'center'))
+
+const isNested = useIsNested()
 </script>
 
 <style lang="scss" scoped>
 .v-block-quote {
   margin: 0;
+}
+
+.v-block-quote:not(.v-block-quote--nested) {
+  padding-block: var(--space-quote);
 }
 
 .v-block-quote--center {
@@ -31,20 +42,23 @@ const alignment = computed(() => (props.block.content.alignment === 'right' ? 'r
   text-align: right;
 }
 
+// Page level: Gaya catch line (accueil); in a column: Gaya pull quote.
 .v-block-quote__text {
+  @include t-accroche;
   margin: 0;
-  max-width: var(--content-max-width);
-  font-family: var(--font-heading);
-  font-size: 32px;
-  line-height: 1.3;
+  // Mockup: 804px (accueil) to 1172px wide at 1440px.
+  max-width: scaled(1004px);
 
-  @media (max-width: $breakpoint-mobile) {
-    font-size: 24px;
+  :deep(em) {
+    font-style: normal;
   }
 }
 
+.v-block-quote--nested .v-block-quote__text {
+  @include t-citation;
+}
+
 .v-block-quote__author {
-  font-size: 16px;
-  font-weight: 700;
+  @include t-small-bold;
 }
 </style>

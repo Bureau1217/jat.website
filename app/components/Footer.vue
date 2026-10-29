@@ -1,80 +1,68 @@
 <template>
   <footer class="v-footer">
-    <h2 class="v-footer__heading u-gutter-x">Infos pratiques</h2>
+    <Newsletter />
 
-    <div class="v-footer__body u-block u-flex u-flex--column u-gap-5xl">
-      <div class="v-footer__grid">
-        <UiMap v-if="mapAddress" :address="mapAddress" class="v-footer__map" />
+    <div class="v-footer__main u-gutter-x">
+      <div class="v-footer__columns">
+        <section v-if="siteInfo?.openingHours.length || address" class="v-footer__column">
+          <h2 class="v-footer__title">Infos pratiques</h2>
+          <p v-for="slot in siteInfo?.openingHours" :key="slot.days">→ {{ slot.days }}<br>{{ slot.hours }}</p>
+          <p v-if="address" class="v-footer__gap">
+            <template v-for="line in addressLines" :key="line">{{ line }}<br></template>
+          </p>
+        </section>
 
-        <div class="u-flex u-flex--column u-gap-2xl">
-          <section v-if="address || siteInfo?.email || siteInfo?.phone" class="u-flex u-flex--column u-gap-s">
-            <h3 class="v-footer__title">Informations pratiques</h3>
-            <p v-if="address">
-              <template v-for="line in addressLines" :key="line">{{ line }}<br></template>
-            </p>
-            <p v-if="siteInfo?.email">
-              <a :href="`mailto:${siteInfo.email}`">{{ siteInfo.email }}</a>
-            </p>
-            <p v-if="siteInfo?.phone">
-              <a :href="`tel:${siteInfo.phone.replace(/\s/g, '')}`">{{ siteInfo.phone }}</a>
-            </p>
-          </section>
+        <section v-if="siteInfo?.phone || siteInfo?.email || siteInfo?.legalLinks.length" class="v-footer__column">
+          <h2 class="v-footer__title">Nous contacter</h2>
+          <p v-if="siteInfo?.phone"><a :href="`tel:${siteInfo.phone.replace(/\s/g, '')}`">{{ siteInfo.phone }}</a></p>
+          <p v-if="siteInfo?.email"><a :href="`mailto:${siteInfo.email}`">{{ siteInfo.email }}</a></p>
+          <ul v-if="siteInfo?.legalLinks.length" class="v-footer__gap">
+            <li v-for="link in siteInfo.legalLinks" :key="link.label">
+              <NuxtLink :to="link.href" class="v-footer__title">{{ link.label }}</NuxtLink>
+            </li>
+          </ul>
+        </section>
 
-          <section v-if="siteInfo?.transports.length" class="u-flex u-flex--column u-gap-s">
-            <h3 class="v-footer__title">Transports</h3>
-            <p v-for="transport in siteInfo.transports" :key="transport.travelTime + transport.lines">
-              {{ transport.travelTime }} : {{ transport.lines }}
-            </p>
-          </section>
-        </div>
-
-        <div class="u-flex u-flex--column u-gap-2xl">
-          <section v-if="siteInfo?.openingHours.length" class="u-flex u-flex--column u-gap-s">
-            <h3 class="v-footer__title">Horaires d’ouverture</h3>
-            <p v-for="slot in siteInfo.openingHours" :key="slot.days">
-              {{ slot.days }}<br>{{ slot.hours }}
-            </p>
-          </section>
-
-          <section v-if="siteInfo?.disabilityReferents.length || siteInfo?.accessibilityText" class="u-flex u-flex--column u-gap-s">
-            <h3 class="v-footer__title">Situation de handicap</h3>
-            <p v-if="siteInfo.disabilityReferents.length">
-              {{ siteInfo.disabilityReferents.length > 1 ? 'Personnes référentes' : 'Personne référente' }} :
-              <template v-for="referent in siteInfo.disabilityReferents" :key="referent.name">
-                <br>
-                <a v-if="referent.contact" :href="referent.contact">{{ referent.name }}</a>
-                <template v-else>{{ referent.name }}</template>
-              </template>
-            </p>
-            <UiRichText v-if="siteInfo.accessibilityText" :html="siteInfo.accessibilityText" class="v-footer__accessibility" />
-          </section>
-        </div>
-      </div>
-
-      <div class="v-footer__bottom u-flex u-flex--justify-between u-gap-xl u-flex--wrap">
-        <ul v-if="siteInfo?.socialLinks.length" class="u-flex u-gap-l u-flex--wrap">
+        <ul v-if="siteInfo?.socialLinks.length" class="v-footer__column">
           <li v-for="link in siteInfo.socialLinks" :key="link.label">
             <a :href="link.href" target="_blank" rel="noopener">{{ link.label }}</a>
           </li>
         </ul>
-        <ul class="u-flex u-gap-l u-flex--wrap">
-          <li v-for="page in siteInfo?.footerPages" :key="page.id">
-            <NuxtLink :to="pagePath(page)">{{ page.title }}</NuxtLink>
-          </li>
-          <li v-for="link in siteInfo?.legalLinks" :key="link.label">
-            <NuxtLink :to="link.href">{{ link.label }}</NuxtLink>
-          </li>
-          <li>© {{ new Date().getFullYear() }} Jazz à Tours</li>
-        </ul>
+
+        <section v-if="siteInfo?.vhssReferents.length" class="v-footer__column">
+          <h2 class="v-footer__title">Référent·es VHSS</h2>
+          <p v-for="referent in siteInfo.vhssReferents" :key="referent.name" class="v-footer__name">
+            <a v-if="referent.contact" :href="referent.contact">{{ referent.name }}</a>
+            <template v-else>{{ referent.name }}</template>
+          </p>
+        </section>
+
+        <section v-if="siteInfo?.disabilityReferents.length" class="v-footer__column">
+          <h2 class="v-footer__title">{{ siteInfo.disabilityReferents.length > 1 ? 'Référent·es handicap' : 'Référent·e handicap' }}</h2>
+          <p v-for="referent in siteInfo.disabilityReferents" :key="referent.name" class="v-footer__name">
+            <a v-if="referent.contact" :href="referent.contact">{{ referent.name }}</a>
+            <template v-else>{{ referent.name }}</template>
+          </p>
+        </section>
+
+        <nav v-if="siteInfo?.footerPages.length" class="v-footer__column" aria-label="Pages du pied de page">
+          <ul>
+            <li v-for="page in siteInfo.footerPages" :key="page.id">
+              <NuxtLink :to="pagePath(page)">{{ page.title }}</NuxtLink>
+            </li>
+          </ul>
+        </nav>
       </div>
     </div>
+
+    <FooterWordmark />
   </footer>
 </template>
 
 <script setup lang="ts">
-// Same on every page (unlike the header, it has no page theme). Everything
-// comes from "Informations générales" in the Panel; each item is only shown
-// once an editor has filled it in.
+// Same on every page (unlike the header, it has no page theme): newsletter
+// band, then the columns of the mockup. Everything comes from
+// « Informations générales » in the Panel; each item only shows once filled.
 const { data: siteInfo } = await useSiteInfo()
 
 const address = computed(() => siteInfo.value?.address ?? null)
@@ -82,29 +70,18 @@ const addressLines = computed(() => {
   const a = address.value
   if (!a) return []
   return [
-    a.name,
     [a.number, a.street].filter(Boolean).join(' '),
     [a.postalCode, a.city].filter(Boolean).join(' ')
   ].filter((line): line is string => Boolean(line))
 })
-
-// The map needs at least a street or a city to geocode; the name alone
-// ("Jazz à Tours") would be a guess.
-const mapAddress = computed(() => {
-  const a = address.value
-  if (!a || !(a.street || a.city)) return null
-  return addressLines.value.slice(a.name ? 1 : 0).join(', ')
-})
 </script>
 
 <style lang="scss" scoped>
+// Mockup: bordeaux band (« Couleur Footer »), text in the page background
+// color, everything in small bold.
 .v-footer {
-  background: var(--color-jat-peach);
-  color: var(--color-jat-bordeaux);
-
-  p {
-    font-size: 18px;
-  }
+  @include t-small-bold;
+  color: var(--color-background);
 
   a {
     text-decoration: none;
@@ -115,51 +92,40 @@ const mapAddress = computed(() => {
   }
 }
 
-// Fades in from the footer background, as the section headings of the
-// mockup do.
-.v-footer__heading {
-  padding-block: var(--spacing-4xl) var(--spacing-l);
-  background: var(--theme-spaces-gradient);
-  color: var(--color-jat-sand);
-  font-size: 64px;
-  text-transform: uppercase;
-
-  @media (max-width: $breakpoint-mobile) {
-    font-size: 40px;
-  }
+.v-footer__main {
+  // No bottom padding: the wordmark below sets the gap (mockup: 112px).
+  padding-top: var(--spacing-2xl);
+  background: var(--color-footer);
 }
 
-.v-footer__grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
-  gap: var(--spacing-5xl);
-  align-items: start;
-
-  @media (max-width: $breakpoint-mobile) {
-    grid-template-columns: 1fr;
-    gap: var(--spacing-2xl);
-  }
+.v-footer__columns {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--spacing-2xl) var(--spacing-3xl);
 }
 
-.v-footer__map {
-  border-radius: 0;
+.v-footer__column {
+  min-width: rem(140px);
 }
 
+// Same small bold as the rest of the footer (overrides the global h2 style).
 .v-footer__title {
-  font-family: var(--font-body);
-  font-size: 18px;
-  font-weight: 700;
+  @include t-small-bold;
+  margin: 0;
+  text-transform: none;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
 }
 
-.v-footer__bottom {
-  padding-top: var(--spacing-xl);
-  border-top: 1px solid currentColor;
-  font-size: 14px;
+.v-footer__gap {
+  margin-top: var(--spacing-l);
 }
 
-.v-footer__accessibility {
-  :deep(p) {
-    font-size: 16px;
-  }
+// Referents in Gaya italic, as in the mockup.
+.v-footer__name {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
 }
 </style>

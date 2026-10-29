@@ -1,7 +1,7 @@
 <template>
   <article v-if="page.event" class="v-page-event u-block">
     <div class="v-page-event__main u-flex u-flex--column u-gap-2xl">
-      <UiImage v-if="page.event.cover" :file="page.event.cover" class="v-page-event__cover" />
+      <UiImage v-if="page.event.cover" :file="page.event.cover" sizes="(max-width: 900px) 100vw, 66vw" eager class="v-page-event__cover" />
       <h1>{{ page.title }}</h1>
       <UiRichText v-if="page.event.text" :html="page.event.text" />
     </div>
@@ -64,21 +64,18 @@ defineProps<{
 }
 
 .v-page-event__cover {
-  border-radius: var(--radius-m);
 }
 
 .v-page-event__infos {
   margin: 0;
 
   dt {
-    font-size: 13px;
-    text-transform: uppercase;
+    @include t-small-bold;
   }
 
   dd {
     margin: 0;
-    font-size: 18px;
-    font-weight: 600;
+    @include t-small;
   }
 }
 </style>

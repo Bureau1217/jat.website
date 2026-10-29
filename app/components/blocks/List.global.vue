@@ -1,17 +1,20 @@
 <template>
-  <div v-if="items.length" class="v-block-list u-block">
-    <ul class="v-block-list__items u-flex u-flex--column">
-      <li v-for="(item, index) in items" :key="index" class="v-block-list__item u-flex u-flex--column u-gap-xxs">
-        <span v-if="item.overline" class="v-block-list__overline">{{ item.overline }}</span>
-        <span class="v-block-list__label">{{ item.label }}</span>
-      </li>
-    </ul>
+  <div v-if="items.length" class="v-block-list" :class="{ 'u-block': !isNested }">
+    <component :is="isNested ? 'div' : UiTwoColumns">
+      <ul class="v-block-list__items u-flex u-flex--column">
+        <li v-for="(item, index) in items" :key="index" class="v-block-list__item u-flex u-flex--column u-gap-xxs">
+          <span v-if="item.overline" class="v-block-list__overline">{{ item.overline }}</span>
+          <span class="v-block-list__label">{{ item.label }}</span>
+        </li>
+      </ul>
+    </component>
   </div>
 </template>
 
 <script setup lang="ts">
 import type { ListContent } from '~~/shared/types/blocks'
 import type { KqlBlock, KqlPageRefs } from '~~/shared/types/kql'
+import UiTwoColumns from '~/components/ui/UiTwoColumns.vue'
 
 const props = defineProps<{
   block: KqlBlock<ListContent>
@@ -29,25 +32,21 @@ const items = computed((): Array<{ label: string, overline: string | null }> => 
   }
   return (manualItems ?? []).map(item => ({ label: item.item_text, overline: null }))
 })
+
+const isNested = useIsNested()
 </script>
 
 <style lang="scss" scoped>
-.v-block-list__items {
-  max-width: var(--content-max-width);
-}
-
 .v-block-list__item {
   padding-block: var(--spacing-s);
   border-bottom: 1px solid currentColor;
 }
 
 .v-block-list__overline {
-  font-size: 14px;
-  text-transform: uppercase;
+  @include t-small;
 }
 
 .v-block-list__label {
-  font-size: 20px;
-  font-weight: 600;
+  @include t-p;
 }
 </style>

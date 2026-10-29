@@ -24,12 +24,10 @@ const programs = computed(() => resolvePageRefs(props.block.content.programs, pr
 
 <style lang="scss" scoped>
 .v-block-related-programs__group {
-  font-size: 13px;
-  text-transform: uppercase;
+  @include t-small;
 }
 
 .v-block-related-programs__title {
-  font-size: 18px;
-  font-weight: 600;
+  @include t-small-bold;
 }
 </style>

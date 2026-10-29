@@ -8,23 +8,19 @@
 import type { ButtonContent } from '~~/shared/types/blocks'
 import type { KqlBlock, KqlFile, KqlPageRefs } from '~~/shared/types/kql'
 
+/**
+ * Button of a Kirby link field: page of the site, external URL (new tab),
+ * document (downloaded), e-mail (mailto:) or phone number (tel:).
+ */
 const props = defineProps<{
   block: KqlBlock<ButtonContent>
   files?: KqlFile[]
   pages?: KqlPageRefs
 }>()
 
-const isDownload = computed(() => props.block.content.link_type === 'file')
+const isDownload = computed(() => props.block.content.link?.startsWith('file://') ?? false)
 
 // Not rendered at all when the target is missing (unpublished page, deleted
 // document) rather than as a dead button.
-const href = computed(() => {
-  const { link_type: type, link_page: page, link_url: url, link_file: file } = props.block.content
-  if (type === 'page') {
-    const target = resolvePageRefs(page, props.pages)[0]
-    return target ? pagePath(target) : null
-  }
-  if (type === 'file') return resolveKqlFile(file, props.files)?.url ?? null
-  return url || null
-})
+const href = computed(() => resolveKirbyLink(props.block.content.link, props.pages, props.files))
 </script>

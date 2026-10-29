@@ -1,4 +1,4 @@
-import type { KqlAddress, KqlLink, KqlNavItem, KqlOpeningHours, KqlSiteInfo, KqlTransport } from '~~/shared/types/kql'
+import type { KqlAddress, KqlLink, KqlNavItem, KqlOpeningHours, KqlReferent, KqlSiteInfo, KqlTransport } from '~~/shared/types/kql'
 
 interface RawSiteInfos {
   /** Kirby object field — [] when never filled in. */
@@ -7,6 +7,7 @@ interface RawSiteInfos {
   phone: string | null
   openingHours: KqlOpeningHours[] | null
   transports: Array<{ travel_time: string, lines: string }> | null
+  vhssReferents: Array<{ referent_name: string, contact: string }> | null
   disabilityReferents: Array<{ referent_name: string, contact: string }> | null
   footerPages: KqlNavItem[] | null
   socialInstagram: string | null
@@ -16,6 +17,9 @@ interface RawSiteInfos {
   legalNoticeLink: string | null
   privacyPolicyLink: string | null
   accessibilityText: string | null
+  newsletterText: string | null
+  seoDescription: string | null
+  seoImage: { url: string } | null
 }
 
 /** Social networks and legal links, in display order — labels are fixed, only the URLs are edited. */
@@ -37,17 +41,21 @@ const EMPTY: KqlSiteInfo = {
   phone: null,
   openingHours: [],
   transports: [],
+  vhssReferents: [],
   disabilityReferents: [],
   footerPages: [],
   socialLinks: [],
   legalLinks: [],
-  accessibilityText: null
+  accessibilityText: null,
+  newsletterText: null,
+  seoDescription: null,
+  seoImage: null
 }
 
 /**
  * Everything editors manage from "Informations générales" (jat.cms
  * `informations` template): contact details, opening hours, transports,
- * disability referents, footer pages,
+ * VHSS and disability referents, footer pages,
  * social networks, legal links and the accessibility text.
  */
 export default defineEventHandler(async (): Promise<KqlSiteInfo> => {
@@ -66,6 +74,10 @@ export default defineEventHandler(async (): Promise<KqlSiteInfo> => {
         query: 'page.transports.toStructure',
         select: { travel_time: true, lines: true }
       },
+      vhssReferents: {
+        query: 'page.vhss_referents.toStructure',
+        select: { referent_name: true, contact: true }
+      },
       disabilityReferents: {
         query: 'page.disability_referents.toStructure',
         select: { referent_name: true, contact: true }
@@ -81,7 +93,14 @@ export default defineEventHandler(async (): Promise<KqlSiteInfo> => {
       // Kirby link fields store "page://<uuid>" for internal pages — .toUrl resolves them.
       legalNoticeLink: 'page.legal_notice_link.toUrl',
       privacyPolicyLink: 'page.privacy_policy_link.toUrl',
-      accessibilityText: 'page.accessibility_text'
+      accessibilityText: 'page.accessibility_text',
+      newsletterText: 'page.newsletter_text',
+      // « SEO » tab: fallback description and the one share image of the site.
+      seoDescription: 'page.seo_default_description',
+      seoImage: {
+        query: 'page.seo_default_image.toFile',
+        select: { url: 'file.resize(1200).url' }
+      }
     }
   })
 
@@ -104,16 +123,23 @@ export default defineEventHandler(async (): Promise<KqlSiteInfo> => {
     .map(({ label, rawKey }) => ({ label, href: toRelativeLink(page[rawKey] as string | null, config.apiUrl) }))
     .filter((link): link is KqlLink => Boolean(link.href))
 
+  const toReferents = (rows: RawSiteInfos['disabilityReferents']): KqlReferent[] => (rows ?? [])
+    .map(row => ({ name: row.referent_name, contact: row.contact || null }))
+
   return {
     address,
     email: page.email || null,
     phone: page.phone || null,
     openingHours: page.openingHours ?? [],
     transports: (page.transports ?? []).map((row): KqlTransport => ({ travelTime: row.travel_time, lines: row.lines })),
-    disabilityReferents: (page.disabilityReferents ?? []).map(row => ({ name: row.referent_name, contact: row.contact || null })),
+    vhssReferents: toReferents(page.vhssReferents),
+    disabilityReferents: toReferents(page.disabilityReferents),
     footerPages: page.footerPages ?? [],
     socialLinks: toLinks(SOCIAL_LINKS),
     legalLinks: toLinks(LEGAL_LINKS),
-    accessibilityText: page.accessibilityText || null
+    accessibilityText: page.accessibilityText || null,
+    newsletterText: page.newsletterText || null,
+    seoDescription: page.seoDescription || null,
+    seoImage: page.seoImage?.url || null
   }
 })

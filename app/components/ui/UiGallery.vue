@@ -1,7 +1,7 @@
 <template>
   <div class="ui-gallery" :class="`ui-gallery--${layout}`">
     <figure v-for="image in images" :key="image.uuid" class="ui-gallery__item">
-      <UiImage :file="image" cover />
+      <UiImage :file="image" cover sizes="(max-width: 900px) 100vw, 33vw" />
     </figure>
   </div>
 </template>

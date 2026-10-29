@@ -2,28 +2,49 @@
 // max, aspect ratio kept) instead of its original upload size. `.resize()`
 // is a no-op on non-resizable files (SVG pictograms, PDF documents), so
 // FILE_SELECT is safe for every file.
+// url600 / url1000 / url1600: smaller versions of the same image, generated
+// and cached by Kirby on first request — offered to the browser through
+// `srcset` (app/utils/imageAttrs.ts, keep SRCSET_WIDTHS in sync), which then
+// downloads only the one that fits the space the image occupies.
 export const FILE_SELECT = {
   filename: true,
   url: 'file.resize(2000).url',
+  url600: 'file.resize(600).url',
+  url1000: 'file.resize(1000).url',
+  url1600: 'file.resize(1600).url',
   alt: 'file.alt',
   width: 'file.resize(2000).width',
   height: 'file.resize(2000).height',
   extension: true,
   uuid: 'file.uuid',
-  focus: 'file.focus'
+  focus: 'file.focus',
+  caption: 'file.caption'
 }
 
 /** Fields of the `event` template (jat.cms: site/blueprints/pages/event.yml). */
+/** Fields every card shows, events and articles alike. */
+export const CARD_SELECT = {
+  categories: 'page.categories.split',
+  // Plain-text start of the text, for the cards (no HTML).
+  excerpt: 'page.text.excerpt(180)',
+  cover: {
+    query: 'page.cover.toFile',
+    select: FILE_SELECT
+  }
+}
+
 export const EVENT_SELECT = {
   startDate: 'page.start_date.toDate("Y-m-d")',
   endDate: 'page.end_date.toDate("Y-m-d")',
   schedule: 'page.schedule',
   location: 'page.location',
-  categories: 'page.categories.split',
-  cover: {
-    query: 'page.cover.toFile',
-    select: FILE_SELECT
-  }
+  ...CARD_SELECT
+}
+
+export const ARTICLE_SELECT = {
+  subtitle: 'page.subtitle',
+  publishedAt: 'page.published_at.toDate("Y-m-d")',
+  ...CARD_SELECT
 }
 
 /**

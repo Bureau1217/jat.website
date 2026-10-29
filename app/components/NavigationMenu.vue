@@ -6,7 +6,12 @@
       <nav class="v-navigation-menu__desktop-nav" aria-label="Navigation principale">
         <ul class="u-flex u-flex--align-center u-gap-2xl">
           <li v-for="item in navItems" :key="item.id">
-            <NuxtLink :to="pagePath(item)" class="v-navigation-menu__link">{{ item.title }}</NuxtLink>
+            <!-- Both typefaces stacked in one cell: the link keeps the width of
+                 the wider one, so switching to Gaya on hover moves nothing. -->
+            <NuxtLink :to="pagePath(item)" class="v-navigation-menu__link">
+              <span class="v-navigation-menu__label">{{ item.title }}</span>
+              <span class="v-navigation-menu__label v-navigation-menu__label--alt" aria-hidden="true">{{ item.title }}</span>
+            </NuxtLink>
           </li>
         </ul>
       </nav>
@@ -61,8 +66,7 @@ watch(isOpen, (open) => {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: var(--theme-gradient);
-  color: var(--theme-text);
+  @include fill-background(header);
 
   @media (max-width: $breakpoint-mobile) {
     &.is-open {
@@ -80,8 +84,8 @@ watch(isOpen, (open) => {
 }
 
 .v-navigation-menu__logo {
-  font-family: var(--font-heading);
-  font-size: 44px;
+  font-family: var(--font-display);
+  font-size: fluid(36px, 55px);
   line-height: 1;
   text-decoration: none;
 }
@@ -89,25 +93,38 @@ watch(isOpen, (open) => {
 .v-navigation-menu__desktop-nav {
   flex: 1;
 
-  // The last item (Recherches in the mockup) sits apart, on the right.
-  li:last-child:not(:first-child) {
-    margin-left: auto;
-  }
-
   @media (max-width: $breakpoint-mobile) {
     display: none;
   }
 }
 
 .v-navigation-menu__link {
-  font-size: 18px;
-  font-weight: 700;
+  display: inline-grid;
+  justify-items: center;
   text-decoration: none;
+}
 
-  &:hover,
-  &.router-link-active {
-    text-decoration: underline;
-    text-underline-offset: 0.25em;
+.v-navigation-menu__label {
+  @include t-label;
+  grid-area: 1 / 1;
+  line-height: 1.2;
+}
+
+// Mockup: the hovered / active page switches to Gaya.
+.v-navigation-menu__label--alt {
+  @include t-nav-alt;
+  line-height: 1.2;
+  visibility: hidden;
+}
+
+.v-navigation-menu__link:hover,
+.v-navigation-menu__link.router-link-active {
+  .v-navigation-menu__label {
+    visibility: hidden;
+  }
+
+  .v-navigation-menu__label--alt {
+    visibility: visible;
   }
 }
 
@@ -177,8 +194,7 @@ watch(isOpen, (open) => {
 }
 
 .v-navigation-menu__mobile-link {
-  font-family: var(--font-heading);
-  font-size: 28px;
+  @include t-h2;
   text-decoration: none;
 
   &:hover,

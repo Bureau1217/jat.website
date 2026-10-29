@@ -1,6 +1,6 @@
 <template>
   <div class="v-block-benefits u-block">
-    <ul class="v-block-benefits__list u-flex u-flex--wrap u-flex--justify-center u-gap-3xl">
+    <ul class="v-block-benefits__list u-flex u-flex--wrap u-flex--justify-center u-gap-4xl">
       <li v-for="(item, index) in items" :key="index" class="v-block-benefits__item u-flex u-flex--column u-flex--align-center u-gap-m">
         <img v-if="item.pictogram" :src="item.pictogram.url" alt="" class="v-block-benefits__pictogram">
         <h4>{{ item.heading }}</h4>
@@ -27,14 +27,18 @@ const items = computed(() => (props.block.content.items ?? []).map(item => ({
 
 <style lang="scss" scoped>
 .v-block-benefits__item {
-  width: 200px;
+  width: fluid(120px, 190px);
   text-align: center;
+}
+
+.v-block-benefits__item h4 {
+  @include t-p-medium;
 }
 
 // Decorative: the title right below carries the meaning.
 .v-block-benefits__pictogram {
-  width: 80px;
-  height: 80px;
+  width: fluid(80px, 170px);
+  height: fluid(80px, 170px);
   object-fit: contain;
 }
 </style>

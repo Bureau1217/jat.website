@@ -40,38 +40,38 @@ const tag = computed(() => {
 </script>
 
 <style lang="scss" scoped>
+// Mockup « Bouton »: pill 50px high, 1px outline, Rebond Light 16. Colors
+// come from --button-* (main.scss), which follow the page theme.
 .ui-button {
-  border: none;
+  @include t-small;
+  min-height: rem(50px);
+  width: fit-content;
   cursor: pointer;
   text-decoration: none;
-  font-weight: 700;
-  font-size: 18px;
-  line-height: 1;
-  width: fit-content;
 }
 
-// Filled pill, switches to outline-only on hover. A transparent border is
-// reserved at all times so the button doesn't change size on hover.
 .ui-button--primary {
-  background: var(--button-color);
+  padding: rem(15px) rem(19px);
+  background: var(--button-background);
   color: var(--button-text);
-  border: 2px solid transparent;
+  border: 1px solid var(--button-border);
   border-radius: var(--radius-pill);
-  padding: var(--spacing-s) var(--spacing-xl);
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease;
 
-  &:hover {
-    background: transparent;
-    color: var(--button-color);
-    border-color: var(--button-color);
+  // No hover state in the mockup: swap fill and text.
+  &:hover,
+  &:focus-visible {
+    background: var(--button-text);
+    color: var(--button-background);
   }
 }
 
 .ui-button--secondary {
+  min-height: 0;
+  padding: 0 0 2px;
   background: transparent;
   color: inherit;
-  border-bottom: 2px solid currentColor;
-  padding: 0 0 2px;
+  border-bottom: 1px solid currentColor;
   border-radius: 0;
 
   &:hover {

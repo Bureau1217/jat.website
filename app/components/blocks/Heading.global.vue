@@ -1,29 +1,27 @@
 <template>
-  <div class="v-block-heading u-block">
-    <h2 :id="block.id" class="v-block-heading__title">{{ block.content.text }}</h2>
-  </div>
+  <UiBar v-if="!isNested" class="v-block-heading" :title="block.content.text" :title-id="block.id" level="h2" />
+  <h3 v-else :id="block.id" class="v-block-heading__label">{{ block.content.text }}</h3>
 </template>
 
 <script setup lang="ts">
 import type { HeadingContent } from '~~/shared/types/blocks'
 import type { KqlBlock } from '~~/shared/types/kql'
 
-// Always an h2: editors no longer pick the level (the page title is the h1).
-// The block id doubles as the anchor targeted by the "3 colonnes" Sommaire.
+/**
+ * Page level: full-width title bar on the page theme fill (« Agenda »,
+ * « Nos formations »). Inside an accordion / column: a label-size title.
+ * The block id doubles as the anchor targeted by the "3 colonnes" Sommaire.
+ */
 defineProps<{
   block: KqlBlock<HeadingContent>
 }>()
+
+const isNested = useIsNested()
 </script>
 
 <style lang="scss" scoped>
-// Only the top of a title gets the block rhythm — it belongs to the content
-// right below it.
-.v-block-heading {
-  padding-bottom: 0;
-}
-
-.v-block-heading__title {
-  max-width: var(--content-max-width);
-  scroll-margin-top: var(--spacing-5xl);
+.v-block-heading__label {
+  @include t-label;
+  scroll-margin-top: calc(var(--navigation-menu-height) + var(--anchors-height) + var(--spacing-xl));
 }
 </style>

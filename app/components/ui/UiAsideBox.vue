@@ -1,5 +1,5 @@
 <template>
-  <section class="ui-aside-box u-flex u-flex--column u-gap-m">
+  <section class="ui-aside-box u-flex u-flex--column u-gap-2xl">
     <h3 v-if="title" class="ui-aside-box__title">{{ title }}</h3>
     <slot />
   </section>
@@ -8,7 +8,7 @@
 <script setup lang="ts">
 /**
  * Shell of a "Contenus liés" box (Accordion "3 colonnes", event page): a small
- * title over its own content, separated from the next box by a rule.
+ * title underlined by a rule, then its own content.
  */
 withDefaults(defineProps<{
   title?: string
@@ -18,17 +18,9 @@ withDefaults(defineProps<{
 </script>
 
 <style lang="scss" scoped>
-.ui-aside-box {
-  padding-block: var(--spacing-xl);
-  border-top: 2px solid currentColor;
-}
-
-// Small label, set in the body font rather than the heading one.
 .ui-aside-box__title {
-  font-family: var(--font-body);
-  font-weight: 700;
-  font-size: 16px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  @include t-small-bold;
+  padding-bottom: var(--spacing-xs);
+  border-bottom: 1px solid currentColor;
 }
 </style>

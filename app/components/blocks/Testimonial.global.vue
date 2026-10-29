@@ -24,13 +24,15 @@ defineProps<{
   margin: 0;
 }
 
+// Mockup: testimonials in Gaya italic.
 .v-block-testimonial__text {
+  @include t-link;
   margin: 0;
   font-style: italic;
+  font-weight: 400;
 }
 
 .v-block-testimonial__author {
-  font-size: 16px;
-  font-weight: 700;
+  @include t-small-bold;
 }
 </style>

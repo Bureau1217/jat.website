@@ -2,12 +2,9 @@
   <img
     class="ui-image"
     :class="{ 'ui-image--cover': cover }"
-    :src="file.url"
+    v-bind="imageAttrs(file, sizes, { eager })"
     :alt="file.alt ?? ''"
-    :width="file.width ?? undefined"
-    :height="file.height ?? undefined"
     :style="cover ? { objectPosition: objectPosition(file) } : undefined"
-    loading="lazy"
   >
 </template>
 
@@ -15,14 +12,22 @@
 import type { KqlFile } from '~~/shared/types/kql'
 
 /**
- * A Kirby image with its alt text and intrinsic size (no layout shift).
+ * A Kirby image with its alt text, intrinsic size (no layout shift) and a
+ * srcset of the sizes Kirby generated (see app/utils/imageAttrs.ts).
+ * `sizes`: rendered width of the image (e.g. "100vw", "(max-width: 900px)
+ * 100vw, 25vw") so the browser downloads the right version.
+ * `eager`: the image is at the top of the page (hero, cover) — no lazy load.
  * `cover` fills its container (object-fit: cover) around the Panel's focal point.
  */
 withDefaults(defineProps<{
   file: KqlFile
   cover?: boolean
+  sizes?: string
+  eager?: boolean
 }>(), {
-  cover: false
+  cover: false,
+  sizes: '100vw',
+  eager: false
 })
 </script>
 

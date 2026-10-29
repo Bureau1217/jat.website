@@ -1,108 +1,187 @@
+@use "sass:list";
+@use "sass:map";
+@use "sass:meta";
 @use "_font-loading.scss";
 @use "grid.scss";
 @use "typo.scss";
 
+/// A base color (--color-<name>) at a given opacity, for the gradient
+/// stops Figma draws semi-transparent.
+@function alpha($name, $percent) {
+  @return color-mix(in srgb, var(--color-#{$name}) #{$percent}, transparent);
+}
+
 :root {
-  // Colors — placeholders until the JAT design system is defined. Blocks
-  // only read the semantic tokens below (--color-background, --color-text,
-  // --color-accent…), never a raw brand color.
-  --color-brand-00: #ffffff;
-  --color-brand-01: #111111;
-  --color-brand-02: #f2f0eb;
-  --color-brand-03: #1f4bd8;
+  // ---------------------------------------------------------------------
+  // Base colors — Figma variables (collection « Collection 1 »), same
+  // names. Every gradient below is built from them.
+  // ---------------------------------------------------------------------
+  --color-accueil: #3354f7;
+  --color-ecole-texte: #ad0725;
+  --color-ecole: #d20a2e;            // « L'École dégradé »
+  --color-se-former: #6308c2;        // « SE FORMER + TEXTE »
+  --color-concerts-projets: #fa8200;
+  --color-espaces: #000857;
+  --color-background: #d2c5b8;
+  --color-footer: #5d0917;
+  --color-secondaire-1: #d7dbff;
+  --color-secondaire-2: #d8e7b4;
+  --color-secondaire-3: #ace7d0;
+  --color-secondaire-4: #cbabec;
+  --color-secondaire-5: #7fffe5;
+  --color-secondaire-6: #f3b67d;
+  --color-secondaire-7: #f9bdc7;
+  --color-secondaire-8: #ffdab7;
+  --color-secondaire-9: #00fc9b;
+  // « Musique à l'image » (MALI) formation.
+  --color-mali-black: #000000;
+  --color-mali-yellow: #feed00;
+  --color-mali-blue: #009fe3;
+  --color-mali-red: #e73f3e;
+  // Used by two color styles but missing from the Figma variables.
+  --color-pervenche: #cbcff4;        // « AGENDA »
+  --color-corail: #fa6268;           // « Formations Pro », « Concerts & projets - bouton »
 
-  --color-background: var(--color-brand-00);
-  --color-text: var(--color-brand-01);
-  --color-surface: var(--color-brand-02);
-  --color-accent: var(--color-brand-03);
-  --color-on-accent: var(--color-brand-00);
+  // Semantic tokens read by components.
+  --color-text: var(--theme-text, var(--color-se-former));
+  --color-surface: color-mix(in srgb, var(--color-background) 70%, #ffffff);
 
-  --button-color: var(--color-accent);
-  --button-text: var(--color-on-accent);
+  // ---------------------------------------------------------------------
+  // Fills — the Figma color styles (« dégradés », same names) and one flat
+  // color (« aplat ») per main color. Each one is a list of color stops,
+  // drawn bottom → top by default as in Figma; the element painting it
+  // picks the direction (« Inverser le dégradé » in the Panel flips it —
+  // see the fill-background mixin). Each has the text color that reads on
+  // it (-text). Pages, sections and accordion sub-sections pick one by
+  // name (CMS select → --<name>).
+  // ---------------------------------------------------------------------
+  --degrade-se-former-formations-pro: #{alpha(corail, 22%)}, var(--color-se-former);
+  --degrade-se-former-formations-pro-text: var(--color-secondaire-2);
+  --degrade-se-former-diplomantes: var(--color-secondaire-3), var(--color-se-former);
+  --degrade-se-former-diplomantes-text: var(--color-secondaire-2);
+  --degrade-se-former-tarifs: var(--color-secondaire-4), var(--color-secondaire-5);
+  --degrade-se-former-tarifs-text: var(--color-se-former);
+  --degrade-se-former-cours-loisirs: var(--color-secondaire-1), #{alpha(se-former, 79%)};
+  --degrade-se-former-cours-loisirs-text: var(--color-secondaire-2);
+  // Figma only has the « INVERSE » version of this one.
+  --degrade-se-former-stages-inverse: var(--color-secondaire-4), var(--color-secondaire-6);
+  --degrade-se-former-stages-inverse-text: var(--color-se-former);
 
-  // JAT palette, sampled from the home mockup (AccueilJAT).
-  --color-jat-mint: #97fbe9;
-  --color-jat-violet: #6e1fcc;
-  --color-jat-lime: #dfeac1;
-  --color-jat-sand: #dacfc4;
-  --color-jat-peach: #f3c197;
-  --color-jat-bordeaux: #72121f;
+  --degrade-concerts-projets: var(--color-concerts-projets), var(--color-secondaire-8) 70%;
+  --degrade-concerts-projets-text: var(--color-se-former);
+  --degrade-concerts-projets-pedago: var(--color-secondaire-6), var(--color-secondaire-4);
+  --degrade-concerts-projets-pedago-text: var(--color-se-former);
+  --degrade-concerts-pedago: var(--color-secondaire-7), var(--color-secondaire-6) 80%;
+  --degrade-concerts-pedago-text: var(--color-se-former);
+  --degrade-concerts-bouton: #{alpha(corail, 60%)}, #{alpha(corail, 22%)};
+  --degrade-concerts-bouton-text: var(--color-se-former);
 
-  // Page themes: each top-level section of the site has its own vertical
-  // gradient (header background) and the text color that reads on it.
-  // Picked per route by app/utils/pageTheme.ts.
-  --theme-home-gradient: linear-gradient(#b8e9d8, #00432e);
-  --theme-home-text: var(--color-jat-mint);
-  --theme-news-gradient: linear-gradient(#00f7ac, #d2cbea);
-  --theme-news-text: var(--color-jat-violet);
-  --theme-training-gradient: linear-gradient(#6c12c9, #e8acba);
-  --theme-training-text: var(--color-jat-lime);
-  --theme-school-gradient: linear-gradient(#deb0a6, #590e1f);
-  --theme-school-text: var(--color-jat-sand);
-  --theme-concerts-gradient: linear-gradient(#ffe0c2, #fa9b17);
-  --theme-concerts-text: var(--color-jat-violet);
-  --theme-spaces-gradient: linear-gradient(#f3c29c, var(--color-jat-bordeaux));
-  --theme-spaces-text: var(--color-jat-sand);
+  --degrade-espace-etudiant: var(--color-secondaire-9), var(--color-espaces);
+  --degrade-espace-etudiant-text: var(--color-secondaire-3);
+  --degrade-espace-enseignant: var(--color-secondaire-5), var(--color-espaces);
+  --degrade-espace-enseignant-text: var(--color-secondaire-3);
+  --degrade-espace-presse: var(--color-secondaire-4), var(--color-espaces);
+  --degrade-espace-presse-text: var(--color-secondaire-3);
+  --degrade-espace-alumni: #{alpha(concerts-projets, 80%)}, var(--color-secondaire-1) 55%;
+  --degrade-espace-alumni-text: var(--color-espaces);
 
-  // Anchors bar under the nav: a solid color taken from the theme gradient.
-  --theme-home-anchors-background: #00432e;
-  --theme-home-anchors-text: var(--color-jat-mint);
-  --theme-news-anchors-background: #d2cbea;
-  --theme-news-anchors-text: var(--color-jat-violet);
-  --theme-training-anchors-background: #6c12c9;
-  --theme-training-anchors-text: var(--color-jat-lime);
-  --theme-school-anchors-background: #590e1f;
-  --theme-school-anchors-text: var(--color-jat-sand);
-  --theme-concerts-anchors-background: #fa9b17;
-  --theme-concerts-anchors-text: var(--color-jat-violet);
-  --theme-spaces-anchors-background: var(--color-jat-bordeaux);
-  --theme-spaces-anchors-text: var(--color-jat-sand);
+  --degrade-ecole: var(--color-ecole), var(--color-secondaire-1);
+  --degrade-ecole-text: var(--color-secondaire-5);
+
+  --degrade-accueil: var(--color-accueil), var(--color-secondaire-5);
+  --degrade-accueil-text: var(--color-secondaire-5);
+  --degrade-agenda: #{alpha(pervenche, 50%)}, var(--color-secondaire-9);
+  --degrade-agenda-text: var(--color-se-former);
+  --degrade-agenda-fond: var(--color-secondaire-3), var(--color-secondaire-4);
+  --degrade-agenda-fond-text: var(--color-se-former);
+
+  // Flat fills: the same color twice, so they paint like a gradient.
+  --aplat-accueil: var(--color-accueil), var(--color-accueil);
+  --aplat-accueil-text: var(--color-secondaire-2);
+  --aplat-ecole: var(--color-ecole), var(--color-ecole);
+  --aplat-ecole-text: var(--color-secondaire-5);
+  --aplat-se-former: var(--color-se-former), var(--color-se-former);
+  --aplat-se-former-text: var(--color-secondaire-2);
+  --aplat-concerts-projets: var(--color-concerts-projets), var(--color-concerts-projets);
+  --aplat-concerts-projets-text: var(--color-se-former);
+  --aplat-espaces: var(--color-espaces), var(--color-espaces);
+  --aplat-espaces-text: var(--color-secondaire-3);
+  --aplat-footer: var(--color-footer), var(--color-footer);
+  --aplat-footer-text: var(--color-background);
+
+  // Buttons: pill, lime fill, outlined in the page text color.
+  --button-background: var(--color-secondaire-2);
+  --button-text: var(--theme-text, var(--color-se-former));
+  --button-border: var(--theme-text, var(--color-se-former));
 
   // Sticky bars: sections scroll to just below both.
-  --navigation-menu-height: 86px;
-  --anchors-height: 48px;
+  --navigation-menu-height: #{fluid(64px, 86px)};
+  --anchors-height: #{rem(47px)};
 
-  // Spacing scale
-  --spacing-xxs: 4px;
-  --spacing-xs: 8px;
-  --spacing-s: 12px;
-  --spacing-m: 16px;
-  --spacing-l: 20px;
-  --spacing-xl: 24px;
-  --spacing-2xl: 32px;
-  --spacing-3xl: 40px;
-  --spacing-4xl: 48px;
-  --spacing-5xl: 64px;
-  --spacing-6xl: 80px;
-  --spacing-7xl: 96px;
+  // Spacing scale (rem: follows the browser font size; fixed, not fluid —
+  // the fluid rhythm lives in grid.scss: --gutter, --grid-gap, --space-*).
+  --spacing-xxs: #{rem(4px)};
+  --spacing-xs: #{rem(8px)};
+  --spacing-s: #{rem(12px)};
+  --spacing-m: #{rem(16px)};
+  --spacing-l: #{rem(20px)};
+  --spacing-xl: #{rem(24px)};
+  --spacing-2xl: #{rem(32px)};
+  --spacing-3xl: #{rem(40px)};
+  --spacing-4xl: #{rem(48px)};
+  --spacing-5xl: #{rem(64px)};
+  --spacing-6xl: #{rem(80px)};
+  --spacing-7xl: #{rem(96px)};
 
   // Fonts
-  --font-heading: 'Animo', system-ui, sans-serif;
-  --font-body: 'ES Rebond Grotesque', system-ui, sans-serif;
+  --font-display: 'Animo', 'Arial Narrow', sans-serif;
+  --font-text: 'ES Rebond Grotesque', system-ui, sans-serif;
+  --font-serif: 'Gaya', Georgia, serif;
+  // Former names, kept for the components not migrated yet.
+  --font-heading: var(--font-display);
+  --font-body: var(--font-text);
 
   // Radii
   --radius-s: var(--spacing-xs);
   --radius-m: var(--spacing-m);
-  --radius-pill: var(--spacing-7xl);
+  --radius-pill: #{rem(30px)};
 
-  // Max width of running text (paragraphs, quotes…)
-  --content-max-width: 760px;
-
-  // --gutter and --block-spacing live in grid.scss (base value + their own
-  // responsive override, kept together in one file).
+  // --gutter, --grid-gap and --space-* live in grid.scss (base value +
+  // their responsive override, kept together in one file).
 }
 
-// .u-theme--<theme> (class from usePageTheme()) maps the current page theme
-// onto generic --theme-* variables, so a themed component reads one set of
-// names whatever the page.
-$page-themes: home, news, training, school, concerts, spaces;
+// ---------------------------------------------------------------------
+// Page themes. .u-theme--<theme> (class from usePageTheme(), set on the
+// whole app) maps the page's fills and colors onto generic --theme-*
+// variables, so a component reads one set of names whatever the page.
+//   header  : navigation bar            hero : page / section hero
+//   bar     : title bars and accordions anchors : bar under the navigation
+//   text    : running text color
+// A fill given as (name, reverse) is drawn top → bottom (the Figma
+// « INVERSE » version). A page can override header / hero / bar in the
+// Panel (« Couleurs »), a section its hero and bars, a sub-section its bar.
+// ---------------------------------------------------------------------
+$page-themes: (
+  home: (header: degrade-accueil, hero: aplat-accueil, bar: degrade-agenda, text: var(--color-se-former), anchors-bg: var(--color-secondaire-3), anchors-text: var(--color-se-former)),
+  news: (header: degrade-agenda, hero: degrade-agenda, bar: degrade-agenda, text: var(--color-se-former), anchors-bg: var(--color-secondaire-3), anchors-text: var(--color-se-former)),
+  school: (header: degrade-ecole, hero: degrade-ecole, bar: (degrade-ecole, reverse), text: var(--color-ecole-texte), anchors-bg: var(--color-secondaire-5), anchors-text: var(--color-ecole-texte)),
+  training: (header: degrade-se-former-diplomantes, hero: aplat-se-former, bar: degrade-se-former-formations-pro, text: var(--color-se-former), anchors-bg: var(--color-footer), anchors-text: var(--color-secondaire-2)),
+  concerts: (header: (degrade-concerts-projets, reverse), hero: degrade-concerts-projets, bar: degrade-concerts-pedago, text: var(--color-se-former), anchors-bg: var(--color-se-former), anchors-text: var(--color-secondaire-8)),
+  spaces: (header: (degrade-espace-etudiant, reverse), hero: aplat-espaces, bar: degrade-espace-etudiant, text: var(--color-footer), anchors-bg: var(--color-secondaire-3), anchors-text: var(--color-espaces))
+);
 
-@each $theme in $page-themes {
+@each $theme, $values in $page-themes {
   .u-theme--#{$theme} {
-    --theme-gradient: var(--theme-#{$theme}-gradient);
-    --theme-text: var(--theme-#{$theme}-text);
-    --theme-anchors-background: var(--theme-#{$theme}-anchors-background);
-    --theme-anchors-text: var(--theme-#{$theme}-anchors-text);
+    @each $role in (header, hero, bar) {
+      $fill: map.get($values, $role);
+      $name: if(meta.type-of($fill) == list, list.nth($fill, 1), $fill);
+      --theme-#{$role}: var(--#{$name});
+      --theme-#{$role}-text: var(--#{$name}-text);
+      --theme-#{$role}-direction: #{if(meta.type-of($fill) == list, "to bottom", "to top")};
+    }
+    --theme-text: #{map.get($values, text)};
+    --theme-anchors-background: #{map.get($values, anchors-bg)};
+    --theme-anchors-text: #{map.get($values, anchors-text)};
   }
 }
 
@@ -119,14 +198,17 @@ body {
 }
 
 html {
+  // 100% = the visitor's browser setting (16px by default): every rem
+  // value follows it.
+  font-size: 100%;
   scrollbar-gutter: stable;
   scroll-behavior: smooth;
 }
 
 body {
+  @include t-p;
   background: var(--color-background);
   color: var(--color-text);
-  font-family: var(--font-body);
   // Never fake a missing weight/style (Animo only has a regular).
   font-synthesis: none;
   -webkit-font-smoothing: antialiased;

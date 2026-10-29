@@ -1,12 +1,14 @@
 <template>
-  <iframe
-    class="ui-map"
-    :src="embedUrl"
-    :title="`Carte : ${address}`"
-    loading="lazy"
-    referrerpolicy="no-referrer-when-downgrade"
-    allowfullscreen
-  />
+  <div class="ui-map">
+    <iframe
+      class="ui-map__frame"
+      :src="embedUrl"
+      :title="`Carte : ${address}`"
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"
+      allowfullscreen
+    />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -22,15 +24,19 @@ const embedUrl = computed(() =>
 </script>
 
 <style lang="scss" scoped>
+// Shape follows its own width (container query): square when narrow.
 .ui-map {
+  container-type: inline-size;
+}
+
+.ui-map__frame {
   display: block;
   width: 100%;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 1;
   border: 0;
-  border-radius: var(--radius-m);
 
-  @media (max-width: $breakpoint-mobile) {
-    aspect-ratio: 1;
+  @include container-wide {
+    aspect-ratio: 16 / 9;
   }
 }
 </style>

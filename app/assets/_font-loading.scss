@@ -1,10 +1,11 @@
 // Webfonts of the JAT identity, served from public/fonts/ (woff2 only —
 // supported by every current browser).
-// Licences: Animo (Heavyweight) and ES Rebond Grotesque are licensed for
-// @font-face use on the JAT website only — the files must not be shared,
-// converted or exposed outside this site (keep this repository private).
+// Licences: Animo (Heavyweight), ES Rebond Grotesque and Gaya are licensed
+// for @font-face use on the JAT website only — the files must not be
+// shared, converted or exposed outside this site (keep this repository
+// private).
 
-// Animo — headings (--font-heading). Single weight: headings use 400 and
+// Animo — titles (--font-display). Single weight: titles use 400 and
 // font-synthesis is disabled (main.scss) so browsers never fake a bold.
 @font-face {
   font-family: 'Animo';
@@ -14,7 +15,8 @@
   font-display: swap;
 }
 
-// ES Rebond Grotesque — running text, UI (--font-body).
+// ES Rebond Grotesque — running text, UI (--font-text).
+// The mockup uses Light 300, Book 400, Medium 500 and Bold 700.
 @mixin rebond-face($file, $weight, $style: normal) {
   @font-face {
     font-family: 'ES Rebond Grotesque';
@@ -25,11 +27,32 @@
   }
 }
 
-@include rebond-face('extralight', 200);
-@include rebond-face('extralight-italic', 200, italic);
 @include rebond-face('regular', 400);
 @include rebond-face('italic', 400, italic);
-@include rebond-face('semibold', 600);
-@include rebond-face('semibold-italic', 600, italic);
 @include rebond-face('bold', 700);
 @include rebond-face('bold-italic', 700, italic);
+// TODO fonts: Light (300) and Medium (500) files are missing from
+// public/fonts — until they are added, 300 uses the Regular file and 500
+// the SemiBold one, so the weight steps stay visible.
+@include rebond-face('regular', 300);
+@include rebond-face('italic', 300, italic);
+@include rebond-face('semibold', 500);
+@include rebond-face('semibold-italic', 500, italic);
+
+// Gaya — emphasis, catch lines, quotes, links (--font-serif).
+// TODO fonts: drop the files in public/fonts/gaya/ with these names, then
+// uncomment the three @include below. Until then the browser falls back to
+// Georgia (see --font-serif) — commented out to avoid 404s.
+@mixin gaya-face($file, $weight, $style: normal) {
+  @font-face {
+    font-family: 'Gaya';
+    src: url('/fonts/gaya/gaya-#{$file}.woff2') format('woff2');
+    font-weight: $weight;
+    font-style: $style;
+    font-display: swap;
+  }
+}
+
+// @include gaya-face('regular', 400);
+// @include gaya-face('italic', 400, italic);
+// @include gaya-face('medium', 500);

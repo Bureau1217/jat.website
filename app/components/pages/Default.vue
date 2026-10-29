@@ -1,8 +1,8 @@
 <template>
   <Anchors :blocks="page.blocks" />
   <article class="v-page-default">
-    <header class="v-page-default__header u-block">
-      <h1>{{ page.title }}</h1>
+    <header v-if="!isHome" class="v-page-default__hero u-gutter-x u-flex u-flex--align-center u-flex--justify-center">
+      <h1 class="v-page-default__title">{{ page.title }}</h1>
     </header>
     <Blocks :blocks="page.blocks" :files="page.files" :pages="page.pages" />
   </article>
@@ -11,14 +11,29 @@
 <script setup lang="ts">
 import type { KqlPage } from '~~/shared/types/kql'
 
-/** Site page (jat.cms `default` template): title + blocks of the `body` field. */
-defineProps<{
+/** Site page (jat.cms `default` template): hero with the title (except on the home page) + blocks of the `body` field. */
+const props = defineProps<{
   page: KqlPage
 }>()
+
+// The home page opens straight on its photo carousel (mockup: no title hero).
+const isHome = computed(() => props.page.id === 'home')
 </script>
 
 <style lang="scss" scoped>
-.v-page-default__header {
-  padding-bottom: 0;
+// Space before the footer after the last text block.
+.v-page-default > :deep(.v-blocks > .u-block:last-child) {
+  padding-bottom: var(--space-section);
+}
+
+// Mockup: 711px hero, page title in Animo display on the page hero fill.
+.v-page-default__hero {
+  min-height: fluid(280px, 711px);
+  @include fill-background(hero);
+  text-align: center;
+}
+
+.v-page-default__title {
+  @include t-display;
 }
 </style>

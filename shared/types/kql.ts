@@ -13,7 +13,12 @@ export type KirbyPageRef = string
 
 export interface KqlFile {
   filename: string
+  /** Resized to 2000px wide max (see FILE_SELECT). */
   url: string
+  /** Smaller versions for `srcset` (app/utils/imageAttrs.ts). */
+  url600?: string | null
+  url1000?: string | null
+  url1600?: string | null
   alt: string | null
   width: number | null
   height: number | null
@@ -22,6 +27,8 @@ export interface KqlFile {
   uuid: string
   /** Panel focal point ("x% y%"), "" when unset — see app/utils/objectPosition.ts. */
   focus: string | null
+  /** Optional caption (jat.cms: files/image.yml). */
+  caption: string | null
 }
 
 /**
@@ -46,6 +53,8 @@ export interface KqlPageRef {
   location: string | null
   categories: string[]
   cover: KqlFile | null
+  /** `event` template: plain-text start of the description. */
+  excerpt: string | null
 }
 
 /** Page refs indexed by their "page://<uuid>". */
@@ -58,11 +67,28 @@ export interface KqlBlock<TContent = Record<string, unknown>> {
   content: TContent
 }
 
+/** Fills picked for a page in the Panel (null → the theme's) and whether to flip them. */
+export interface KqlPageColors {
+  header: string | null
+  headerReverse: boolean
+  hero: string | null
+  heroReverse: boolean
+  bar: string | null
+  barReverse: boolean
+}
+
 export interface KqlPage {
   id: string
   uri: string
   title: string
   template: string
+  /** « Thème » picked in the Panel (`default` template), null → follows the URL. */
+  theme: string | null
+  /** « Couleurs » overrides of the theme (`default` template). */
+  colors: KqlPageColors
+  /** « SEO » tab — null when left empty (usePageSeo falls back). */
+  seoTitle: string | null
+  seoDescription: string | null
   /** Every file of the page — block file refs are resolved against it by uuid. */
   files: KqlFile[]
   /** Pages referenced anywhere in `blocks`. */
@@ -71,6 +97,8 @@ export interface KqlPage {
   blocks: KqlBlock[]
   /** `event` template fields (null/empty on every other template). */
   event: KqlEventFields | null
+  /** `article` template fields (null on every other template). */
+  article: KqlArticleFields | null
 }
 
 export interface KqlEventFields {
@@ -86,6 +114,33 @@ export interface KqlEventFields {
   gallery: KqlFile[]
 }
 
+/** « Actualités » blog article (`article` template), as listed by the Articles block. */
+export interface KqlArticle {
+  id: string
+  uri: string
+  title: string
+  subtitle: string | null
+  /** Y-m-d. */
+  publishedAt: string | null
+  categories: string[]
+  cover: KqlFile | null
+  /** Plain-text start of the text. */
+  excerpt: string | null
+  /** « À la une » in the Panel — one article at most (jat.cms exclusive-toggle plugin). */
+  isFeatured: boolean
+}
+
+/** `article` page: the fields its template shows. */
+export interface KqlArticleFields {
+  subtitle: string | null
+  publishedAt: string | null
+  categories: string[]
+  cover: KqlFile | null
+  /** Writer HTML. */
+  text: string | null
+  gallery: KqlFile[]
+}
+
 /** One event of the Agenda, as listed by the News block. */
 export interface KqlEvent {
   id: string
@@ -97,7 +152,9 @@ export interface KqlEvent {
   location: string | null
   categories: string[]
   cover: KqlFile | null
-  /** "Mis en avant" in the Panel. */
+  /** Plain-text start of the description. */
+  excerpt: string | null
+  /** « À la une » in the Panel — one event at most (jat.cms exclusive-toggle plugin). */
   isFeatured: boolean
 }
 
@@ -166,6 +223,8 @@ export interface KqlSiteInfo {
   phone: string | null
   openingHours: KqlOpeningHours[]
   transports: KqlTransport[]
+  /** Violences et harcèlement sexistes et sexuels. */
+  vhssReferents: KqlReferent[]
   disabilityReferents: KqlReferent[]
   footerPages: KqlNavItem[]
   /** Only the networks with a URL filled in. */
@@ -174,4 +233,9 @@ export interface KqlSiteInfo {
   legalLinks: KqlLink[]
   /** Writer HTML. */
   accessibilityText: string | null
+  /** « Newsletter » invitation, above the word Newsletter in the footer. */
+  newsletterText: string | null
+  /** « SEO » tab: default meta description and site-wide share image. */
+  seoDescription: string | null
+  seoImage: string | null
 }
