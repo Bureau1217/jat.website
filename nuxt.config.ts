@@ -13,6 +13,11 @@ export default defineNuxtConfig({
         { name: 'description', content: 'Jazz à Tours — école de jazz et de musiques actuelles à Tours.' },
         { property: 'og:type', content: 'website' },
         { property: 'og:site_name', content: 'Jazz à Tours' }
+      ],
+      link: [
+        { rel: 'icon', href: '/favicon.ico', sizes: '48x48' },
+        { rel: 'icon', type: 'image/png', href: '/FaviconJAT.png', sizes: '512x512' },
+        { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' }
       ]
     }
   },
