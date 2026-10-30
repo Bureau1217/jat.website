@@ -5,13 +5,8 @@ interface RawPage {
   uri: string
   title: string
   template: string
-  theme: string | null
   headerFill: string | null
   headerFillReverse: boolean | null
-  heroFill: string | null
-  heroFillReverse: boolean | null
-  barFill: string | null
-  barFillReverse: boolean | null
   seoTitle: string | null
   seoDescription: string | null
   files: KqlFile[]
@@ -38,14 +33,9 @@ const PAGE_SELECT = {
   uri: 'page.uri',
   title: true,
   template: 'page.intendedTemplate',
-  theme: 'page.theme',
-  // « Couleurs » (default template): fills overriding the theme's.
+  // « Fond de la navigation » (default template): overrides the theme's.
   headerFill: 'page.header_fill',
   headerFillReverse: 'page.header_fill_reverse.toBool',
-  heroFill: 'page.hero_fill',
-  heroFillReverse: 'page.hero_fill_reverse.toBool',
-  barFill: 'page.bar_fill',
-  barFillReverse: 'page.bar_fill_reverse.toBool',
   // « SEO » tab (jat.cms: tabs/seo.yml) — both optional, see
   // app/composables/usePageSeo.ts for the fallbacks.
   seoTitle: 'page.seo_title',
@@ -112,15 +102,8 @@ export async function fetchPage(id: string): Promise<KqlPage | null> {
     uri: raw.uri,
     title: raw.title,
     template: raw.template,
-    theme: raw.theme || null,
-    colors: {
-      header: raw.headerFill || null,
-      headerReverse: raw.headerFillReverse === true,
-      hero: raw.heroFill || null,
-      heroReverse: raw.heroFillReverse === true,
-      bar: raw.barFill || null,
-      barReverse: raw.barFillReverse === true
-    },
+    headerFill: raw.headerFill || null,
+    headerFillReverse: raw.headerFillReverse === true,
     seoTitle: raw.seoTitle || null,
     seoDescription: raw.seoDescription || null,
     files: (raw.files ?? []).map(file => ({ ...file, caption: file.caption || null })),

@@ -67,25 +67,15 @@ export interface KqlBlock<TContent = Record<string, unknown>> {
   content: TContent
 }
 
-/** Fills picked for a page in the Panel (null → the theme's) and whether to flip them. */
-export interface KqlPageColors {
-  header: string | null
-  headerReverse: boolean
-  hero: string | null
-  heroReverse: boolean
-  bar: string | null
-  barReverse: boolean
-}
-
 export interface KqlPage {
   id: string
   uri: string
   title: string
   template: string
-  /** « Thème » picked in the Panel (`default` template), null → follows the URL. */
-  theme: string | null
-  /** « Couleurs » overrides of the theme (`default` template). */
-  colors: KqlPageColors
+  /** « Fond de la navigation » picked in the Panel, null → the theme's. */
+  headerFill: string | null
+  /** « Inverser le dégradé » for the navigation fill. */
+  headerFillReverse: boolean
   /** « SEO » tab — null when left empty (usePageSeo falls back). */
   seoTitle: string | null
   seoDescription: string | null

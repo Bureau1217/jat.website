@@ -3,7 +3,8 @@
  * « aplats » of the main colors, defined as
  * CSS variables in assets/main.scss (`--<name>` and `--<name>-text`). The
  * jat.cms select fields (fields/fill.yml) store these names; keep the three
- * lists in sync.
+ * lists in sync. The page background (« Agenda — Fond ») is not one of them:
+ * it is set in code by the page theme (main.scss), not in the Panel.
  */
 export const FILLS = [
   'degrade-se-former-formations-pro',
@@ -22,7 +23,6 @@ export const FILLS = [
   'degrade-ecole',
   'degrade-accueil',
   'degrade-agenda',
-  'degrade-agenda-fond',
   'aplat-accueil',
   'aplat-ecole',
   'aplat-se-former',
@@ -37,6 +37,7 @@ export function isFill(value: unknown): value is Fill {
   return typeof value === 'string' && (FILLS as readonly string[]).includes(value)
 }
 
+/** Fills the Panel can override: navigation (page), hero (section), bars (section, sub-section). */
 export type FillRole = 'header' | 'hero' | 'bar'
 
 /**

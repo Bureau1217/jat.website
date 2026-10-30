@@ -163,7 +163,7 @@
 // ---------------------------------------------------------------------
 $page-themes: (
   home: (header: degrade-accueil, hero: aplat-accueil, bar: degrade-agenda, text: var(--color-se-former), anchors-bg: var(--color-secondaire-3), anchors-text: var(--color-se-former)),
-  news: (header: degrade-agenda, hero: degrade-agenda, bar: degrade-agenda, text: var(--color-se-former), anchors-bg: var(--color-secondaire-3), anchors-text: var(--color-se-former)),
+  news: (page-bg: linear-gradient(to top, var(--degrade-agenda-fond)), header: degrade-agenda, hero: degrade-agenda, bar: degrade-agenda, text: var(--color-se-former), anchors-bg: var(--color-secondaire-3), anchors-text: var(--color-se-former)),
   school: (header: degrade-ecole, hero: degrade-ecole, bar: (degrade-ecole, reverse), text: var(--color-ecole-texte), anchors-bg: var(--color-secondaire-5), anchors-text: var(--color-ecole-texte)),
   training: (header: degrade-se-former-diplomantes, hero: aplat-se-former, bar: degrade-se-former-formations-pro, text: var(--color-se-former), anchors-bg: var(--color-footer), anchors-text: var(--color-secondaire-2)),
   concerts: (header: (degrade-concerts-projets, reverse), hero: degrade-concerts-projets, bar: degrade-concerts-pedago, text: var(--color-se-former), anchors-bg: var(--color-se-former), anchors-text: var(--color-secondaire-8)),
@@ -181,6 +181,10 @@ $page-themes: (
     }
     --theme-text: #{map.get($values, text)};
     --theme-anchors-background: #{map.get($values, anchors-bg)};
+    // Page background: plain --color-background, except where the theme sets
+    // one (Actualités / Agenda: « AGENDA - BACKGROUND » over the whole page,
+    // as in the mockup). Not editable in the Panel on purpose.
+    --theme-page-background: #{map.get($values, page-bg) or var(--color-background)};
     --theme-anchors-text: #{map.get($values, anchors-text)};
   }
 }

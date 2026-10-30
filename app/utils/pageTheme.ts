@@ -2,16 +2,12 @@ export const PAGE_THEMES = ['home', 'news', 'training', 'school', 'concerts', 's
 
 export type PageTheme = typeof PAGE_THEMES[number]
 
-export function isPageTheme(value: unknown): value is PageTheme {
-  return typeof value === 'string' && (PAGE_THEMES as readonly string[]).includes(value)
-}
-
 /**
- * Top-level slugs → theme, used when a page has no « Thème » picked in the
- * Panel: the theme then follows the first URL segment, so a page and all
- * its children share their section's colors. Several slugs per theme
- * absorb the usual Kirby slug variants (with/without article). Unknown
- * sections fall back to home.
+ * Top-level slugs → theme: the theme follows the first URL segment, so a
+ * page and all its children share their section's colors (not editable in
+ * the Panel). Several slugs per theme absorb the usual Kirby slug variants
+ * (with/without article). Pages outside the sections (legal pages, tests…)
+ * fall back to home.
  */
 const THEME_BY_SLUG: Record<string, PageTheme> = {
   'actualites': 'news',

@@ -1,5 +1,6 @@
 <template>
-  <header class="v-navigation-menu" :class="[`u-theme--${theme}`, { 'is-open': isOpen }]">
+  <!-- Theme and « Fond de la navigation » come from the app root (app.vue). -->
+  <header class="v-navigation-menu" :class="{ 'is-open': isOpen }">
     <div class="v-navigation-menu__bar u-flex u-flex--align-center u-gap-5xl u-gutter-x">
       <NuxtLink to="/" class="v-navigation-menu__logo" aria-label="Jazz à Tours — accueil" @click="isOpen = false">JÀT</NuxtLink>
 
@@ -44,7 +45,6 @@
 
 <script setup lang="ts">
 const isOpen = ref(false)
-const theme = usePageTheme()
 
 // Every listed top-level site page, in Panel order (see /api/nav). The home
 // page is left out: the logo already links to "/".
