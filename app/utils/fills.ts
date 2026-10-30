@@ -37,8 +37,8 @@ export function isFill(value: unknown): value is Fill {
   return typeof value === 'string' && (FILLS as readonly string[]).includes(value)
 }
 
-/** Fills the Panel can override: navigation (page), hero (section), bars (section, sub-section). */
-export type FillRole = 'header' | 'hero' | 'bar'
+/** Fills the Panel can set: navigation (page), hero (section), bars (section, sub-section), quote band. */
+export type FillRole = 'header' | 'hero' | 'bar' | 'quote'
 
 /**
  * Inline style overriding one fill of the page theme (`role`: navigation,

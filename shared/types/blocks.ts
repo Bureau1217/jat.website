@@ -93,6 +93,11 @@ export interface QuoteContent {
   text: string
   author: string
   alignment: 'center' | 'right'
+  /** Named fill (utils/fills.ts), empty → no background. */
+  fill?: string
+  fill_reverse?: string
+  /** Base color name (utils/colors.ts), empty → the fill's text color or the theme's. */
+  text_color?: string
 }
 
 export interface ImageContent {

@@ -1,7 +1,8 @@
 <template>
   <figure
     class="v-block-quote u-flex u-flex--column u-gap-m"
-    :class="[`v-block-quote--${alignment}`, { 'v-block-quote--nested': isNested, 'u-block': !isNested }]"
+    :class="[`v-block-quote--${alignment}`, { 'v-block-quote--nested': isNested, 'v-block-quote--filled': hasFill, 'u-block': !isNested }]"
+    :style="style"
   >
     <blockquote class="v-block-quote__text" v-html="text" />
     <figcaption v-if="block.content.author" class="v-block-quote__author">{{ block.content.author }}</figcaption>
@@ -21,6 +22,16 @@ const text = computed(() => frenchSpacing(props.block.content.text))
 const alignment = computed(() => (props.block.content.alignment === 'right' ? 'right' : 'center'))
 
 const isNested = useIsNested()
+
+// Colors picked in the Panel: an optional fill turns the quote into a band
+// (mockup: the home quote on the Accueil blue), and an optional text color
+// wins over the fill's own text color.
+const hasFill = computed(() => isFill(props.block.content.fill))
+const style = computed(() => {
+  const fill = fillStyle(props.block.content.fill, props.block.content.fill_reverse, 'quote')
+  const color = colorValue(props.block.content.text_color)
+  return color ? { ...fill, color } : fill
+})
 </script>
 
 <style lang="scss" scoped>
@@ -30,6 +41,15 @@ const isNested = useIsNested()
 
 .v-block-quote:not(.v-block-quote--nested) {
   padding-block: var(--space-quote);
+}
+
+// Inline color (text color picked in the Panel) still wins: it's on the element.
+.v-block-quote--filled {
+  @include fill-background(quote);
+}
+
+.v-block-quote--nested.v-block-quote--filled {
+  padding: var(--block-spacing);
 }
 
 .v-block-quote--center {
