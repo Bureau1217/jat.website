@@ -1,5 +1,5 @@
 <template>
-  <nav v-if="anchors.length" class="v-anchors u-gutter-x" :class="`u-theme--${theme}`" aria-label="Sections de la page">
+  <nav v-if="anchors.length" class="v-anchors u-gutter-x" aria-label="Sections de la page">
     <ul class="v-anchors__list u-flex u-flex--align-center">
       <li v-for="anchor in anchors" :key="anchor.id">
         <!-- Mockup « Menu-Repères »: ○ + section name, ● on the current one. -->
@@ -18,7 +18,6 @@ const props = defineProps<{
   blocks?: KqlBlock[]
 }>()
 
-const theme = usePageTheme()
 const anchors = computed(() => sectionAnchors(props.blocks))
 const activeId = ref<string | null>(null)
 

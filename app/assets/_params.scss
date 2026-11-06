@@ -46,11 +46,12 @@ $container-narrow: 720px;
   }
 }
 
-/// Paints a fill of the page theme: `role` is header, hero or bar. Fills
-/// are color-stop lists (main.scss); the direction is bottom → top unless
-/// the theme, the page, the section or the sub-section reverses it.
+/// Paints a fill of the page theme: `role` is header, hero, bar or quote.
+/// Fills are color-stop lists (main.scss), drawn bottom → top as in Figma;
+/// « Inverser le dégradé » swaps in the fill's -inverse list, never the
+/// direction (utils/fills.ts).
 @mixin fill-background($role) {
-  background: linear-gradient(var(--theme-#{$role}-direction, to top), var(--theme-#{$role}));
+  background: linear-gradient(to top, var(--theme-#{$role}));
   color: var(--theme-#{$role}-text);
 }
 
@@ -92,7 +93,11 @@ $root-font-size: 16px;
 }
 
 // Type scale of the site — one mixin per text style of the mockup
-// (Figma board « Typographies — tableau final »). Sizes are fluid: the
+// (Figma text styles of « Jazz à Tours - Maquette », page FINAL - JAT:
+// display = H1, h1 = H2 large, h2 = H3, h4 = H4, h3 = T3 title, label =
+// B3 small bold, accroche = H2 Gaya, exergue = E1, lead = B1, p = B2 light,
+// p-medium = B2 medium, link = B2 lien, small(-bold) = B4, nav-alt = B3
+// interactif). Sizes are fluid: the
 // second value is the mockup size at 1440px, the first the size on a small
 // phone. Line heights are unitless and letter-spacing in em so they follow
 // the size. Every component includes these mixins instead of writing its
@@ -124,17 +129,19 @@ $root-font-size: 16px;
 @mixin t-h4 { @include t-animo; font-size: fluid(26px, 40px); line-height: 1; }
 
 // Block titles — Rebond
-@mixin t-h3 { @include t-rebond(700); font-size: fluid(24px, 40px); line-height: 1.12; text-transform: none; }
-@mixin t-label { @include t-rebond(700); font-size: fluid(17px, 20px); line-height: 1.24; text-transform: none; }
+@mixin t-h3 { @include t-rebond(700); font-size: fluid(24px, 40px); line-height: 1.12; letter-spacing: -0.019em; text-transform: none; }
+@mixin t-label { @include t-rebond(700); font-size: fluid(17px, 20px); line-height: 1.2; text-transform: none; }
 
 // Catch lines and pull quotes
-@mixin t-signature { @include t-gaya; font-size: fluid(44px, 112px); line-height: 1.28; text-transform: capitalize; }
+@mixin t-signature { @include t-gaya(normal, 400); font-size: fluid(48px, 150px); line-height: 1.03; text-transform: none; }
+@mixin t-acronym { @include t-animo; font-size: fluid(36px, 110px); line-height: 1; }
 @mixin t-accroche { @include t-gaya; font-size: fluid(32px, 72px); line-height: 1.28; text-transform: none; }
 @mixin t-exergue { @include t-rebond(400); font-size: fluid(24px, 40px); line-height: 1.2; }
 @mixin t-citation { @include t-gaya; font-size: fluid(24px, 40px); line-height: 1.3; text-transform: none; }
 
 // Running text
 @mixin t-lead { @include t-rebond(500); font-size: fluid(19px, 26px); line-height: 1.231; }
+@mixin t-lead-bold { @include t-rebond(700); font-size: fluid(19px, 26px); line-height: 1.308; text-transform: none; }
 @mixin t-p { @include t-rebond(300); font-size: fluid(17px, 20px); line-height: 1.24; }
 @mixin t-p-medium { @include t-rebond(500); font-size: fluid(17px, 20px); line-height: 1.24; }
 @mixin t-link { @include t-gaya(normal, 500); font-size: fluid(17px, 20px); line-height: 1.24; }
@@ -142,5 +149,5 @@ $root-font-size: 16px;
 @mixin t-small-bold { @include t-rebond(700); font-size: fluid(14px, 16px); line-height: 1.28; }
 
 // UI
-@mixin t-nav-alt { @include t-gaya(normal, 400); font-size: fluid(18px, 20px); line-height: 1; text-transform: capitalize; }
+@mixin t-nav-alt { @include t-gaya(normal, 400); font-size: fluid(19px, 21px); line-height: 0.952; text-transform: capitalize; }
 @mixin t-newsletter { @include t-rebond(700); font-size: fluid(40px, 79px); line-height: 1.28; text-transform: uppercase; }

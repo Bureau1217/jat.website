@@ -42,19 +42,35 @@ export type FillRole = 'header' | 'hero' | 'bar' | 'quote'
 
 /**
  * Inline style overriding one fill of the page theme (`role`: navigation,
- * hero or title bars) with a named fill picked in the Panel, and/or
- * flipping its direction (« Inverser le dégradé »: drawn top → bottom, the
- * Figma « INVERSE » version). Read by the fill-background mixin.
+ * hero, title bars or quote band) with a named fill picked in the Panel,
+ * and/or « Inverser le dégradé »: the fill's « INVERSE » version, defined in
+ * main.scss as --<name>-inverse (the Figma INVERSE style, or the stops
+ * mirrored). --theme-<role>-inverse always holds the other version, so a
+ * section / sub-section that only ticks « Inverser » flips the fill it
+ * inherits. Read by the fill-background mixin.
  * Undefined when nothing is picked: the page theme applies.
  */
 export function fillStyle(value: unknown, reverse: unknown = false, role: FillRole = 'bar'): Record<string, string> | undefined {
-  const style: Record<string, string> = {}
+  const flip = reverse === true || reverse === 'true'
   if (isFill(value)) {
-    style[`--theme-${role}`] = `var(--${value})`
-    style[`--theme-${role}-text`] = `var(--${value}-text)`
+    return {
+      [`--theme-${role}`]: `var(--${value}${flip ? '-inverse' : ''})`,
+      [`--theme-${role}-inverse`]: `var(--${value}${flip ? '' : '-inverse'})`,
+      [`--theme-${role}-text`]: `var(--${value}-text)`
+    }
   }
-  if (reverse === true || reverse === 'true') {
-    style[`--theme-${role}-direction`] = 'to bottom'
-  }
-  return Object.keys(style).length ? style : undefined
+  // Only « Inverser »: the inherited fill's other version.
+  return flip ? { [`--theme-${role}`]: `var(--theme-${role}-inverse)` } : undefined
+}
+
+/**
+ * Inline style for « Fond de la page » picked in the Panel: the fill (or its
+ * « INVERSE » version) painted bottom → top over the whole page, in place of
+ * the theme's page background (--theme-page-background, read by app.vue).
+ * Undefined when nothing is picked.
+ */
+export function pageFillStyle(value: unknown, reverse: unknown = false): Record<string, string> | undefined {
+  if (!isFill(value)) return undefined
+  const flip = reverse === true || reverse === 'true'
+  return { '--theme-page-background': `linear-gradient(to top, var(--${value}${flip ? '-inverse' : ''}))` }
 }

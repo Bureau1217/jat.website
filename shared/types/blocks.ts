@@ -53,11 +53,20 @@ export interface AccordionContent {
   items: AccordionItemContent[]
 }
 
+export interface ParagraphColumn {
+  column_title: string
+  /** Writer HTML. */
+  column_text: string
+}
+
 export interface ParagraphContent {
   heading: string
+  /** « 3 colonnes »: the text, then titled columns on the ¾. */
+  layout?: 'text' | 'columns'
   is_highlighted: RawToggle
   /** Writer HTML. */
   text: string
+  columns?: ParagraphColumn[]
   image: KirbyFileRef[]
 }
 

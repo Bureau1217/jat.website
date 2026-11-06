@@ -76,6 +76,10 @@ export interface KqlPage {
   headerFill: string | null
   /** « Inverser le dégradé » for the navigation fill. */
   headerFillReverse: boolean
+  /** « Fond de la page » picked in the Panel, null → the theme's page background. */
+  pageFill: string | null
+  /** « Inverser le dégradé » for the page background. */
+  pageFillReverse: boolean
   /** « SEO » tab — null when left empty (usePageSeo falls back). */
   seoTitle: string | null
   seoDescription: string | null
@@ -207,6 +211,14 @@ export interface KqlLink {
 }
 
 /** Everything editors manage from "Informations générales" (`informations` template). */
+/** Credits of the website (« Crédits du site »), e.g. « Développement web » — Bureau 1217. */
+export interface KqlCredit {
+  /** One per line in the Panel (« Design graphique », « Direction artistique »). */
+  roles: string[]
+  name: string
+  link: string | null
+}
+
 export interface KqlSiteInfo {
   address: KqlAddress | null
   email: string | null
@@ -216,6 +228,7 @@ export interface KqlSiteInfo {
   /** Violences et harcèlement sexistes et sexuels. */
   vhssReferents: KqlReferent[]
   disabilityReferents: KqlReferent[]
+  credits: KqlCredit[]
   footerPages: KqlNavItem[]
   /** Only the networks with a URL filled in. */
   socialLinks: KqlLink[]

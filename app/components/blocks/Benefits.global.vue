@@ -1,8 +1,10 @@
 <template>
   <div class="v-block-benefits u-block">
-    <ul class="v-block-benefits__list u-flex u-flex--wrap u-flex--justify-center u-gap-4xl">
-      <li v-for="(item, index) in items" :key="index" class="v-block-benefits__item u-flex u-flex--column u-flex--align-center u-gap-m">
-        <img v-if="item.pictogram" :src="item.pictogram.url" alt="" class="v-block-benefits__pictogram">
+    <ul class="v-block-benefits__list u-flex u-flex--wrap u-flex--justify-center">
+      <li v-for="(item, index) in items" :key="index" class="v-block-benefits__item u-flex u-flex--column u-flex--align-center u-gap-l">
+        <div v-if="item.pictogram" class="v-block-benefits__pictogram u-flex u-flex--align-center u-flex--justify-center">
+          <img :src="item.pictogram.url" alt="">
+        </div>
         <h4>{{ item.heading }}</h4>
       </li>
     </ul>
@@ -26,19 +28,35 @@ const items = computed(() => (props.block.content.items ?? []).map(item => ({
 </script>
 
 <style lang="scss" scoped>
+// Mockup (École, « Jazz à Tours en quelques points »): up to 6 columns of
+// 187px, ~31px apart, on one line at 1440px.
+.v-block-benefits__list {
+  gap: var(--spacing-4xl) fluid(16px, 31px);
+}
+
 .v-block-benefits__item {
-  width: fluid(120px, 190px);
+  width: fluid(120px, 187px);
   text-align: center;
 }
 
 .v-block-benefits__item h4 {
   @include t-p-medium;
+  text-transform: none;
 }
 
-// Decorative: the title right below carries the meaning.
+// Pictograms keep their own size, as drawn in the mockup (star 171px,
+// triangle 141px, circle 117px — the SVG width / height), centered in a
+// row as tall as the biggest one; they shrink with the column on small
+// screens. Decorative: the title right below carries the meaning.
 .v-block-benefits__pictogram {
-  width: fluid(80px, 170px);
-  height: fluid(80px, 170px);
-  object-fit: contain;
+  width: 100%;
+  height: fluid(110px, 179px);
+
+  img {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+  }
 }
 </style>

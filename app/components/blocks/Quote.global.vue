@@ -4,8 +4,17 @@
     :class="[`v-block-quote--${alignment}`, { 'v-block-quote--nested': isNested, 'v-block-quote--filled': hasFill, 'u-block': !isNested }]"
     :style="style"
   >
-    <blockquote class="v-block-quote__text" v-html="text" />
-    <figcaption v-if="block.content.author" class="v-block-quote__author">{{ block.content.author }}</figcaption>
+    <!-- « Alignée à droite »: on the ¾ column, like the running text (mockup: Se former). -->
+    <UiTwoColumns v-if="isAside">
+      <div class="u-flex u-flex--column u-gap-m">
+        <blockquote class="v-block-quote__text" v-html="text" />
+        <figcaption v-if="block.content.author" class="v-block-quote__author">{{ block.content.author }}</figcaption>
+      </div>
+    </UiTwoColumns>
+    <template v-else>
+      <blockquote class="v-block-quote__text" v-html="text" />
+      <figcaption v-if="block.content.author" class="v-block-quote__author">{{ block.content.author }}</figcaption>
+    </template>
   </figure>
 </template>
 
@@ -22,6 +31,7 @@ const text = computed(() => frenchSpacing(props.block.content.text))
 const alignment = computed(() => (props.block.content.alignment === 'right' ? 'right' : 'center'))
 
 const isNested = useIsNested()
+const isAside = computed(() => alignment.value === 'right' && !isNested)
 
 // Colors picked in the Panel: an optional fill turns the quote into a band
 // (mockup: the home quote on the Accueil blue), and an optional text color
@@ -57,9 +67,10 @@ const style = computed(() => {
   text-align: center;
 }
 
+// Mockup: left-aligned on the ¾ column, in the pull-quote style (Gaya 40).
 .v-block-quote--right {
-  align-items: flex-end;
-  text-align: right;
+  align-items: stretch;
+  text-align: left;
 }
 
 // Page level: Gaya catch line (accueil); in a column: Gaya pull quote.
@@ -74,8 +85,10 @@ const style = computed(() => {
   }
 }
 
-.v-block-quote--nested .v-block-quote__text {
+.v-block-quote--nested .v-block-quote__text,
+.v-block-quote--right .v-block-quote__text {
   @include t-citation;
+  max-width: none;
 }
 
 .v-block-quote__author {

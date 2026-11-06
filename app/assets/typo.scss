@@ -32,6 +32,8 @@ i {
   font-family: var(--font-serif);
   font-style: italic;
   font-weight: 400;
+  // L'École: italics in their own red (theme --theme-emphasis).
+  color: var(--theme-emphasis, currentColor);
 }
 
 a {
@@ -47,7 +49,7 @@ ol {
   list-style: none;
 }
 
-$text-styles: display, h1, h2, h3, h4, label, signature, accroche, exergue, citation, lead, p, p-medium, link, small, small-bold, nav-alt, newsletter;
+$text-styles: display, h1, h2, h3, h4, label, signature, acronym, accroche, exergue, citation, lead, p, p-medium, link, small, small-bold, nav-alt, newsletter;
 
 .t-display { @include t-display; }
 .t-h1 { @include t-h1; }
@@ -56,10 +58,12 @@ $text-styles: display, h1, h2, h3, h4, label, signature, accroche, exergue, cita
 .t-h4 { @include t-h4; }
 .t-label { @include t-label; }
 .t-signature { @include t-signature; }
+.t-acronym { @include t-acronym; }
 .t-accroche { @include t-accroche; }
 .t-exergue { @include t-exergue; }
 .t-citation { @include t-citation; }
 .t-lead { @include t-lead; }
+.t-lead-bold { @include t-lead-bold; }
 .t-p { @include t-p; }
 .t-p-medium { @include t-p-medium; }
 .t-link { @include t-link; }

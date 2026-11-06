@@ -29,21 +29,36 @@
           </li>
         </ul>
 
-        <section v-if="siteInfo?.vhssReferents.length" class="v-footer__column">
-          <h2 class="v-footer__title">Référent·es VHSS</h2>
-          <p v-for="referent in siteInfo.vhssReferents" :key="referent.name" class="v-footer__name">
-            <a v-if="referent.contact" :href="referent.contact">{{ referent.name }}</a>
-            <template v-else>{{ referent.name }}</template>
-          </p>
-        </section>
+        <!-- Mockup: VHSS and disability referents stacked in one column. -->
+        <div v-if="siteInfo?.vhssReferents.length || siteInfo?.disabilityReferents.length" class="v-footer__column v-footer__stack">
+          <section v-if="siteInfo.vhssReferents.length">
+            <h2 class="v-footer__title">Référent·es VHSS</h2>
+            <p v-for="referent in siteInfo.vhssReferents" :key="referent.name" class="v-footer__name">
+              <a v-if="referent.contact" :href="referent.contact">{{ referent.name }}</a>
+              <template v-else>{{ referent.name }}</template>
+            </p>
+          </section>
+          <section v-if="siteInfo.disabilityReferents.length">
+            <h2 class="v-footer__title">{{ siteInfo.disabilityReferents.length > 1 ? 'Référent·es handicap' : 'Référent·e handicap' }}</h2>
+            <p v-for="referent in siteInfo.disabilityReferents" :key="referent.name" class="v-footer__name">
+              <a v-if="referent.contact" :href="referent.contact">{{ referent.name }}</a>
+              <template v-else>{{ referent.name }}</template>
+            </p>
+          </section>
+        </div>
 
-        <section v-if="siteInfo?.disabilityReferents.length" class="v-footer__column">
-          <h2 class="v-footer__title">{{ siteInfo.disabilityReferents.length > 1 ? 'Référent·es handicap' : 'Référent·e handicap' }}</h2>
-          <p v-for="referent in siteInfo.disabilityReferents" :key="referent.name" class="v-footer__name">
-            <a v-if="referent.contact" :href="referent.contact">{{ referent.name }}</a>
-            <template v-else>{{ referent.name }}</template>
-          </p>
-        </section>
+        <!-- « Crédits du site »: role(s) underlined, name in Gaya italic. -->
+        <div v-if="siteInfo?.credits.length" class="v-footer__column v-footer__stack">
+          <section v-for="credit in siteInfo.credits" :key="credit.name">
+            <h2 class="v-footer__title">
+              <template v-for="(role, index) in credit.roles" :key="role"><br v-if="index">{{ role }}</template>
+            </h2>
+            <p class="v-footer__name">
+              <a v-if="credit.link" :href="credit.link" target="_blank" rel="noopener">{{ credit.name }}</a>
+              <template v-else>{{ credit.name }}</template>
+            </p>
+          </section>
+        </div>
 
         <nav v-if="siteInfo?.footerPages.length" class="v-footer__column" aria-label="Pages du pied de page">
           <ul>
@@ -120,6 +135,13 @@ const addressLines = computed(() => {
 
 .v-footer__gap {
   margin-top: var(--spacing-l);
+}
+
+// Several titled groups in one column (referents, credits).
+.v-footer__stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-l);
 }
 
 // Referents in Gaya italic, as in the mockup.

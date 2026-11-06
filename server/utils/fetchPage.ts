@@ -7,6 +7,8 @@ interface RawPage {
   template: string
   headerFill: string | null
   headerFillReverse: boolean | null
+  pageFill: string | null
+  pageFillReverse: boolean | null
   seoTitle: string | null
   seoDescription: string | null
   files: KqlFile[]
@@ -36,6 +38,9 @@ const PAGE_SELECT = {
   // « Fond de la navigation » (default template): overrides the theme's.
   headerFill: 'page.header_fill',
   headerFillReverse: 'page.header_fill_reverse.toBool',
+  // « Fond de la page » (default template): replaces the theme's page background.
+  pageFill: 'page.page_fill',
+  pageFillReverse: 'page.page_fill_reverse.toBool',
   // « SEO » tab (jat.cms: tabs/seo.yml) — both optional, see
   // app/composables/usePageSeo.ts for the fallbacks.
   seoTitle: 'page.seo_title',
@@ -104,6 +109,8 @@ export async function fetchPage(id: string): Promise<KqlPage | null> {
     template: raw.template,
     headerFill: raw.headerFill || null,
     headerFillReverse: raw.headerFillReverse === true,
+    pageFill: raw.pageFill || null,
+    pageFillReverse: raw.pageFillReverse === true,
     seoTitle: raw.seoTitle || null,
     seoDescription: raw.seoDescription || null,
     files: (raw.files ?? []).map(file => ({ ...file, caption: file.caption || null })),

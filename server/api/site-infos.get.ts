@@ -1,4 +1,4 @@
-import type { KqlAddress, KqlLink, KqlNavItem, KqlOpeningHours, KqlReferent, KqlSiteInfo, KqlTransport } from '~~/shared/types/kql'
+import type { KqlAddress, KqlCredit, KqlLink, KqlNavItem, KqlOpeningHours, KqlReferent, KqlSiteInfo, KqlTransport } from '~~/shared/types/kql'
 
 interface RawSiteInfos {
   /** Kirby object field — [] when never filled in. */
@@ -9,6 +9,7 @@ interface RawSiteInfos {
   transports: Array<{ travel_time: string, lines: string }> | null
   vhssReferents: Array<{ referent_name: string, contact: string }> | null
   disabilityReferents: Array<{ referent_name: string, contact: string }> | null
+  credits: Array<{ role: string, credit_name: string, link: string }> | null
   footerPages: KqlNavItem[] | null
   socialInstagram: string | null
   socialFacebook: string | null
@@ -43,6 +44,7 @@ const EMPTY: KqlSiteInfo = {
   transports: [],
   vhssReferents: [],
   disabilityReferents: [],
+  credits: [],
   footerPages: [],
   socialLinks: [],
   legalLinks: [],
@@ -81,6 +83,10 @@ export default defineEventHandler(async (): Promise<KqlSiteInfo> => {
       disabilityReferents: {
         query: 'page.disability_referents.toStructure',
         select: { referent_name: true, contact: true }
+      },
+      credits: {
+        query: 'page.credits.toStructure',
+        select: { role: true, credit_name: true, link: true }
       },
       footerPages: {
         query: 'page.footer_pages.toPages',
@@ -134,6 +140,11 @@ export default defineEventHandler(async (): Promise<KqlSiteInfo> => {
     transports: (page.transports ?? []).map((row): KqlTransport => ({ travelTime: row.travel_time, lines: row.lines })),
     vhssReferents: toReferents(page.vhssReferents),
     disabilityReferents: toReferents(page.disabilityReferents),
+    credits: (page.credits ?? []).map((row): KqlCredit => ({
+      roles: row.role.split('\n').map(role => role.trim()).filter(Boolean),
+      name: row.credit_name,
+      link: row.link || null
+    })),
     footerPages: page.footerPages ?? [],
     socialLinks: toLinks(SOCIAL_LINKS),
     legalLinks: toLinks(LEGAL_LINKS),

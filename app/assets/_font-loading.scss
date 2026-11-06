@@ -32,12 +32,12 @@
 @include rebond-face('bold', 700);
 @include rebond-face('bold-italic', 700, italic);
 // TODO fonts: Light (300) and Medium (500) files are missing from
-// public/fonts — until they are added, 300 uses the Regular file and 500
-// the SemiBold one, so the weight steps stay visible.
+// public/fonts — until they are added, both use the Regular file (SemiBold
+// was far heavier and wider than the mockup's Medium).
 @include rebond-face('regular', 300);
 @include rebond-face('italic', 300, italic);
-@include rebond-face('semibold', 500);
-@include rebond-face('semibold-italic', 500, italic);
+@include rebond-face('regular', 500);
+@include rebond-face('italic', 500, italic);
 
 // Gaya — emphasis, catch lines, quotes, links (--font-serif).
 // TODO fonts: drop the files in public/fonts/gaya/ with these names, then
