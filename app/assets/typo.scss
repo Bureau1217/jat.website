@@ -53,3 +53,32 @@ ol {
   padding: 0;
   list-style: none;
 }
+
+// Link whose label switches to Gaya on hover / when current, without moving
+// its neighbours: two invisible, zero-height copies of the label — one in
+// the link's own font, one in Gaya — reserve the wider of the two widths.
+// Markup: <a class="u-stable-label" :data-label="text"><span>text</span></a>;
+// the component switches the <span> to Gaya.
+.u-stable-label {
+  display: inline-grid;
+
+  > span,
+  &::before,
+  &::after {
+    grid-area: 1 / 1;
+  }
+
+  &::before,
+  &::after {
+    content: attr(data-label);
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
+  }
+
+  &::after {
+    font-family: var(--font-accent);
+    font-size: var(--stable-label-accent-size, inherit);
+    font-weight: 400;
+  }
+}

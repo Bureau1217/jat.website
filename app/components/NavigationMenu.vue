@@ -10,7 +10,7 @@
       <nav class="v-navigation-menu__desktop-nav" :aria-label="t('Navigation principale')">
         <ul class="u-flex u-flex--align-center u-gap-2xl">
           <li v-for="item in navItems" :key="item.id">
-            <NuxtLink :to="pagePath(item)" class="v-navigation-menu__link">{{ item.title }}</NuxtLink>
+            <NuxtLink :to="pagePath(item)" class="v-navigation-menu__link u-stable-label" :data-label="item.title"><span>{{ item.title }}</span></NuxtLink>
           </li>
         </ul>
       </nav>
@@ -121,13 +121,17 @@ watch(isOpen, (open) => {
 
 // Hovered and current links switch to Gaya ("small bold interactif" text
 // style of the mockup: Gaya Regular 21) instead of being underlined.
+// The width never changes (u-stable-label, typo.scss): neighbours don't move.
 .v-navigation-menu__link {
+  --stable-label-accent-size: 21px;
+
   font-size: 18px;
   font-weight: 700;
+  line-height: 24px;
   text-decoration: none;
 
-  &:hover,
-  &.router-link-active {
+  &:hover > span,
+  &.router-link-active > span {
     font-family: var(--font-accent);
     font-size: 21px;
     font-weight: 400;

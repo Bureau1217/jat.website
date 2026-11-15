@@ -6,11 +6,12 @@
         :to="item.to"
         :lang="item.locale"
         :hreflang="item.locale"
-        class="ui-language-switcher__link"
+        class="ui-language-switcher__link u-stable-label"
         :class="{ 'is-active': item.locale === locale }"
+        :data-label="item.label"
         :aria-current="item.locale === locale ? 'true' : undefined"
       >
-        {{ item.label }}
+        <span>{{ item.label }}</span>
       </NuxtLink>
     </template>
   </nav>
@@ -39,12 +40,13 @@ const items = computed(() => LOCALES.map(code => ({
 }
 
 // As the navigation links: Gaya on hover and for the current language,
-// never underlined.
+// never underlined, without changing width (u-stable-label, typo.scss).
 .ui-language-switcher__link {
+  line-height: 24px;
   text-decoration: none;
 
-  &:hover,
-  &.is-active {
+  &:hover > span,
+  &.is-active > span {
     font-family: var(--font-accent);
     font-weight: 400;
   }
