@@ -38,12 +38,15 @@ const items = computed(() => LOCALES.map(code => ({
   white-space: nowrap;
 }
 
+// As the navigation links: Gaya on hover and for the current language,
+// never underlined.
 .ui-language-switcher__link {
   text-decoration: none;
 
   &:hover,
   &.is-active {
-    text-decoration: underline;
+    font-family: var(--font-accent);
+    font-weight: 400;
   }
 }
 </style>

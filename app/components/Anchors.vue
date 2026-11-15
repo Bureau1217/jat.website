@@ -115,11 +115,6 @@ onBeforeUnmount(() => observer?.disconnect())
   font-weight: 700;
   line-height: 1.28;
   text-decoration: none;
-
-  &:hover {
-    text-decoration: underline;
-    text-underline-offset: 0.3em;
-  }
 }
 
 // Radio-like dot, filled on the current section / page.

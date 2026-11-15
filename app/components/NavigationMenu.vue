@@ -119,6 +119,8 @@ watch(isOpen, (open) => {
   }
 }
 
+// Hovered and current links switch to Gaya ("small bold interactif" text
+// style of the mockup: Gaya Regular 21) instead of being underlined.
 .v-navigation-menu__link {
   font-size: 18px;
   font-weight: 700;
@@ -126,8 +128,9 @@ watch(isOpen, (open) => {
 
   &:hover,
   &.router-link-active {
-    text-decoration: underline;
-    text-underline-offset: 0.25em;
+    font-family: var(--font-accent);
+    font-size: 21px;
+    font-weight: 400;
   }
 }
 
@@ -212,7 +215,7 @@ watch(isOpen, (open) => {
 
   &:hover,
   &.router-link-active {
-    text-decoration: underline;
+    font-family: var(--font-accent);
   }
 }
 
