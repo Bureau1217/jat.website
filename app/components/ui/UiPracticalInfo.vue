@@ -1,6 +1,8 @@
 <template>
   <div v-if="siteInfo" class="ui-practical-info">
-    <div class="ui-practical-info__inner u-flex u-flex--column u-gap-4xl">
+    <div class="ui-practical-info__inner">
+      <UiMap v-if="mapAddress" :address="mapAddress" class="ui-practical-info__map" />
+
       <div class="ui-practical-info__columns">
         <section v-if="addressLines.length || siteInfo.email || siteInfo.phone" class="u-flex u-flex--column u-gap-s">
           <h3 class="ui-practical-info__title">{{ t('Informations pratiques') }}</h3>
@@ -44,8 +46,6 @@
           </section>
         </div>
       </div>
-
-      <UiMap v-if="mapAddress" :address="mapAddress" class="ui-practical-info__map" />
     </div>
   </div>
 </template>
@@ -77,21 +77,23 @@ const mapAddress = computed(() => {
 </script>
 
 <style lang="scss" scoped>
-// Same ¼ / ¾ grid as the Paragraph block.
-.ui-practical-info {
-  container-type: inline-size;
-}
-
+// Map on the left, the information on the right (home page mockup).
 .ui-practical-info__inner {
-  @container (min-width: 900px) {
-    margin-left: calc(25% + var(--spacing-xl) * 0.75);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-4xl);
+  align-items: start;
+
+  @media (max-width: $breakpoint-mobile) {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-2xl);
   }
 }
 
 .ui-practical-info__columns {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--spacing-4xl);
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-2xl) var(--spacing-4xl);
 
   p {
     font-size: 20px;
@@ -100,7 +102,6 @@ const mapAddress = computed(() => {
 
   @media (max-width: $breakpoint-mobile) {
     grid-template-columns: 1fr;
-    gap: var(--spacing-2xl);
   }
 }
 
@@ -112,7 +113,11 @@ const mapAddress = computed(() => {
 }
 
 .ui-practical-info__map {
-  width: min(100%, 646px);
+  width: 100%;
   aspect-ratio: 646 / 326;
+
+  @media (max-width: $breakpoint-mobile) {
+    grid-row: 2;
+  }
 }
 </style>

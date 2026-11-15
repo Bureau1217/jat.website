@@ -99,6 +99,7 @@ export interface KeyInfoContent {
 }
 
 export interface BenefitsContent {
+  heading?: string
   items: Array<{ pictogram: KirbyFileRef[], heading: string }>
 }
 

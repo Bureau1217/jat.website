@@ -33,8 +33,11 @@ const textColor = computed(() => {
   margin: 0;
 }
 
-// A colored band: more air around the text.
+// A colored band filling the screen under the navigation (home page
+// accroche), its text centered.
 .v-block-quote--filled {
+  justify-content: center;
+  min-height: calc(100svh - var(--navigation-menu-height));
   padding-block: var(--spacing-6xl);
 }
 

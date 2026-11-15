@@ -1,5 +1,6 @@
 <template>
-  <Anchors :blocks="page.blocks" />
+  <!-- The home page opens straight on its carousel: no Repères bar (mockup). -->
+  <Anchors v-if="page.uri !== 'home'" :blocks="page.blocks" />
   <article class="v-page-default">
     <UiPageHero
       v-if="page.hero.title"
