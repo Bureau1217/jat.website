@@ -47,6 +47,11 @@ const isCover = computed(() => isKirbyTrue(props.block.content.is_cover))
   padding-top: 0;
 }
 
+// Followed by a colored band (home accroche), the two touch.
+:global(.v-block-image--cover:has(+ .v-block-quote--filled)) {
+  padding-bottom: 0;
+}
+
 // Opening a page (home carousel), it sits right under the navigation.
 :global(.v-page-default > .v-blocks > .v-block-image--cover:first-child) {
   padding-top: 0;

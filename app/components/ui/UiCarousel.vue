@@ -163,6 +163,24 @@ onMounted(onScroll)
   transform: rotate(180deg);
 }
 
+// Cover: the dots float over the bottom of the photo, in light blue
+// (home mockup), so the carousel ends right on the photo's edge.
+.ui-carousel--cover {
+  position: relative;
+}
+
+.ui-carousel--cover .ui-carousel__dots {
+  position: absolute;
+  inset-inline: 0;
+  bottom: var(--spacing-xl);
+  color: var(--color-secondaire-5);
+  pointer-events: none;
+
+  .ui-carousel__dot {
+    pointer-events: auto;
+  }
+}
+
 .ui-carousel__dot {
   width: 10px;
   height: 10px;
@@ -170,6 +188,8 @@ onMounted(onScroll)
   border: 1px solid currentColor;
   border-radius: 50%;
   background: transparent;
+  // Buttons don't inherit the text color by default.
+  color: inherit;
   cursor: pointer;
 
   &.is-active {
