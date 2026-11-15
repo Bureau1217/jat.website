@@ -6,7 +6,7 @@ import type { KqlNavItem } from '~~/shared/types/kql'
  * Panel. Data pages (informations, teams, agenda, programs) use other
  * templates and are left out automatically.
  */
-export default defineEventHandler(async () => {
+export default defineEventHandler(async (event) => {
   const pages = await kqlFetch<KqlNavItem[]>({
     query: 'site.children.listed.filterBy("intendedTemplate", "default")',
     select: {
@@ -14,7 +14,7 @@ export default defineEventHandler(async () => {
       title: true,
       uri: 'page.uri'
     }
-  })
+  }, requestLocale(event))
 
   return pages ?? []
 })

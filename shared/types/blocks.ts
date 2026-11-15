@@ -13,9 +13,20 @@ export type RawBlocks = string | unknown[]
 /** Kirby toggle value. */
 export type RawToggle = 'true' | 'false' | boolean | ''
 
+/** Value of a jat.cms fields/fill select ("" = default of the component). */
+export type RawFill = string
+
 export interface SectionContent {
   /** Section name, shown in the anchors bar ("" → not listed). */
   heading: string
+  /** Opens the section with a large banner holding its name. */
+  show_hero?: RawToggle
+  /** Banner fill (empty = page theme). */
+  fill?: RawFill
+  fill_reverse?: RawToggle
+  /** Fill of the title / accordion bars inside the section (empty = page theme). */
+  bar_fill?: RawFill
+  bar_fill_reverse?: RawToggle
   body: RawBlocks
 }
 
@@ -34,31 +45,57 @@ export interface AccordionItemContent {
   body: RawBlocks
   /** "Contenus liés", only used by the "three_columns" layout. */
   aside: RawBlocks
-  has_theme: RawToggle
-  background_color: string
-  text_color: string
+  /** Left column of the "three_columns" layout (Infos clés, buttons); empty = generated summary. */
+  side?: RawBlocks
+  /** Bar fill of this sub-section (empty = the section's bars, else page theme). */
+  fill?: RawFill
+  fill_reverse?: RawToggle
 }
 
 export interface AccordionContent {
   items: AccordionItemContent[]
 }
 
+/** normal = running text, lead = chapô, highlight = exergue. */
+export type ParagraphTextStyle = 'normal' | 'lead' | 'highlight'
+
 export interface ParagraphContent {
   heading: string
-  is_highlighted: RawToggle
+  /** Absent on blocks saved before the field existed. */
+  text_style?: ParagraphTextStyle
+  /** Legacy "Mise en avant" toggle, replaced by text_style: 'highlight'. */
+  is_highlighted?: RawToggle
   /** Writer HTML. */
   text: string
   image: KirbyFileRef[]
 }
 
-export type ButtonLinkType = 'page' | 'url' | 'file'
-
 export interface ButtonContent {
   button_label: string
-  link_type: ButtonLinkType
-  link_page: KirbyPageRef[]
-  link_url: string
-  link_file: KirbyFileRef[]
+  /** Kirby link field: "page://…", "file://…", URL, "mailto:…" or "tel:…". */
+  link: string
+}
+
+export interface NewsContent {
+  /** "Afficher les événements passés" (absent on blocks saved before it existed). */
+  show_past?: RawToggle
+}
+
+export interface TabsContent {
+  heading: string
+  /** text: writer HTML · programs: "Formations concernées". */
+  tabs: Array<{ label: string, text: string, programs: KirbyPageRef[] }>
+  programs_heading: string
+}
+
+export interface ListColumnsContent {
+  /** text: writer HTML, one paragraph per entry. */
+  groups: Array<{ heading: string, text: string }>
+}
+
+export interface KeyInfoContent {
+  /** label + writer HTML, one arrowed line per paragraph. */
+  items: Array<{ label: string, text: string }>
 }
 
 export interface BenefitsContent {
@@ -86,6 +123,11 @@ export interface QuoteContent {
   text: string
   author: string
   alignment: 'center' | 'right'
+  /** Turns the quote into a colored band (empty = page background). */
+  fill?: RawFill
+  fill_reverse?: RawToggle
+  /** jat.cms fields/text_color value (empty = automatic for the fill). */
+  text_color?: string
 }
 
 export interface ImageContent {

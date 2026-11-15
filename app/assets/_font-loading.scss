@@ -33,3 +33,22 @@
 @include rebond-face('semibold-italic', 600, italic);
 @include rebond-face('bold', 700);
 @include rebond-face('bold-italic', 700, italic);
+
+// Gaya — italic emphases and accents (--font-accent).
+// Served as the supplied desktop OTF, unconverted: only a desktop licence
+// was provided so far — check the web licence before going live.
+@font-face {
+  font-family: 'Gaya';
+  src: url('/fonts/gaya/gaya-regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Gaya';
+  src: url('/fonts/gaya/gaya-italic.otf') format('opentype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}

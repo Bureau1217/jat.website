@@ -4,11 +4,15 @@ interface KqlResponse<T> {
   status: string
 }
 
+import type { Locale } from '~~/shared/utils/locales'
+
 /**
  * POSTs a query to the Kirby KQL endpoint using the server-only
  * credentials from runtimeConfig. Never call this from client code.
+ * `locale` picks the content language (Kirby falls back to French for
+ * untranslated fields).
  */
-export async function kqlFetch<T>(body: Record<string, unknown>): Promise<T> {
+export async function kqlFetch<T>(body: Record<string, unknown>, locale?: Locale): Promise<T> {
   const config = useRuntimeConfig()
   const credentials = Buffer
     .from(`${config.apiAuthEmail}:${config.apiAuthPassword}`)
@@ -18,7 +22,8 @@ export async function kqlFetch<T>(body: Record<string, unknown>): Promise<T> {
     baseURL: config.apiUrl,
     method: 'POST',
     headers: {
-      Authorization: `Basic ${credentials}`
+      'Authorization': `Basic ${credentials}`,
+      ...(locale ? { 'X-Language': locale } : {})
     },
     body
   })

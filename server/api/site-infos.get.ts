@@ -8,6 +8,9 @@ interface RawSiteInfos {
   openingHours: KqlOpeningHours[] | null
   transports: Array<{ travel_time: string, lines: string }> | null
   disabilityReferents: Array<{ referent_name: string, contact: string }> | null
+  vhssReferents: Array<{ referent_name: string, contact: string }> | null
+  newsletterText: string | null
+  newsletterAction: string | null
   footerPages: KqlNavItem[] | null
   socialInstagram: string | null
   socialFacebook: string | null
@@ -38,6 +41,8 @@ const EMPTY: KqlSiteInfo = {
   openingHours: [],
   transports: [],
   disabilityReferents: [],
+  vhssReferents: [],
+  newsletter: { text: null, action: null },
   footerPages: [],
   socialLinks: [],
   legalLinks: [],
@@ -50,7 +55,7 @@ const EMPTY: KqlSiteInfo = {
  * disability referents, footer pages,
  * social networks, legal links and the accessibility text.
  */
-export default defineEventHandler(async (): Promise<KqlSiteInfo> => {
+export default defineEventHandler(async (event): Promise<KqlSiteInfo> => {
   const config = useRuntimeConfig()
   const page = await kqlFetch<RawSiteInfos | null>({
     query: 'site.index.filterBy("intendedTemplate", "informations").first',
@@ -70,6 +75,12 @@ export default defineEventHandler(async (): Promise<KqlSiteInfo> => {
         query: 'page.disability_referents.toStructure',
         select: { referent_name: true, contact: true }
       },
+      vhssReferents: {
+        query: 'page.vhss_referents.toStructure',
+        select: { referent_name: true, contact: true }
+      },
+      newsletterText: 'page.newsletter_text',
+      newsletterAction: 'page.newsletter_action',
       footerPages: {
         query: 'page.footer_pages.toPages',
         select: { id: true, title: true, uri: 'page.uri' }
@@ -83,7 +94,7 @@ export default defineEventHandler(async (): Promise<KqlSiteInfo> => {
       privacyPolicyLink: 'page.privacy_policy_link.toUrl',
       accessibilityText: 'page.accessibility_text'
     }
-  })
+  }, requestLocale(event))
 
   if (!page) {
     return EMPTY
@@ -111,6 +122,11 @@ export default defineEventHandler(async (): Promise<KqlSiteInfo> => {
     openingHours: page.openingHours ?? [],
     transports: (page.transports ?? []).map((row): KqlTransport => ({ travelTime: row.travel_time, lines: row.lines })),
     disabilityReferents: (page.disabilityReferents ?? []).map(row => ({ name: row.referent_name, contact: row.contact || null })),
+    vhssReferents: (page.vhssReferents ?? []).map(row => ({ name: row.referent_name, contact: row.contact || null })),
+    newsletter: {
+      text: page.newsletterText || null,
+      action: page.newsletterAction || null
+    },
     footerPages: page.footerPages ?? [],
     socialLinks: toLinks(SOCIAL_LINKS),
     legalLinks: toLinks(LEGAL_LINKS),

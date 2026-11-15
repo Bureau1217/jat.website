@@ -1,5 +1,5 @@
 <template>
-  <nav v-if="anchors.length" class="v-anchors u-gutter-x" :class="`u-theme--${theme}`" aria-label="Sections de la page">
+  <nav v-if="anchors.length" class="v-anchors u-gutter-x" :class="`u-theme--${theme}`" :aria-label="t('Sections de la page')">
     <ul class="v-anchors__list u-flex u-flex--align-center u-gap-2xl">
       <li v-for="anchor in anchors" :key="anchor.id">
         <a

@@ -1,5 +1,5 @@
 <template>
-  <UiAsideBox v-if="laureates.length" title="Lauréats">
+  <UiAsideBox v-if="laureates.length" :title="t('Lauréats')">
     <ul class="u-flex u-flex--column u-gap-m">
       <li v-for="(laureate, index) in laureates" :key="index" class="v-block-laureates__item u-flex u-flex--align-center u-gap-m">
         <div class="v-block-laureates__photo">

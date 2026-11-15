@@ -14,17 +14,10 @@ const props = defineProps<{
   pages?: KqlPageRefs
 }>()
 
-const isDownload = computed(() => props.block.content.link_type === 'file')
+// Kirby link field: page://, file://, https://, mailto: or tel:.
+const isDownload = computed(() => props.block.content.link?.startsWith('file://') ?? false)
 
 // Not rendered at all when the target is missing (unpublished page, deleted
 // document) rather than as a dead button.
-const href = computed(() => {
-  const { link_type: type, link_page: page, link_url: url, link_file: file } = props.block.content
-  if (type === 'page') {
-    const target = resolvePageRefs(page, props.pages)[0]
-    return target ? pagePath(target) : null
-  }
-  if (type === 'file') return resolveKqlFile(file, props.files)?.url ?? null
-  return url || null
-})
+const href = computed(() => resolveKirbyLink(props.block.content.link, props.pages, props.files))
 </script>

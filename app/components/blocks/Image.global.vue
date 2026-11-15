@@ -4,8 +4,10 @@
     class="v-block-image u-flex u-flex--column u-gap-s"
     :class="isCover ? 'v-block-image--cover' : 'u-block'"
   >
-    <UiGallery v-if="images.length > 1" :images="images" />
-    <UiImage v-else :file="images[0]!" class="v-block-image__single" />
+    <div class="v-block-image__media">
+      <UiCarousel v-if="images.length > 1" :images="images" :variant="isCover ? 'cover' : 'row'" :label="block.content.caption || t('Photos')" />
+      <UiImage v-else :file="images[0]!" class="v-block-image__single" />
+    </div>
     <figcaption v-if="block.content.caption" class="v-block-image__caption" :class="{ 'u-gutter-x': isCover }">
       {{ block.content.caption }}
     </figcaption>
@@ -16,27 +18,35 @@
 import type { ImageContent } from '~~/shared/types/blocks'
 import type { KqlBlock, KqlFile } from '~~/shared/types/kql'
 
-/** One photo → single image (full-bleed with "Couverture"), several → gallery. */
+/**
+ * "Couverture" on: full width — one photo, or a carousel with dots.
+ * Off: in the ¾ column — one photo, or a row carousel with arrows (Locaux).
+ */
 const props = defineProps<{
   block: KqlBlock<ImageContent>
   files?: KqlFile[]
 }>()
 
 const images = computed(() => resolveKqlFiles(props.block.content.images, props.files))
-const isCover = computed(() => images.value.length === 1 && isKirbyTrue(props.block.content.is_cover))
+const isCover = computed(() => isKirbyTrue(props.block.content.is_cover))
 </script>
 
 <style lang="scss" scoped>
 .v-block-image {
   margin: 0;
+  container-type: inline-size;
 }
 
 .v-block-image--cover {
   padding-block: var(--block-spacing);
 }
 
-.v-block-image:not(.v-block-image--cover) .v-block-image__single {
-  border-radius: var(--radius-m);
+// Same ¼ / ¾ grid as the Paragraph block.
+.v-block-image:not(.v-block-image--cover) .v-block-image__media,
+.v-block-image:not(.v-block-image--cover) .v-block-image__caption {
+  @container (min-width: 900px) {
+    margin-left: calc(25% + var(--spacing-xl) * 0.75);
+  }
 }
 
 .v-block-image__caption {

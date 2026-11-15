@@ -2,7 +2,7 @@
   <iframe
     class="ui-map"
     :src="embedUrl"
-    :title="`Carte : ${address}`"
+    :title="`${t('Carte')} : ${address}`"
     loading="lazy"
     referrerpolicy="no-referrer-when-downgrade"
     allowfullscreen

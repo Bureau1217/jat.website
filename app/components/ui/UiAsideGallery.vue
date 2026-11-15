@@ -1,5 +1,5 @@
 <template>
-  <UiAsideBox v-if="images.length" title="Galerie photos">
+  <UiAsideBox v-if="images.length" :title="t('Galerie photos')">
     <UiGallery :images="images" layout="stack" />
   </UiAsideBox>
 </template>

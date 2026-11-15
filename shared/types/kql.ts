@@ -46,6 +46,8 @@ export interface KqlPageRef {
   location: string | null
   categories: string[]
   cover: KqlFile | null
+  /** `event` template: plain-text start of the text ("" when empty). */
+  excerpt: string | null
 }
 
 /** Page refs indexed by their "page://<uuid>". */
@@ -60,6 +62,14 @@ export interface KqlBlock<TContent = Record<string, unknown>> {
 
 export interface KqlPage {
   id: string
+  /** "page://<uuid>" — matches team / course refs. */
+  uuid: string
+  /** null for a top-level page. */
+  parentTitle: string | null
+  /** Published subpages, two levels deep (listing templates). */
+  children: KqlPageChild[]
+  /** `program` template fields (null on every other template). */
+  program: KqlProgramFields | null
   uri: string
   title: string
   template: string
@@ -71,6 +81,51 @@ export interface KqlPage {
   blocks: KqlBlock[]
   /** `event` template fields (null/empty on every other template). */
   event: KqlEventFields | null
+  /** `article` template fields (null on every other template). */
+  article: KqlArticleFields | null
+  /** "Fond de la navigation" (jat.cms fields/fill value); null = page theme. */
+  headerFill: KqlFillValue | null
+  /** Page banner, shown when its title is filled: title, italic signature, fill (null = page theme). */
+  hero: {
+    title: string | null
+    signature: string | null
+    fill: KqlFillValue | null
+  }
+}
+
+/** A jat.cms fields/fill value with its "Inverser le dégradé" toggle. */
+export interface KqlFillValue {
+  fill: string
+  reverse: boolean
+}
+
+export interface KqlPageChild {
+  id: string
+  uuid: string
+  uri: string
+  title: string
+  template: string
+  /** `program` template: writer HTML. */
+  description: string | null
+  children: KqlPageChild[]
+}
+
+export interface KqlProgramFields {
+  /** Writer HTML ("Descriptif"). */
+  description: string | null
+  /** Writer HTML ("Déroulé"). */
+  outline: string | null
+}
+
+export interface KqlArticleFields {
+  subtitle: string | null
+  /** "Y-m-d". */
+  publishedAt: string | null
+  categories: string[]
+  cover: KqlFile | null
+  /** Writer HTML. */
+  text: string | null
+  gallery: KqlFile[]
 }
 
 export interface KqlEventFields {
@@ -97,7 +152,24 @@ export interface KqlEvent {
   location: string | null
   categories: string[]
   cover: KqlFile | null
-  /** "Mis en avant" in the Panel. */
+  /** Plain-text start of the event text (cards). */
+  excerpt: string | null
+  /** "À la une" in the Panel. */
+  isFeatured: boolean
+}
+
+/** Article of the Actualités blog (jat.cms `article` template). */
+export interface KqlArticle {
+  id: string
+  uri: string
+  title: string
+  subtitle: string | null
+  /** "Y-m-d". */
+  publishedAt: string | null
+  categories: string[]
+  cover: KqlFile | null
+  excerpt: string | null
+  /** "À la une" in the Panel. */
   isFeatured: boolean
 }
 
@@ -114,6 +186,22 @@ export interface KqlTeamMember {
   /** Teaching staff only: personal website. */
   websiteUrl: string | null
   photo: KqlFile | null
+  /** Teaching staff only: published courses they teach ("Ateliers" column). */
+  courses: Array<{ id: string, title: string, uri: string }>
+  /** Fiche dépliable (null = the row doesn't open). */
+  profile: KqlTeamMemberProfile | null
+}
+
+export interface KqlTeamMemberProfile {
+  /** Writer HTML ("Parcours"). */
+  bio: string | null
+  /** Writer HTML, one paragraph per line. */
+  cursus: string | null
+  bands: string | null
+  collaborations: string | null
+  links: Array<{ label: string, url: string }>
+  /** YouTube / Vimeo page URLs. */
+  videos: string[]
 }
 
 export interface KqlTeam {
@@ -167,6 +255,9 @@ export interface KqlSiteInfo {
   openingHours: KqlOpeningHours[]
   transports: KqlTransport[]
   disabilityReferents: KqlReferent[]
+  vhssReferents: KqlReferent[]
+  /** action: form URL of the e-mailing tool (null = no form). */
+  newsletter: { text: string | null, action: string | null }
   footerPages: KqlNavItem[]
   /** Only the networks with a URL filled in. */
   socialLinks: KqlLink[]

@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'Invalid page path' })
   }
 
-  const page = await fetchPage(id)
+  const page = await fetchPage(id, requestLocale(event))
 
   if (!page) {
     throw createError({ statusCode: 404, statusMessage: 'Page not found' })

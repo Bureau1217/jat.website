@@ -1,8 +1,8 @@
 <template>
-  <UiAsideBox v-if="events.length" title="Actualités en lien">
+  <UiAsideBox v-if="events.length" :title="t('Actualités en lien')">
     <ul class="u-flex u-flex--column u-gap-xl">
       <li v-for="event in events" :key="event.id">
-        <UiEventCard :event="event" />
+        <UiTeaserCard :teaser="eventTeaser(event)" compact />
       </li>
     </ul>
   </UiAsideBox>

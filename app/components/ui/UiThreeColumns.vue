@@ -1,6 +1,9 @@
 <template>
   <div class="ui-three-columns">
-    <nav v-if="summary.length" class="ui-three-columns__summary" aria-label="Sommaire">
+    <div v-if="side.length" class="ui-three-columns__side u-nested">
+      <Blocks :blocks="side" :files="files" :pages="pages" />
+    </div>
+    <nav v-else-if="summary.length" class="ui-three-columns__summary" :aria-label="t('Sommaire')">
       <ol class="u-flex u-flex--column u-gap-s">
         <li v-for="heading in summary" :key="heading.id">
           <a :href="`#${heading.id}`">{{ heading.text }}</a>
@@ -10,7 +13,7 @@
     <div class="ui-three-columns__main u-nested">
       <Blocks :blocks="body" :files="files" :pages="pages" />
     </div>
-    <aside v-if="aside.length" class="ui-three-columns__aside u-nested" aria-label="Contenus liés">
+    <aside v-if="aside.length" class="ui-three-columns__aside u-nested" :aria-label="t('Contenus liés')">
       <Blocks :blocks="aside" :files="files" :pages="pages" />
     </aside>
   </div>
@@ -21,13 +24,14 @@ import type { HeadingContent } from '~~/shared/types/blocks'
 import type { KqlBlock, KqlFile, KqlPageRefs } from '~~/shared/types/kql'
 
 /**
- * "3 colonnes" layout of an Accordion sub-section: Sommaire (generated) ·
- * content · Contenus liés. The summary links to every Titre block of the
+ * "3 colonnes" layout of an Accordion sub-section: left column (Infos clés
+ * and buttons, or else a generated Sommaire) · content · Contenus liés. The summary links to every Titre block of the
  * content, anchored by block id (see Heading.global.vue).
  */
 const props = defineProps<{
   body: KqlBlock[]
   aside: KqlBlock[]
+  side: KqlBlock[]
   files?: KqlFile[]
   pages?: KqlPageRefs
 }>()
@@ -70,6 +74,11 @@ const summary = computed(() => props.body
   @media (max-width: $breakpoint-mobile) {
     position: static;
   }
+}
+
+.ui-three-columns__side {
+  grid-area: summary;
+  min-width: 0;
 }
 
 .ui-three-columns__main {

@@ -1,5 +1,9 @@
 <template>
-  <figure class="v-block-quote u-block u-flex u-flex--column u-gap-m" :class="`v-block-quote--${alignment}`">
+  <figure
+    class="v-block-quote u-block u-flex u-flex--column u-gap-m"
+    :class="[`v-block-quote--${alignment}`, { 'v-block-quote--filled': fill }]"
+    :style="fill ? { background: fill.background, color: fill.color } : textColor"
+  >
     <blockquote class="v-block-quote__text" v-html="block.content.text" />
     <figcaption v-if="block.content.author" class="v-block-quote__author">{{ block.content.author }}</figcaption>
   </figure>
@@ -14,11 +18,24 @@ const props = defineProps<{
 }>()
 
 const alignment = computed(() => (props.block.content.alignment === 'right' ? 'right' : 'center'))
+
+const fill = computed(() => resolveFill(props.block.content.fill, props.block.content.fill_reverse, props.block.content.text_color))
+
+// Without a fill, "Couleur du texte" still applies on the page background.
+const textColor = computed(() => {
+  const color = props.block.content.text_color
+  return color ? { color: `var(--color-${color})` } : undefined
+})
 </script>
 
 <style lang="scss" scoped>
 .v-block-quote {
   margin: 0;
+}
+
+// A colored band: more air around the text.
+.v-block-quote--filled {
+  padding-block: var(--spacing-6xl);
 }
 
 .v-block-quote--center {
@@ -31,15 +48,17 @@ const alignment = computed(() => (props.block.content.alignment === 'right' ? 'r
   text-align: right;
 }
 
+// Accroche of the mockup (home page, under an event banner): Gaya italic XL.
 .v-block-quote__text {
   margin: 0;
-  max-width: var(--content-max-width);
-  font-family: var(--font-heading);
-  font-size: 32px;
-  line-height: 1.3;
+  max-width: 1360px;
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-size: 72px;
+  line-height: 1.28;
 
   @media (max-width: $breakpoint-mobile) {
-    font-size: 24px;
+    font-size: 36px;
   }
 }
 

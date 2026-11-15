@@ -1,9 +1,13 @@
 <template>
   <Anchors :blocks="page.blocks" />
   <article class="v-page-default">
-    <header class="v-page-default__header u-block">
-      <h1>{{ page.title }}</h1>
-    </header>
+    <UiPageHero
+      v-if="page.hero.title"
+      :title="page.hero.title"
+      :signature="page.hero.signature"
+      :fill-value="page.hero.fill"
+    />
+    <h1 v-else class="u-visually-hidden">{{ page.title }}</h1>
     <Blocks :blocks="page.blocks" :files="page.files" :pages="page.pages" />
   </article>
 </template>
@@ -11,14 +15,12 @@
 <script setup lang="ts">
 import type { KqlPage } from '~~/shared/types/kql'
 
-/** Site page (jat.cms `default` template): title + blocks of the `body` field. */
+/**
+ * Site page (jat.cms `default` template): optional banner ("Titre du
+ * bandeau" filled — the home and Agenda pages open on their own blocks) +
+ * blocks of the `body` field.
+ */
 defineProps<{
   page: KqlPage
 }>()
 </script>
-
-<style lang="scss" scoped>
-.v-page-default__header {
-  padding-bottom: 0;
-}
-</style>

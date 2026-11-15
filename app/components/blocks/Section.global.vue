@@ -1,5 +1,8 @@
 <template>
-  <section :id="block.id" class="v-block-section">
+  <section :id="block.id" class="v-block-section" :style="barVariables">
+    <div v-if="hasHero" class="v-block-section__hero u-gutter-x u-flex u-flex--align-center u-flex--justify-center" :style="heroVariables">
+      <h2 class="v-block-section__hero-title">{{ block.content.heading }}</h2>
+    </div>
     <Blocks :blocks="body" :files="files" :pages="pages" />
   </section>
 </template>
@@ -15,6 +18,14 @@ const props = defineProps<{
 }>()
 
 const body = computed(() => parseKqlBlocks(props.block.content.body))
+
+// A banner needs a name to show.
+const hasHero = computed(() => isKirbyTrue(props.block.content.show_hero) && !!props.block.content.heading)
+
+const heroVariables = computed(() => fillVariables('hero', resolveFill(props.block.content.fill, props.block.content.fill_reverse)))
+
+// Inherited by the Titre and Accordion bars of the section.
+const barVariables = computed(() => fillVariables('bar', resolveFill(props.block.content.bar_fill, props.block.content.bar_fill_reverse)))
 </script>
 
 <style lang="scss" scoped>
@@ -23,9 +34,26 @@ const body = computed(() => parseKqlBlocks(props.block.content.body))
   scroll-margin-top: calc(var(--navigation-menu-height) + var(--anchors-height));
 }
 
-// Consecutive sections are separated by a rule; the blocks inside keep
-// their own page-level spacing and gutter.
-.v-block-section + .v-block-section {
-  border-top: 1px solid currentColor;
+// "Bandeau H1" of the mockup: chapter break between the large parts of a page.
+.v-block-section__hero {
+  min-height: 500px;
+  padding-block: var(--spacing-5xl);
+  background: var(--hero-fill, var(--theme-gradient));
+  color: var(--hero-text, var(--theme-text));
+  text-align: center;
+
+  @media (max-width: $breakpoint-mobile) {
+    min-height: 280px;
+  }
+}
+
+.v-block-section__hero-title {
+  font-size: 90px;
+  line-height: 1.2;
+  text-transform: uppercase;
+
+  @media (max-width: $breakpoint-mobile) {
+    font-size: 44px;
+  }
 }
 </style>

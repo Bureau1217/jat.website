@@ -1,9 +1,13 @@
 <template>
-  <header class="v-navigation-menu" :class="[`u-theme--${theme}`, { 'is-open': isOpen }]">
+  <header
+    class="v-navigation-menu"
+    :class="[`u-theme--${theme}`, { 'is-open': isOpen }]"
+    :style="headerFill ? { '--theme-gradient': headerFill.background, '--theme-text': headerFill.color } : undefined"
+  >
     <div class="v-navigation-menu__bar u-flex u-flex--align-center u-gap-5xl u-gutter-x">
-      <NuxtLink to="/" class="v-navigation-menu__logo" aria-label="Jazz à Tours — accueil" @click="isOpen = false">JÀT</NuxtLink>
+      <NuxtLink :to="withLocale('/', locale)" class="v-navigation-menu__logo" :aria-label="t('Jazz à Tours — accueil')" @click="isOpen = false">JÀT</NuxtLink>
 
-      <nav class="v-navigation-menu__desktop-nav" aria-label="Navigation principale">
+      <nav class="v-navigation-menu__desktop-nav" :aria-label="t('Navigation principale')">
         <ul class="u-flex u-flex--align-center u-gap-2xl">
           <li v-for="item in navItems" :key="item.id">
             <NuxtLink :to="pagePath(item)" class="v-navigation-menu__link">{{ item.title }}</NuxtLink>
@@ -11,12 +15,14 @@
         </ul>
       </nav>
 
+      <UiLanguageSwitcher class="v-navigation-menu__languages" />
+
       <button
         type="button"
         class="v-navigation-menu__burger"
         :aria-expanded="isOpen"
         aria-controls="v-navigation-menu-nav"
-        :aria-label="isOpen ? 'Fermer le menu' : 'Ouvrir le menu'"
+        :aria-label="t(isOpen ? 'Fermer le menu' : 'Ouvrir le menu')"
         @click="isOpen = !isOpen"
       >
         <span class="v-navigation-menu__burger-icon" :class="{ 'is-open': isOpen }">
@@ -26,7 +32,7 @@
     </div>
 
     <transition name="v-navigation-menu-nav">
-      <nav v-if="isOpen" id="v-navigation-menu-nav" class="v-navigation-menu__mobile-nav u-gutter-x" aria-label="Navigation principale">
+      <nav v-if="isOpen" id="v-navigation-menu-nav" class="v-navigation-menu__mobile-nav u-gutter-x" :aria-label="t('Navigation principale')">
         <ul class="u-flex u-flex--column u-gap-m">
           <li v-for="item in navItems" :key="item.id">
             <NuxtLink :to="pagePath(item)" class="v-navigation-menu__mobile-link" @click="isOpen = false">{{ item.title }}</NuxtLink>
@@ -38,8 +44,12 @@
 </template>
 
 <script setup lang="ts">
+import { withLocale } from '~~/shared/utils/locales'
+
 const isOpen = ref(false)
 const theme = usePageTheme()
+const locale = useLocale()
+const headerFill = useHeaderFill()
 
 // Every listed top-level site page, in Panel order (see /api/nav). The home
 // page is left out: the logo already links to "/".
@@ -61,7 +71,9 @@ watch(isOpen, (open) => {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: var(--theme-gradient);
+  // Some gradients are translucent (Agenda): the page background under them
+  // keeps the content from showing through the sticky bar.
+  background: var(--theme-gradient), var(--color-background);
   color: var(--theme-text);
 
   @media (max-width: $breakpoint-mobile) {
@@ -108,6 +120,15 @@ watch(isOpen, (open) => {
   &.router-link-active {
     text-decoration: underline;
     text-underline-offset: 0.25em;
+  }
+}
+
+.v-navigation-menu__languages {
+  font-size: 18px;
+  font-weight: 700;
+
+  @media (max-width: $breakpoint-mobile) {
+    margin-left: auto;
   }
 }
 

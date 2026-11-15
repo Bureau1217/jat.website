@@ -1,5 +1,5 @@
 <template>
-  <div class="ui-rich-text" v-html="html" />
+  <div class="ui-rich-text" :class="{ 'ui-rich-text--wide': wide }" v-html="html" />
 </template>
 
 <script setup lang="ts">
@@ -9,6 +9,8 @@
  */
 defineProps<{
   html: string
+  /** Spans its whole column instead of the reading max width. */
+  wide?: boolean
 }>()
 </script>
 
@@ -48,5 +50,9 @@ defineProps<{
   :deep(> :last-child) {
     margin-bottom: 0;
   }
+}
+
+.ui-rich-text--wide {
+  max-width: none;
 }
 </style>

@@ -23,7 +23,9 @@ export const EVENT_SELECT = {
   cover: {
     query: 'page.cover.toFile',
     select: FILE_SELECT
-  }
+  },
+  // Teaser text of the cards (Agenda, Actualités): plain text, cut by Kirby.
+  excerpt: 'page.text.excerpt(180)'
 }
 
 /**

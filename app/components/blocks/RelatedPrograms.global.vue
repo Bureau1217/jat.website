@@ -1,5 +1,5 @@
 <template>
-  <UiAsideBox v-if="programs.length" title="Formations en lien">
+  <UiAsideBox v-if="programs.length" :title="t('Formations en lien')">
     <ul class="v-block-related-programs u-flex u-flex--column u-gap-s">
       <li v-for="program in programs" :key="program.id" class="u-flex u-flex--column u-gap-xxs">
         <span v-if="program.parentTitle" class="v-block-related-programs__group">{{ program.parentTitle }}</span>

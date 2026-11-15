@@ -7,7 +7,7 @@ type RawEvent = Omit<KqlEvent, 'isFeatured'> & { isFeatured: boolean | null }
  * template rather than by the agenda page's slug so it keeps working
  * whatever editors name that page.
  */
-export default defineEventHandler(async (): Promise<KqlEvent[]> => {
+export default defineEventHandler(async (event): Promise<KqlEvent[]> => {
   const events = await kqlFetch<RawEvent[]>({
     query: 'site.index.filterBy("intendedTemplate", "event").sortBy("start_date", "desc")',
     select: {
@@ -17,7 +17,7 @@ export default defineEventHandler(async (): Promise<KqlEvent[]> => {
       isFeatured: 'page.is_featured.toBool',
       ...EVENT_SELECT
     }
-  })
+  }, requestLocale(event))
 
-  return (events ?? []).map(event => ({ ...event, isFeatured: event.isFeatured === true }))
+  return (events ?? []).map(event => ({ ...event, excerpt: event.excerpt || null, isFeatured: event.isFeatured === true }))
 })

@@ -1,5 +1,5 @@
 <template>
-  <UiAsideBox title="Témoignage">
+  <UiAsideBox :title="t('Témoignage')">
     <figure class="v-block-testimonial u-flex u-flex--column u-gap-s">
       <blockquote class="v-block-testimonial__text">
         <UiRichText :html="block.content.text" />

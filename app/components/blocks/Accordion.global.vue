@@ -1,36 +1,32 @@
 <template>
-  <div class="v-block-accordion u-block">
-    <details
+  <div class="v-block-accordion">
+    <UiDisclosure
       v-for="(item, index) in items"
       :key="index"
-      class="v-block-accordion__item"
-      :class="{ 'v-block-accordion__item--themed': item.theme }"
-      :style="item.theme"
+      :title="item.heading"
+      :style="item.fill"
     >
-      <summary class="v-block-accordion__summary u-flex u-flex--align-center u-flex--justify-between u-gap-xl">
-        <h3 class="v-block-accordion__title">{{ item.heading }}</h3>
-        <span class="v-block-accordion__icon" aria-hidden="true" />
-      </summary>
       <UiThreeColumns
         v-if="item.isThreeColumns"
         class="v-block-accordion__content"
         :body="item.blocks"
         :aside="item.aside"
+        :side="item.side"
         :files="files"
         :pages="pages"
       />
       <div v-else class="v-block-accordion__content u-nested">
         <Blocks :blocks="item.blocks" :files="files" :pages="pages" />
       </div>
-    </details>
+    </UiDisclosure>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { AccordionContent, AccordionItemContent } from '~~/shared/types/blocks'
+import type { AccordionContent } from '~~/shared/types/blocks'
 import type { KqlBlock, KqlFile, KqlPageRefs } from '~~/shared/types/kql'
 
-/** Sous-sections, each with its own layout ("Simple" / "3 colonnes") and optional theme. */
+/** Sous-sections, each with its own layout ("Simple" / "3 colonnes") and bar fill. */
 
 const props = defineProps<{
   block: KqlBlock<AccordionContent>
@@ -43,87 +39,21 @@ const items = computed(() => (props.block.content.items ?? []).map(item => ({
   isThreeColumns: item.layout === 'three_columns',
   blocks: parseKqlBlocks(item.body),
   aside: parseKqlBlocks(item.aside),
-  theme: itemTheme(item)
+  side: parseKqlBlocks(item.side),
+  // Overrides the --bar-* fill inherited from the Section for this bar only.
+  fill: fillVariables('bar', resolveFill(item.fill, item.fill_reverse))
 })))
-
-// "Thème" toggle on: the editor's background/text colors, applied as CSS
-// variables so nested blocks (buttons included) follow them.
-function itemTheme(item: AccordionItemContent): Record<string, string> | undefined {
-  const { has_theme: hasTheme, background_color: background, text_color: text } = item
-  if (!isKirbyTrue(hasTheme) || !background || !text) return undefined
-  return {
-    '--accordion-background': background,
-    '--accordion-text': text,
-    '--button-color': text,
-    '--button-text': background
-  }
-}
 </script>
 
 <style lang="scss" scoped>
-.v-block-accordion__item--themed {
-  background: var(--accordion-background);
-  color: var(--accordion-text);
-}
+.v-block-accordion {
+  // The page gutter, kept for the content: inside it --gutter is reset to 0.
+  --accordion-gutter: var(--gutter);
 
-.v-block-accordion__item {
-  border-bottom: 1px solid currentColor;
-
-  &:first-child {
-    border-top: 1px solid currentColor;
-  }
-
-  &[open] .v-block-accordion__icon::after {
-    transform: translate(-50%, -50%) scaleY(0);
-  }
-}
-
-.v-block-accordion__summary {
-  padding-block: var(--spacing-xl);
-  cursor: pointer;
-  list-style: none;
-
-  &::-webkit-details-marker {
-    display: none;
-  }
-}
-
-.v-block-accordion__title {
-  flex: 1;
-  // Lets a long title wrap instead of pushing the icon out of the row.
-  min-width: 0;
-}
-
-// "+" that becomes a "−" when open.
-.v-block-accordion__icon {
-  position: relative;
-  flex-shrink: 0;
-  width: 24px;
-  height: 24px;
-
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    background: currentColor;
-    transform: translate(-50%, -50%);
-  }
-
-  &::before {
-    width: 100%;
-    height: 2px;
-  }
-
-  &::after {
-    width: 2px;
-    height: 100%;
-    transition: transform 0.2s ease;
-  }
+  padding-block: var(--block-spacing);
 }
 
 .v-block-accordion__content {
-  padding-bottom: var(--spacing-xl);
+  padding: var(--spacing-4xl) var(--accordion-gutter);
 }
 </style>

@@ -1,4 +1,5 @@
 import type { KirbyPageRef, KqlPageRef, KqlPageRefs } from '~~/shared/types/kql'
+import { withLocale, type Locale } from '~~/shared/utils/locales'
 
 /**
  * Block content stores pages as "page://<uuid>" refs — the server already
@@ -16,7 +17,12 @@ export function resolvePageRefs(refs: KirbyPageRef[] | undefined, pages: KqlPage
     .filter((page): page is KqlPageRef => Boolean(page))
 }
 
-/** Front-end path of a page ("" uri = home). */
-export function pagePath(page: Pick<KqlPageRef, 'uri'>): string {
-  return `/${page.uri === 'home' ? '' : page.uri}`
+/**
+ * Front-end path of a page ("home" uri = home), in the language of the
+ * current route unless `locale` is given — so every link of an English
+ * page stays under /en.
+ */
+export function pagePath(page: Pick<KqlPageRef, 'uri'>, locale?: Locale): string {
+  const path = `/${page.uri === 'home' ? '' : page.uri}`
+  return withLocale(path, locale ?? currentLocale())
 }

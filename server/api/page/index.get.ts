@@ -1,5 +1,5 @@
-export default defineEventHandler(async () => {
-  const page = await fetchPage('')
+export default defineEventHandler(async (event) => {
+  const page = await fetchPage('', requestLocale(event))
 
   if (!page) {
     throw createError({ statusCode: 404, statusMessage: 'Page not found' })

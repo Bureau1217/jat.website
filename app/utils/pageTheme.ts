@@ -1,3 +1,5 @@
+import { stripLocale } from '~~/shared/utils/locales'
+
 export type PageTheme = 'home' | 'news' | 'training' | 'school' | 'concerts' | 'spaces'
 
 /**
@@ -19,6 +21,7 @@ const THEME_BY_SLUG: Record<string, PageTheme> = {
 }
 
 export function pageTheme(path: string): PageTheme {
-  const slug = path.split('/').find(Boolean) ?? ''
+  // "/en/ecole" belongs to the same section as "/ecole".
+  const slug = stripLocale(path).split('/').find(Boolean) ?? ''
   return THEME_BY_SLUG[slug] ?? 'home'
 }

@@ -6,23 +6,23 @@
       <UiRichText v-if="page.event.text" :html="page.event.text" />
     </div>
 
-    <aside class="v-page-event__aside u-nested" aria-label="Informations pratiques et galerie">
-      <UiAsideBox title="Informations pratiques">
+    <aside class="v-page-event__aside u-nested" :aria-label="t('Informations pratiques et galerie')">
+      <UiAsideBox :title="t('Informations pratiques')">
         <dl class="v-page-event__infos u-flex u-flex--column u-gap-s">
           <div v-if="page.event.startDate">
-            <dt>Date</dt>
+            <dt>{{ t('Date') }}</dt>
             <dd>{{ formatEventDate(page.event.startDate, page.event.endDate) }}</dd>
           </div>
           <div v-if="page.event.schedule">
-            <dt>Horaires</dt>
+            <dt>{{ t('Horaires') }}</dt>
             <dd>{{ page.event.schedule }}</dd>
           </div>
           <div v-if="page.event.location">
-            <dt>Lieu</dt>
+            <dt>{{ t('Lieu') }}</dt>
             <dd>{{ page.event.location }}</dd>
           </div>
           <div v-if="page.event.categories.length">
-            <dt>Catégories</dt>
+            <dt>{{ t('Catégories') }}</dt>
             <dd>{{ page.event.categories.join(', ') }}</dd>
           </div>
         </dl>
