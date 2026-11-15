@@ -53,12 +53,13 @@ const isCover = computed(() => isKirbyTrue(props.block.content.is_cover))
   padding-bottom: 0;
 }
 
-// Opening a page (home carousel), it sits right under the navigation and
-// fills the rest of the first screen: its bottom edge falls on the fold.
+// Opening a page (home carousel, Actualités), it sits right under the
+// navigation, fills the rest of the first screen (its bottom edge falls on
+// the fold) and the next block starts right under it.
 :global(.v-page-default > .v-blocks > .v-block-image--cover:first-child) {
   --opening-height: calc(100svh - var(--navigation-menu-height) - var(--opening-offset, 0px));
 
-  padding-top: 0;
+  padding-block: 0;
 }
 
 :global(.v-page-default > .v-blocks > .v-block-image--cover:first-child .ui-carousel__slide),

@@ -78,6 +78,18 @@ export interface ButtonContent {
   link: string
 }
 
+export interface TitleBannerContent {
+  /** Plain text, one line per line break (Gaya). */
+  title: string
+  /** Animo capitals line under the title. */
+  caps?: string
+  /** Animo tag, top right ("[AMP]"). */
+  tag?: string
+  fill?: RawFill
+  fill_reverse?: RawToggle
+  text_color?: string
+}
+
 export interface NewsContent {
   /** "Afficher les événements passés" (absent on blocks saved before it existed). */
   show_past?: RawToggle
