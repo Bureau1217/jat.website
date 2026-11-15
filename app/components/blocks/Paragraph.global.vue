@@ -147,4 +147,13 @@ const image = computed(() => resolveKqlFile(props.block.content.image, props.fil
     color: var(--color-emphasis);
   }
 }
+
+// Text under a cover visual (home: L’École, Formations, Concerts & Projets):
+// close to its image, then at least half a screen of air — the same rhythm
+// for every visual + text pair. Whole selector in :global(), see Heading.
+:global(.v-block-image--cover + .v-block-paragraph) {
+  min-height: 50svh;
+  padding-top: var(--spacing-2xl);
+  padding-bottom: var(--spacing-6xl);
+}
 </style>

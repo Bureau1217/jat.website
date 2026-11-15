@@ -149,4 +149,9 @@ const pastCount = ref(3)
   font-size: 20px;
   cursor: pointer;
 }
+
+// Right under the Agenda title bar, the "À la une" bar follows it directly.
+:global(.v-block-heading + .ui-agenda) {
+  padding-top: 0;
+}
 </style>
