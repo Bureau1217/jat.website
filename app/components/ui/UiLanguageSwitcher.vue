@@ -1,7 +1,7 @@
 <template>
   <nav class="ui-language-switcher" :aria-label="t('Langue')">
     <template v-for="(item, index) in items" :key="item.locale">
-      <span v-if="index > 0" aria-hidden="true"> / </span>
+      <span v-if="index > 0" aria-hidden="true">/</span>
       <NuxtLink
         :to="item.to"
         :lang="item.locale"
@@ -35,7 +35,12 @@ const items = computed(() => LOCALES.map(code => ({
 </script>
 
 <style lang="scss" scoped>
+// Flex, centered: the links' invisible width copies (u-stable-label) would
+// otherwise shift their baseline against the "/" text.
 .ui-language-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
   white-space: nowrap;
 }
 

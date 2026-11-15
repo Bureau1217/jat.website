@@ -68,9 +68,12 @@ ol {
     grid-area: 1 / 1;
   }
 
+  // Placed after the label in grid order: the visible text, not a
+  // zero-height copy, gives the link its baseline (else it sits too low).
   &::before,
   &::after {
     content: attr(data-label);
+    order: 1;
     height: 0;
     overflow: hidden;
     visibility: hidden;
