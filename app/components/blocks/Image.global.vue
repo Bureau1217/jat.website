@@ -47,6 +47,11 @@ const isCover = computed(() => isKirbyTrue(props.block.content.is_cover))
   padding-top: 0;
 }
 
+// Opening a page (home carousel), it sits right under the navigation.
+:global(.v-page-default > .v-blocks > .v-block-image--cover:first-child) {
+  padding-top: 0;
+}
+
 // Same ¼ / ¾ grid as the Paragraph block.
 .v-block-image:not(.v-block-image--cover) .v-block-image__media,
 .v-block-image:not(.v-block-image--cover) .v-block-image__caption {
