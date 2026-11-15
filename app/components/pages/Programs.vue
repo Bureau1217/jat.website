@@ -31,9 +31,6 @@ const groups = computed(() => (props.page.template === 'programs'
 </script>
 
 <style lang="scss" scoped>
-.v-page-programs__groups {
-  padding-block: var(--block-spacing);
-}
 
 .v-page-programs__list {
   display: grid;

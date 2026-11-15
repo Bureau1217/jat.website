@@ -52,9 +52,10 @@ const items = computed(() => (props.block.content.items ?? []).map(item => ({
 <style lang="scss" scoped>
 .v-block-accordion {
   // The page gutter, kept for the content: inside it --gutter is reset to 0.
+  // No vertical padding: bars stack with no gap against a title bar, a
+  // section banner or another accordion (site-wide rule); after text, the
+  // text's own spacing separates them.
   --accordion-gutter: var(--gutter);
-
-  padding-block: var(--block-spacing);
 }
 
 // Full width under the bar: a cover image spans the page, other blocks

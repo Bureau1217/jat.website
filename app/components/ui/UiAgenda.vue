@@ -89,9 +89,6 @@ const pastCount = ref(3)
 </script>
 
 <style lang="scss" scoped>
-.ui-agenda {
-  padding-block: var(--block-spacing);
-}
 
 .ui-agenda__content {
   padding: var(--spacing-4xl) var(--gutter);
@@ -148,10 +145,5 @@ const pastCount = ref(3)
   font: inherit;
   font-size: 20px;
   cursor: pointer;
-}
-
-// Right under the Agenda title bar, the "À la une" bar follows it directly.
-:global(.v-block-heading + .ui-agenda) {
-  padding-top: 0;
 }
 </style>

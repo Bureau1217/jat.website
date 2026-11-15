@@ -26,8 +26,3 @@ const teams = computed(() => (allTeams.value ?? []).filter(team => (props.page.t
   : props.page.children.some(child => child.uuid === team.uuid))))
 </script>
 
-<style lang="scss" scoped>
-.v-page-teams__teams {
-  padding-block: var(--block-spacing);
-}
-</style>
