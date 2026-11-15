@@ -36,10 +36,13 @@
           <h3 v-if="siteInfo?.email || siteInfo?.phone" class="v-footer__title">{{ t('Nous contacter') }}</h3>
           <p v-if="siteInfo?.phone"><a :href="`tel:${siteInfo.phone.replace(/\s/g, '')}`">{{ siteInfo.phone }}</a></p>
           <p v-if="siteInfo?.email"><a :href="`mailto:${siteInfo.email}`">{{ siteInfo.email }}</a></p>
-          <p v-for="link in siteInfo?.legalLinks" :key="link.label" class="v-footer__spaced">
-            <NuxtLink :to="localHref(link.href)" class="v-footer__title">{{ t(link.label) }}</NuxtLink>
-          </p>
         </section>
+
+        <ul v-if="siteInfo?.legalLinks.length" class="v-footer__legal">
+          <li v-for="link in siteInfo.legalLinks" :key="link.label">
+            <NuxtLink :to="localHref(link.href)" class="v-footer__title">{{ t(link.label) }}</NuxtLink>
+          </li>
+        </ul>
 
         <ul v-if="siteInfo?.socialLinks.length">
           <li v-for="link in siteInfo.socialLinks" :key="link.label">
@@ -63,7 +66,7 @@
           </li>
         </ul>
 
-        <UiLanguageSwitcher />
+        <UiLanguageSwitcher class="v-footer__languages" />
       </div>
 
       <div class="v-footer__signature" aria-hidden="true">Jazz à Tours</div>
@@ -179,12 +182,51 @@ const addressLines = computed(() => {
   color: var(--color-background);
 }
 
+// Desktop: one row of columns spread over the width (mockup), the legal
+// links under « Nous contacter ». Mobile: two left-aligned columns, the
+// legal links and FR / EN side by side on the last row.
 .v-footer__columns {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: auto auto;
   justify-content: space-between;
-  gap: var(--spacing-2xl);
+  gap: var(--spacing-xl) var(--spacing-2xl);
   padding-block: var(--spacing-2xl) var(--spacing-4xl);
+
+  > * {
+    grid-row: 1;
+  }
+
+  @media (max-width: $breakpoint-mobile) {
+    grid-auto-flow: row;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: none;
+    justify-content: stretch;
+
+    > * {
+      grid-row: auto;
+    }
+  }
+}
+
+.v-footer__legal {
+  grid-column: 2;
+  grid-row: 2;
+
+  @media (max-width: $breakpoint-mobile) {
+    order: 1;
+    grid-column: 1;
+    grid-row: auto;
+  }
+}
+
+.v-footer__languages {
+  align-self: start;
+
+  @media (max-width: $breakpoint-mobile) {
+    order: 1;
+    grid-column: 2;
+  }
 }
 
 .v-footer__title {
