@@ -40,7 +40,8 @@ export const PAGE_REF_SELECT = {
   title: true,
   template: 'page.intendedTemplate',
   status: 'page.status',
-  parentTitle: 'page.parent.title',
+  // Null-safe: a top-level page (Button to a section) has no parent.
+  parentTitle: 'page.parent?.title',
   description: 'page.description',
   ...EVENT_SELECT
 }

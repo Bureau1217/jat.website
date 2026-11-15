@@ -60,6 +60,13 @@ const image = computed(() => resolveKqlFile(props.block.content.image, props.fil
   @media (max-width: $breakpoint-mobile) {
     font-size: 28px;
   }
+
+  // Narrow column (middle of a fiche 3 colonnes): a bold subtitle.
+  @container (max-width: 899px) {
+    font-size: 22px;
+    line-height: 1.24;
+    letter-spacing: 0;
+  }
 }
 
 // Without a heading the text still sits in the ¾ column — except an

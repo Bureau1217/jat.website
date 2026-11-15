@@ -41,6 +41,12 @@ const isCover = computed(() => isKirbyTrue(props.block.content.is_cover))
   padding-block: var(--block-spacing);
 }
 
+// Right under a title bar, the visual sticks to it (home: « L’École »,
+// « Formations »…). Whole selector in :global(): `:global(.a) .b` compiles to `.a`.
+:global(.v-block-heading + .v-block-image--cover) {
+  padding-top: 0;
+}
+
 // Same ¼ / ¾ grid as the Paragraph block.
 .v-block-image:not(.v-block-image--cover) .v-block-image__media,
 .v-block-image:not(.v-block-image--cover) .v-block-image__caption {
