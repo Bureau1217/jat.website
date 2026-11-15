@@ -11,6 +11,9 @@ export type PageTheme = 'home' | 'news' | 'training' | 'school' | 'concerts' | '
 const THEME_BY_SLUG: Record<string, PageTheme> = {
   'actualites': 'news',
   'agenda': 'news',
+  // Blog data page (articles template)
+  'actualites-blog': 'news',
+  'articles': 'news',
   'se-former': 'training',
   'formations': 'training',
   'ecole': 'school',

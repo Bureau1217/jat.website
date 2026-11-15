@@ -55,7 +55,7 @@ const isCover = computed(() => isKirbyTrue(props.block.content.is_cover))
 // Opening a page (home carousel), it sits right under the navigation and
 // fills the rest of the first screen: its bottom edge falls on the fold.
 :global(.v-page-default > .v-blocks > .v-block-image--cover:first-child) {
-  --opening-height: calc(100svh - var(--navigation-menu-height));
+  --opening-height: calc(100svh - var(--navigation-menu-height) - var(--opening-offset, 0px));
 
   padding-top: 0;
 }

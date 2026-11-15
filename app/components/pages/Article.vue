@@ -1,23 +1,22 @@
 <template>
-  <article v-if="page.article" class="v-page-article u-block">
-    <div class="v-page-article__main u-flex u-flex--column u-gap-2xl">
-      <UiImage v-if="page.article.cover" :file="page.article.cover" class="v-page-article__cover" />
-      <div class="u-flex u-flex--column u-gap-s">
-        <p v-if="page.article.categories.length" class="v-page-article__categories">
-          <span v-for="category in page.article.categories" :key="category"># {{ category }}</span>
-        </p>
-        <h1 class="v-page-article__title">{{ page.title }}</h1>
-        <p v-if="page.article.publishedAt" class="v-page-article__date">
-          <time :datetime="page.article.publishedAt">{{ formatEventDate(page.article.publishedAt) }}</time>
-        </p>
-      </div>
-      <p v-if="page.article.subtitle" class="v-page-article__subtitle">{{ page.article.subtitle }}</p>
-      <UiRichText v-if="page.article.text" :html="page.article.text" class="v-page-article__text" />
-    </div>
+  <article v-if="page.article" class="v-page-article">
+    <UiImage v-if="page.article.cover" :file="page.article.cover" cover class="v-page-article__cover" />
 
-    <aside v-if="page.article.gallery.length" class="v-page-article__aside u-nested" :aria-label="t('Galerie')">
-      <UiAsideGallery :images="page.article.gallery" />
-    </aside>
+    <header class="v-page-article__header u-gutter-x u-flex u-flex--column u-gap-l">
+      <p v-if="page.article.categories.length || page.article.publishedAt" class="v-page-article__meta u-flex u-flex--wrap u-gap-m">
+        <span v-for="category in page.article.categories" :key="category" class="v-page-article__category"># {{ category }}</span>
+        <time v-if="page.article.publishedAt" :datetime="page.article.publishedAt">{{ formatEventDate(page.article.publishedAt) }}</time>
+      </p>
+      <h1 class="v-page-article__title">{{ page.title }}</h1>
+      <p v-if="page.article.subtitle" class="v-page-article__subtitle">{{ page.article.subtitle }}</p>
+    </header>
+
+    <div class="v-page-article__body u-block">
+      <UiRichText v-if="page.article.text" :html="page.article.text" wide class="v-page-article__text" />
+      <aside v-if="page.article.gallery.length" class="v-page-article__aside u-nested" :aria-label="t('Galerie')">
+        <UiAsideGallery :images="page.article.gallery" />
+      </aside>
+    </div>
   </article>
 </template>
 
@@ -25,9 +24,9 @@
 import type { KqlPage } from '~~/shared/types/kql'
 
 /**
- * Actualités article (jat.cms `article` template), mockup B18: visual,
- * title, chapô (subtitle), text — and the optional gallery on the right,
- * like an Agenda event.
+ * Actualités article (jat.cms `article` template), mockup B18: the visual
+ * filling the first screen, the title on the page's bar gradient with the
+ * subtitle, then the text on about 60 % of the width (gallery beside it).
  */
 defineProps<{
   page: KqlPage
@@ -35,9 +34,53 @@ defineProps<{
 </script>
 
 <style lang="scss" scoped>
-.v-page-article {
+.v-page-article__cover {
+  height: calc(100svh - var(--navigation-menu-height));
+
+  @media (max-width: $breakpoint-mobile) {
+    height: auto;
+    aspect-ratio: 4 / 3;
+  }
+}
+
+.v-page-article__header {
+  padding-block: var(--spacing-3xl);
+  background: var(--theme-bar-gradient);
+}
+
+.v-page-article__meta {
+  font-size: 20px;
+}
+
+.v-page-article__category {
+  font-family: var(--font-accent);
+  font-style: italic;
+}
+
+.v-page-article__title {
+  font-size: 72px;
+  line-height: 1.07;
+  text-transform: uppercase;
+
+  @media (max-width: $breakpoint-mobile) {
+    font-size: 36px;
+  }
+}
+
+.v-page-article__subtitle {
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+
+  @media (max-width: $breakpoint-mobile) {
+    font-size: 26px;
+  }
+}
+
+.v-page-article__body {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 3fr 2fr;
   gap: var(--spacing-5xl);
   align-items: start;
 
@@ -47,36 +90,14 @@ defineProps<{
   }
 }
 
-.v-page-article__main,
+// Writer HTML: v-html content, hence :deep().
+.v-page-article__text :deep(p) {
+  margin-bottom: var(--spacing-xs);
+  font-size: 20px;
+  line-height: 1.24;
+}
+
 .v-page-article__aside {
   min-width: 0;
-}
-
-.v-page-article__categories {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-xs);
-  font-family: var(--font-accent);
-  font-style: italic;
-  font-size: 20px;
-}
-
-.v-page-article__title {
-  text-transform: uppercase;
-}
-
-.v-page-article__date {
-  font-size: 20px;
-}
-
-// Chapô: the lead size of the Paragraph block.
-.v-page-article__subtitle {
-  font-size: 26px;
-  line-height: 1.24;
-}
-
-.v-page-article__text :deep(p) {
-  font-size: 20px;
-  line-height: 1.24;
 }
 </style>
