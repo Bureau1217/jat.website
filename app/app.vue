@@ -22,6 +22,7 @@ const locale = useLocale()
 .v-app {
   min-height: 100vh;
   color: var(--color-text);
+  background: var(--theme-page-background, var(--color-background));
 
   main {
     flex: 1;

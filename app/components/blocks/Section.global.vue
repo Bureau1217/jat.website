@@ -35,8 +35,10 @@ const barVariables = computed(() => fillVariables('bar', resolveFill(props.block
 }
 
 // "Bandeau H1" of the mockup: chapter break between the large parts of a page.
+// Fills the screen under the sticky bars, as the 730 px banners of the
+// mockup do on a 1440 × 900 screen.
 .v-block-section__hero {
-  min-height: 500px;
+  min-height: calc(100svh - var(--navigation-menu-height) - var(--anchors-height));
   padding-block: var(--spacing-5xl);
   background: var(--hero-fill, var(--theme-gradient));
   color: var(--hero-text, var(--theme-text));

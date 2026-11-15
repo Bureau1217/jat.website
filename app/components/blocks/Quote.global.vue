@@ -17,7 +17,10 @@ const props = defineProps<{
   block: KqlBlock<QuoteContent>
 }>()
 
-const alignment = computed(() => (props.block.content.alignment === 'right' ? 'right' : 'center'))
+const alignment = computed(() => {
+  const value = props.block.content.alignment
+  return value === 'right' || value === 'column' ? value : 'center'
+})
 
 const fill = computed(() => resolveFill(props.block.content.fill, props.block.content.fill_reverse, props.block.content.text_color))
 
@@ -49,6 +52,29 @@ const textColor = computed(() => {
 .v-block-quote--right {
   align-items: flex-end;
   text-align: right;
+}
+
+// "Dans la colonne de texte": left-aligned in the ¾ column, as the text of
+// the Paragraph block, at the smaller Gaya size (Se former, Cours loisirs).
+.v-block-quote--column {
+  container-type: inline-size;
+  justify-content: center;
+}
+
+.v-block-quote--column .v-block-quote__text,
+.v-block-quote--column .v-block-quote__author {
+  @container (min-width: 900px) {
+    margin-left: calc(25% + var(--spacing-xl) * 0.75);
+  }
+}
+
+.v-block-quote--column .v-block-quote__text {
+  font-size: 40px;
+  line-height: 1.3;
+
+  @media (max-width: $breakpoint-mobile) {
+    font-size: 28px;
+  }
 }
 
 // Accroche of the mockup (home page, under an event banner): Gaya italic XL.

@@ -24,7 +24,8 @@ const fill = computed(() => props.fillValue ? resolveFill(props.fillValue.fill, 
 <style lang="scss" scoped>
 // "Hero de page" of the mockup: the section's gradient unless the page picks one.
 .ui-page-hero {
-  min-height: 711px;
+  // The first screen, under the navigation (and the Repères bar if any).
+  min-height: calc(100svh - var(--navigation-menu-height) - var(--opening-offset, 0px));
   padding-block: var(--spacing-6xl);
   background: var(--theme-gradient);
   color: var(--theme-text);

@@ -102,6 +102,15 @@
   --theme-concerts-bar-gradient: linear-gradient(to bottom, var(--degrade-concerts-projets));
   --theme-spaces-bar-gradient: linear-gradient(to bottom, var(--degrade-espace-etudiant));
 
+  // Italic emphases of lead / exergue text: pink by default, bordeaux on
+  // the Se former and Concerts pages (mockup).
+  --theme-training-emphasis: var(--color-footer);
+  --theme-concerts-emphasis: var(--color-footer);
+
+  // Page background: the site's beige, a gradient on the Agenda pages
+  // ("AGENDA - BACKGROUND" color style).
+  --theme-news-page-background: linear-gradient(to top, var(--degrade-agenda-fond));
+
   // Anchors bar under the nav: the solid color the theme gradient ends on.
   --theme-home-anchors-background: var(--color-secondaire-5);
   --theme-home-anchors-text: var(--color-espaces);
@@ -170,6 +179,8 @@ $page-themes: home, news, training, school, concerts, spaces;
     --color-text: var(--theme-#{$theme}-ink);
     --color-accent: var(--theme-#{$theme}-ink);
     --button-color: var(--theme-#{$theme}-ink);
+    --color-emphasis: var(--theme-#{$theme}-emphasis, var(--color-jat-pink));
+    --theme-page-background: var(--theme-#{$theme}-page-background, var(--color-background));
   }
 }
 

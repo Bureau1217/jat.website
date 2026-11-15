@@ -47,6 +47,8 @@ export interface AccordionItemContent {
   aside: RawBlocks
   /** Left column of the "three_columns" layout (Infos clés, buttons); empty = generated summary. */
   side?: RawBlocks
+  /** "Haut de la fiche": full width above the three columns (banner, accroche). */
+  top?: RawBlocks
   /** Bar fill of this sub-section (empty = the section's bars, else page theme). */
   fill?: RawFill
   fill_reverse?: RawToggle
@@ -123,7 +125,7 @@ export interface QuoteContent {
   /** Inline writer HTML (italic only). */
   text: string
   author: string
-  alignment: 'center' | 'right'
+  alignment: 'center' | 'right' | 'column'
   /** Turns the quote into a colored band (empty = page background). */
   fill?: RawFill
   fill_reverse?: RawToggle
