@@ -6,7 +6,7 @@
   >
     <div class="v-block-image__media">
       <UiCarousel v-if="images.length > 1" :images="images" :variant="isCover ? 'cover' : 'row'" :label="block.content.caption || t('Photos')" />
-      <UiImage v-else :file="images[0]!" class="v-block-image__single" />
+      <UiImage v-else :file="images[0]!" :cover="isCover" class="v-block-image__single" />
     </div>
     <figcaption v-if="block.content.caption" class="v-block-image__caption" :class="{ 'u-gutter-x': isCover }">
       {{ block.content.caption }}
@@ -52,9 +52,18 @@ const isCover = computed(() => isKirbyTrue(props.block.content.is_cover))
   padding-bottom: 0;
 }
 
-// Opening a page (home carousel), it sits right under the navigation.
+// Opening a page (home carousel), it sits right under the navigation and
+// fills the rest of the first screen: its bottom edge falls on the fold.
 :global(.v-page-default > .v-blocks > .v-block-image--cover:first-child) {
+  --opening-height: calc(100svh - var(--navigation-menu-height));
+
   padding-top: 0;
+}
+
+:global(.v-page-default > .v-blocks > .v-block-image--cover:first-child .ui-carousel__slide),
+:global(.v-page-default > .v-blocks > .v-block-image--cover:first-child .v-block-image__single) {
+  aspect-ratio: auto;
+  height: var(--opening-height);
 }
 
 // Same ¼ / ¾ grid as the Paragraph block.
