@@ -82,6 +82,10 @@ watch(isOpen, (open) => {
       inset: 0;
       display: flex;
       flex-direction: column;
+      // Stretched full screen, the gradient's light end would fade the
+      // links: the solid pair of the Repères bar reads in every theme.
+      background: var(--theme-anchors-background);
+      color: var(--theme-anchors-text);
     }
   }
 }
@@ -89,6 +93,10 @@ watch(isOpen, (open) => {
 .v-navigation-menu__bar {
   min-height: var(--navigation-menu-height);
   padding-block: var(--spacing-s);
+
+  @media (max-width: $breakpoint-mobile) {
+    gap: var(--spacing-m);
+  }
 }
 
 .v-navigation-menu__logo {
@@ -123,6 +131,7 @@ watch(isOpen, (open) => {
   }
 }
 
+// Pushed to the right on mobile, the burger right after it.
 .v-navigation-menu__languages {
   font-size: 18px;
   font-weight: 700;
@@ -136,7 +145,6 @@ watch(isOpen, (open) => {
   display: none;
   width: 48px;
   height: 48px;
-  margin-left: auto;
   padding: var(--spacing-xs);
   background: transparent;
   border: none;

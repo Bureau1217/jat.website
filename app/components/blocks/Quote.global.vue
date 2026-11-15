@@ -62,6 +62,13 @@ const textColor = computed(() => {
   }
 }
 
+// Inside a column (fiche 3 colonnes): the smaller "exergue" of the mockup.
+// (The whole selector goes in :global() — `:global(.a) .b` compiles to `.a`.)
+:global(.u-nested .v-block-quote__text) {
+  font-size: 40px;
+  line-height: 1.3;
+}
+
 .v-block-quote__author {
   font-size: 16px;
   font-weight: 700;

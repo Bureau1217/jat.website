@@ -11,6 +11,7 @@ const EN: Record<string, string> = {
   'Ouvrir le menu': 'Open the menu',
   'Fermer le menu': 'Close the menu',
   'Sections de la page': 'Page sections',
+  'Pages de la rubrique': 'Section pages',
   'Langue': 'Language',
   'E-mail': 'Email',
   'e-mail': 'email',

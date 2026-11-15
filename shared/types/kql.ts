@@ -218,6 +218,11 @@ export interface KqlNavItem {
   uri: string
 }
 
+/** Top-level page of the header nav, with its listed subpages. */
+export interface KqlNavSection extends KqlNavItem {
+  children: KqlNavItem[]
+}
+
 export interface KqlAddress {
   name: string | null
   street: string | null
