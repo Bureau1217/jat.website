@@ -1,17 +1,21 @@
 <template>
-  <div class="ui-rich-text" :class="{ 'ui-rich-text--wide': wide }" v-html="html" />
+  <div class="ui-rich-text" :class="{ 'ui-rich-text--wide': wide }" v-html="formatted" />
 </template>
 
 <script setup lang="ts">
 /**
  * HTML of a Kirby writer field (paragraphs, lists, bold, italic, links),
- * with the list markers the global reset strips (typo.scss) restored.
+ * with the list markers the global reset strips (typo.scss) restored and
+ * French punctuation spacing in French.
  */
-defineProps<{
+const props = defineProps<{
   html: string
   /** Spans its whole column instead of the reading max width. */
   wide?: boolean
 }>()
+
+const locale = useLocale()
+const formatted = computed(() => (locale.value === 'fr' ? frenchSpacing(props.html) : props.html))
 </script>
 
 <style lang="scss" scoped>

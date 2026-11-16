@@ -39,6 +39,8 @@ interface RawPage {
   heroSignature: string | null
   heroFill: string | null
   heroFillReverse: string | null
+  seoTitle: string | null
+  seoDescription: string | null
 }
 
 /**
@@ -95,6 +97,10 @@ const PAGE_SELECT = {
   heroSignature: 'page.hero_signature',
   heroFill: 'page.hero_fill',
   heroFillReverse: 'page.hero_fill_reverse',
+  // « SEO » tab (jat.cms sections/seo.yml), both optional: see
+  // app/composables/usePageSeo.ts for the fallbacks.
+  seoTitle: 'page.seo_title',
+  seoDescription: 'page.seo_description',
   ...EVENT_SELECT
 }
 
@@ -165,7 +171,9 @@ export async function fetchPage(id: string, locale: Locale): Promise<KqlPage | n
       fill: raw.heroFill
         ? { fill: raw.heroFill, reverse: raw.heroFillReverse === 'true' }
         : null
-    }
+    },
+    seoTitle: raw.seoTitle || null,
+    seoDescription: raw.seoDescription || null
   }
 }
 

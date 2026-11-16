@@ -2,23 +2,24 @@
   <footer class="v-footer">
     <div class="v-footer__newsletter u-gutter-x">
       <div class="u-flex u-flex--column u-gap-xs">
-        <p v-if="siteInfo?.newsletter.text" class="v-footer__newsletter-text">{{ siteInfo.newsletter.text }}</p>
+        <p class="v-footer__newsletter-text">{{ siteInfo?.newsletter.text ?? t('Pour vous tenir au courant de l’actualité de l’école, inscrivez-vous à notre') }}</p>
         <h2 class="v-footer__newsletter-title">Newsletter</h2>
       </div>
       <form
-        v-if="siteInfo?.newsletter.action"
-        :action="siteInfo.newsletter.action"
+        :action="nativeAction"
         method="post"
         target="_blank"
         class="v-footer__form"
+        @submit="onSubmit"
       >
         <label class="u-visually-hidden" for="v-footer-email">{{ t('E-mail') }}</label>
-        <input id="v-footer-email" name="EMAIL" type="email" required autocomplete="email" :placeholder="t('e-mail')" class="v-footer__input">
+        <input id="v-footer-email" v-model="email" name="EMAIL" type="email" required autocomplete="email" :placeholder="t('e-mail')" class="v-footer__input">
         <label class="u-visually-hidden" for="v-footer-first-name">{{ t('Prénom') }}</label>
-        <input id="v-footer-first-name" name="FNAME" type="text" autocomplete="given-name" :placeholder="t('Prénom')" class="v-footer__input">
+        <input id="v-footer-first-name" v-model="firstName" name="FNAME" type="text" autocomplete="given-name" :placeholder="t('Prénom')" class="v-footer__input">
         <label class="u-visually-hidden" for="v-footer-last-name">{{ t('Nom') }}</label>
-        <input id="v-footer-last-name" name="LNAME" type="text" autocomplete="family-name" :placeholder="t('Nom')" class="v-footer__input">
-        <button type="submit" class="v-footer__submit">{{ t('S’inscrire') }}</button>
+        <input id="v-footer-last-name" v-model="lastName" name="LNAME" type="text" autocomplete="family-name" :placeholder="t('Nom')" class="v-footer__input">
+        <button type="submit" class="v-footer__submit" :disabled="sending">{{ t('S’inscrire') }}</button>
+        <p class="v-footer__newsletter-status" aria-live="polite">{{ statusMessage }}</p>
       </form>
     </div>
 
@@ -75,6 +76,7 @@
 </template>
 
 <script setup lang="ts">
+import type { NewsletterResponse } from '~~/shared/types/newsletter'
 import { stripLocale, withLocale } from '~~/shared/utils/locales'
 
 // Same on every page (unlike the header, it has no page theme). Everything
@@ -88,6 +90,44 @@ const { data: siteInfo } = await useSiteInfo()
 const locale = useLocale()
 function localHref(href: string): string {
   return href.startsWith('/') ? withLocale(stripLocale(href), locale.value) : href
+}
+
+// Newsletter, always shown (mockup): with Mailchimp configured on the
+// server, the form posts to /api/newsletter and answers in place; else it
+// posts natively to the e-mailing tool's form address set in the Panel (new
+// tab); with neither, /api/newsletter answers that sign-up opens soon.
+const nativeAction = computed(() => (siteInfo.value?.newsletter.api ? undefined : siteInfo.value?.newsletter.action ?? undefined))
+const email = ref('')
+const firstName = ref('')
+const lastName = ref('')
+const sending = ref(false)
+const status = ref<NewsletterResponse['status'] | null>(null)
+
+const STATUS_MESSAGES: Record<NewsletterResponse['status'], string> = {
+  success: 'Merci, vous êtes inscrit·e à la newsletter.',
+  invalid: 'L’adresse e-mail n’est pas valide.',
+  unavailable: 'L’inscription à la newsletter ouvre bientôt.',
+  error: 'Une erreur est survenue, réessayez ou écrivez-nous.'
+}
+const statusMessage = computed(() => (status.value ? t(STATUS_MESSAGES[status.value]) : ''))
+
+async function onSubmit(submitEvent: Event): Promise<void> {
+  if (nativeAction.value) return
+  submitEvent.preventDefault()
+  sending.value = true
+  try {
+    const response = await $fetch<NewsletterResponse>('/api/newsletter', {
+      method: 'POST',
+      body: { email: email.value, firstName: firstName.value, lastName: lastName.value }
+    })
+    status.value = response.status
+    email.value = firstName.value = lastName.value = ''
+  } catch (error) {
+    // Validation / not configured / Mailchimp errors come back with a status.
+    status.value = (error as { data?: NewsletterResponse }).data?.status ?? 'error'
+  } finally {
+    sending.value = false
+  }
 }
 
 const addressLines = computed(() => {
@@ -174,6 +214,20 @@ const addressLines = computed(() => {
 
 .v-footer__submit {
   cursor: pointer;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+}
+
+.v-footer__newsletter-status {
+  flex-basis: 100%;
+  text-align: right;
+
+  &:empty {
+    display: none;
+  }
 }
 
 .v-footer__main {

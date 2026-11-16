@@ -91,6 +91,9 @@ export interface KqlPage {
     signature: string | null
     fill: KqlFillValue | null
   }
+  /** « SEO » tab — null when left empty (usePageSeo falls back). */
+  seoTitle: string | null
+  seoDescription: string | null
 }
 
 /** A jat.cms fields/fill value with its "Inverser le dégradé" toggle. */
@@ -261,8 +264,12 @@ export interface KqlSiteInfo {
   transports: KqlTransport[]
   disabilityReferents: KqlReferent[]
   vhssReferents: KqlReferent[]
-  /** action: form URL of the e-mailing tool (null = no form). */
-  newsletter: { text: string | null, action: string | null }
+  /**
+   * action: form URL of the e-mailing tool. api: sign-ups go through
+   * /api/newsletter (Mailchimp configured), which wins over `action`.
+   * Neither: no form.
+   */
+  newsletter: { text: string | null, action: string | null, api: boolean }
   footerPages: KqlNavItem[]
   /** Only the networks with a URL filled in. */
   socialLinks: KqlLink[]
@@ -270,4 +277,7 @@ export interface KqlSiteInfo {
   legalLinks: KqlLink[]
   /** Writer HTML. */
   accessibilityText: string | null
+  /** « SEO » tab: default meta description and share image (absolute URL). */
+  seoDescription: string | null
+  seoImage: string | null
 }

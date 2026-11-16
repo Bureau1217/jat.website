@@ -4,7 +4,7 @@
     :class="[`v-block-quote--${alignment}`, { 'v-block-quote--filled': fill }]"
     :style="fill ? { background: fill.background, color: fill.color } : textColor"
   >
-    <blockquote class="v-block-quote__text" v-html="block.content.text" />
+    <blockquote class="v-block-quote__text" v-html="text" />
     <figcaption v-if="block.content.author" class="v-block-quote__author">{{ block.content.author }}</figcaption>
   </figure>
 </template>
@@ -16,6 +16,9 @@ import type { KqlBlock } from '~~/shared/types/kql'
 const props = defineProps<{
   block: KqlBlock<QuoteContent>
 }>()
+
+const locale = useLocale()
+const text = computed(() => (locale.value === 'fr' ? frenchSpacing(props.block.content.text) : props.block.content.text))
 
 const alignment = computed(() => {
   const value = props.block.content.alignment

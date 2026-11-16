@@ -53,7 +53,5 @@ watchEffect(() => {
   headerFill.value = fill ? resolveFill(fill.fill, fill.reverse) : null
 })
 
-useSeoMeta({
-  title: () => page.value?.title
-})
+usePageSeo(page)
 </script>

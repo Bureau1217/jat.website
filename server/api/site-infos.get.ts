@@ -19,6 +19,8 @@ interface RawSiteInfos {
   legalNoticeLink: string | null
   privacyPolicyLink: string | null
   accessibilityText: string | null
+  seoDescription: string | null
+  seoImage: { url: string } | null
 }
 
 /** Social networks and legal links, in display order — labels are fixed, only the URLs are edited. */
@@ -42,18 +44,21 @@ const EMPTY: KqlSiteInfo = {
   transports: [],
   disabilityReferents: [],
   vhssReferents: [],
-  newsletter: { text: null, action: null },
+  newsletter: { text: null, action: null, api: false },
   footerPages: [],
   socialLinks: [],
   legalLinks: [],
-  accessibilityText: null
+  accessibilityText: null,
+  seoDescription: null,
+  seoImage: null
 }
 
 /**
  * Everything editors manage from "Informations générales" (jat.cms
  * `informations` template): contact details, opening hours, transports,
  * disability referents, footer pages,
- * social networks, legal links and the accessibility text.
+ * social networks, legal links, the accessibility text, the newsletter
+ * and the SEO defaults.
  */
 export default defineEventHandler(async (event): Promise<KqlSiteInfo> => {
   const config = useRuntimeConfig()
@@ -92,12 +97,17 @@ export default defineEventHandler(async (event): Promise<KqlSiteInfo> => {
       // Kirby link fields store "page://<uuid>" for internal pages — .toUrl resolves them.
       legalNoticeLink: 'page.legal_notice_link.toUrl',
       privacyPolicyLink: 'page.privacy_policy_link.toUrl',
-      accessibilityText: 'page.accessibility_text'
+      accessibilityText: 'page.accessibility_text',
+      seoDescription: 'page.seo_default_description',
+      seoImage: {
+        query: 'page.seo_default_image.toFile',
+        select: { url: true }
+      }
     }
   }, requestLocale(event))
 
   if (!page) {
-    return EMPTY
+    return { ...EMPTY, newsletter: { ...EMPTY.newsletter, api: isMailchimpConfigured() } }
   }
 
   const address: KqlAddress | null = page.address && !Array.isArray(page.address)
@@ -125,11 +135,14 @@ export default defineEventHandler(async (event): Promise<KqlSiteInfo> => {
     vhssReferents: (page.vhssReferents ?? []).map(row => ({ name: row.referent_name, contact: row.contact || null })),
     newsletter: {
       text: page.newsletterText || null,
-      action: page.newsletterAction || null
+      action: page.newsletterAction || null,
+      api: isMailchimpConfigured()
     },
     footerPages: page.footerPages ?? [],
     socialLinks: toLinks(SOCIAL_LINKS),
     legalLinks: toLinks(LEGAL_LINKS),
-    accessibilityText: page.accessibilityText || null
+    accessibilityText: page.accessibilityText || null,
+    seoDescription: page.seoDescription || null,
+    seoImage: page.seoImage?.url || null
   }
 })
