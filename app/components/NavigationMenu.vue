@@ -1,8 +1,11 @@
 <template>
+  <!-- Gab's dev--gab header (sizes, logo, colours) + FR / EN. The fill is
+       the section's (main.scss, --theme-*-header-*) unless the page picks
+       its own « Fond de la navigation » in the Panel. -->
   <header
     class="v-navigation-menu"
     :class="[`u-theme--${theme}`, { 'is-open': isOpen }]"
-    :style="headerFill ? { '--theme-gradient': headerFill.background, '--theme-text': headerFill.color } : undefined"
+    :style="headerFill ? { '--theme-header-gradient': headerFill.background, '--theme-header-text': headerFill.color } : undefined"
   >
     <div class="v-navigation-menu__bar u-flex u-flex--align-center u-gap-5xl u-gutter-x">
       <NuxtLink :to="withLocale('/', locale)" class="v-navigation-menu__logo" :aria-label="t('Jazz à Tours — accueil')" @click="isOpen = false">JÀT</NuxtLink>
@@ -10,7 +13,12 @@
       <nav class="v-navigation-menu__desktop-nav" :aria-label="t('Navigation principale')">
         <ul class="u-flex u-flex--align-center u-gap-2xl">
           <li v-for="item in navItems" :key="item.id">
-            <NuxtLink :to="pagePath(item)" class="v-navigation-menu__link u-stable-label" :data-label="item.title"><span>{{ item.title }}</span></NuxtLink>
+            <!-- Both typefaces stacked in one cell: the link keeps the width of
+                 the wider one, so switching to Gaya on hover moves nothing. -->
+            <NuxtLink :to="pagePath(item)" class="v-navigation-menu__link">
+              <span class="v-navigation-menu__label">{{ item.title }}</span>
+              <span class="v-navigation-menu__label v-navigation-menu__label--alt" aria-hidden="true">{{ item.title }}</span>
+            </NuxtLink>
           </li>
         </ul>
       </nav>
@@ -49,7 +57,13 @@ import { withLocale } from '~~/shared/utils/locales'
 const isOpen = ref(false)
 const theme = usePageTheme()
 const locale = useLocale()
-const headerFill = useHeaderFill()
+// « Fond de la navigation » of the page, read from the page data itself
+// (shared request): known at server render, so the fill is in the HTML.
+const { data: currentPage } = await useCurrentPage()
+const headerFill = computed(() => {
+  const fill = currentPage.value?.headerFill
+  return fill ? resolveFill(fill.fill, fill.reverse) : null
+})
 
 // Every listed top-level site page, in Panel order (see /api/nav). The home
 // page is left out: the logo already links to "/".
@@ -73,8 +87,8 @@ watch(isOpen, (open) => {
   z-index: 1000;
   // Some gradients are translucent (Agenda): the page background under them
   // keeps the content from showing through the sticky bar.
-  background: var(--theme-gradient), var(--color-background);
-  color: var(--theme-text);
+  background: var(--theme-header-gradient), var(--color-background);
+  color: var(--theme-header-text);
 
   @media (max-width: $breakpoint-mobile) {
     &.is-open {
@@ -82,10 +96,6 @@ watch(isOpen, (open) => {
       inset: 0;
       display: flex;
       flex-direction: column;
-      // Stretched full screen, the gradient's light end would fade the
-      // links: the solid pair of the Repères bar reads in every theme.
-      background: var(--theme-anchors-background);
-      color: var(--theme-anchors-text);
     }
   }
 }
@@ -101,7 +111,7 @@ watch(isOpen, (open) => {
 
 .v-navigation-menu__logo {
   font-family: var(--font-heading);
-  font-size: 44px;
+  font-size: fluid(36px, 55px);
   line-height: 1;
   text-decoration: none;
 }
@@ -109,38 +119,49 @@ watch(isOpen, (open) => {
 .v-navigation-menu__desktop-nav {
   flex: 1;
 
-  // The last item (Recherches in the mockup) sits apart, on the right.
-  li:last-child:not(:first-child) {
-    margin-left: auto;
-  }
-
   @media (max-width: $breakpoint-mobile) {
     display: none;
   }
 }
 
-// Hovered and current links switch to Gaya ("small bold interactif" text
-// style of the mockup: Gaya Regular 21) instead of being underlined.
-// The width never changes (u-stable-label, typo.scss): neighbours don't move.
 .v-navigation-menu__link {
-  --stable-label-accent-size: 21px;
-
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 24px;
+  display: inline-grid;
+  justify-items: center;
   text-decoration: none;
+}
 
-  &:hover > span,
-  &.router-link-active > span {
-    font-family: var(--font-accent);
-    font-size: 21px;
-    font-weight: 400;
+// Mockup « B3 small bold »: ES Rebond Bold.
+.v-navigation-menu__label {
+  grid-area: 1 / 1;
+  font-family: var(--font-body);
+  font-size: fluid(17px, 20px);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+// Mockup « B3 interactif »: the hovered / active page switches to Gaya.
+.v-navigation-menu__label--alt {
+  font-family: var(--font-accent);
+  font-size: fluid(19px, 21px);
+  font-weight: 400;
+  text-transform: capitalize;
+  visibility: hidden;
+}
+
+.v-navigation-menu__link:hover,
+.v-navigation-menu__link.router-link-active {
+  .v-navigation-menu__label {
+    visibility: hidden;
+  }
+
+  .v-navigation-menu__label--alt {
+    visibility: visible;
   }
 }
 
-// Pushed to the right on mobile, the burger right after it.
+// Same type as the links; pushed to the right on mobile, the burger after it.
 .v-navigation-menu__languages {
-  font-size: 18px;
+  font-size: fluid(17px, 20px);
   font-weight: 700;
 
   @media (max-width: $breakpoint-mobile) {
@@ -212,14 +233,17 @@ watch(isOpen, (open) => {
   }
 }
 
+// Mockup « H3 »: Animo capitals.
 .v-navigation-menu__mobile-link {
   font-family: var(--font-heading);
-  font-size: 28px;
+  font-size: fluid(34px, 72px);
+  line-height: 1.07;
+  text-transform: uppercase;
   text-decoration: none;
 
   &:hover,
   &.router-link-active {
-    font-family: var(--font-accent);
+    text-decoration: underline;
   }
 }
 

@@ -15,24 +15,10 @@
 </template>
 
 <script setup lang="ts">
-import type { KqlPage } from '~~/shared/types/kql'
-
-const route = useRoute()
 const locale = useLocale()
 
-// Kirby page id: the URL without its /en prefix.
-const path = computed(() => {
-  const segments = Array.isArray(route.params.slug) ? route.params.slug : []
-  return (locale.value === 'en' ? segments.slice(1) : segments).join('/')
-})
-
-const { data: page, error } = await useFetch<KqlPage>(
-  () => (path.value === '' ? '/api/page' : `/api/page/${path.value}`),
-  {
-    query: { lang: locale },
-    key: () => `page:${locale.value}:${path.value}`
-  }
-)
+// Same request as NavigationMenu (shared key): already resolved here.
+const { data: page, error } = await useCurrentPage()
 
 useHead({
   htmlAttrs: { lang: locale }
@@ -45,13 +31,6 @@ if (error.value) {
     fatal: true
   })
 }
-
-// Read by NavigationMenu, which lives outside the page.
-const headerFill = useHeaderFill()
-watchEffect(() => {
-  const fill = page.value?.headerFill
-  headerFill.value = fill ? resolveFill(fill.fill, fill.reverse) : null
-})
 
 usePageSeo(page)
 </script>

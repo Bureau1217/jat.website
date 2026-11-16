@@ -1,3 +1,6 @@
+@use "sass:math";
+
+
 // Build-time SCSS constants — values that must be known at compile time,
 // like a breakpoint inside a @media query (which can't read a CSS custom
 // property). Anything that CAN live as a runtime CSS variable belongs in
@@ -6,3 +9,27 @@
 // (see nuxt.config.ts) — reference it directly, no @use/@import needed.
 
 $breakpoint-mobile: 900px;
+
+// Fluid sizes (from dev--gab): the mockup is drawn at 1440px wide; a fluid
+// value grows linearly from $fluid-min-viewport (small phone) to the mockup
+// width, then keeps scaling with the screen up to $scale-max-viewport.
+$fluid-min-viewport: 375px;
+$fluid-max-viewport: 1440px;
+$scale-max-viewport: 2560px;
+$root-font-size: 16px;
+
+/// px → rem, so every size follows the visitor's browser font setting.
+@function rem($px) {
+  @return math.div($px, $root-font-size) * 1rem;
+}
+
+/// $min (px) on a small phone → $max (px, the mockup value) at 1440px, then
+/// proportional to the screen up to $scale-max-viewport.
+@function fluid($min, $max) {
+  $slope: math.div($max - $min, $fluid-max-viewport - $fluid-min-viewport);
+  $intercept: $min - $slope * $fluid-min-viewport;
+  $vw: math.div(math.round($slope * 10000), 100);
+  $grow: math.div(math.round(math.div($max, $fluid-max-viewport) * 1000000), 10000);
+  $cap: math.div($max * $scale-max-viewport, $fluid-max-viewport);
+  @return min(max(clamp(#{rem($min)}, #{rem($intercept)} + #{$vw}vw, #{rem($max)}), #{$grow}vw), #{rem($cap)});
+}

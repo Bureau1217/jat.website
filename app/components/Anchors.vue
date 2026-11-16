@@ -63,9 +63,8 @@ let observer: IntersectionObserver | null = null
 
 function observeSections(): void {
   observer?.disconnect()
-  const offset = getComputedStyle(document.documentElement)
-  const barsHeight = parseFloat(offset.getPropertyValue('--navigation-menu-height'))
-    + parseFloat(offset.getPropertyValue('--anchors-height'))
+  // The nav height is fluid (clamp/min/max): measured, not parsed.
+  const barsHeight = cssLengthToPx('calc(var(--navigation-menu-height) + var(--anchors-height))')
 
   observer = new IntersectionObserver((entries) => {
     for (const entry of entries) {

@@ -94,6 +94,22 @@
   --theme-spaces-text: var(--color-background);
   --theme-spaces-ink: var(--color-footer);
 
+  // Navigation bar: its own fill per section (Gab's dev--gab version,
+  // validated on the deployed preview), separate from the section banners.
+  // "to bottom" = the Figma INVERSE version.
+  --theme-home-header-gradient: linear-gradient(to top, var(--degrade-accueil));
+  --theme-home-header-text: var(--color-secondaire-5);
+  --theme-news-header-gradient: linear-gradient(to top, var(--degrade-agenda));
+  --theme-news-header-text: var(--color-se-former);
+  --theme-training-header-gradient: linear-gradient(to top, var(--degrade-se-former-diplomantes));
+  --theme-training-header-text: var(--color-secondaire-2);
+  --theme-school-header-gradient: linear-gradient(to top, var(--degrade-ecole));
+  --theme-school-header-text: var(--color-secondaire-3);
+  --theme-concerts-header-gradient: linear-gradient(to bottom, var(--degrade-concerts-projets));
+  --theme-concerts-header-text: var(--color-se-former);
+  --theme-spaces-header-gradient: linear-gradient(to bottom, var(--degrade-espace-etudiant));
+  --theme-spaces-header-text: var(--color-secondaire-3);
+
   // Title / accordion bars: the theme gradient, reversed (mockup).
   --theme-home-bar-gradient: linear-gradient(to bottom, var(--degrade-accueil));
   --theme-news-bar-gradient: linear-gradient(to bottom, var(--degrade-agenda));
@@ -126,7 +142,7 @@
   --theme-spaces-anchors-text: var(--color-background);
 
   // Sticky bars: sections scroll to just below both.
-  --navigation-menu-height: 86px;
+  --navigation-menu-height: #{fluid(64px, 86px)};
   --anchors-height: 48px;
 
   // Spacing scale
@@ -170,6 +186,8 @@ $page-themes: home, news, training, school, concerts, spaces;
   .u-theme--#{$theme} {
     --theme-gradient: var(--theme-#{$theme}-gradient);
     --theme-text: var(--theme-#{$theme}-text);
+    --theme-header-gradient: var(--theme-#{$theme}-header-gradient);
+    --theme-header-text: var(--theme-#{$theme}-header-text);
     --theme-anchors-background: var(--theme-#{$theme}-anchors-background);
     --theme-anchors-text: var(--theme-#{$theme}-anchors-text);
     --theme-ink: var(--theme-#{$theme}-ink);

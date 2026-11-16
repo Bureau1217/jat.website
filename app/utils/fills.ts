@@ -94,8 +94,11 @@ export function resolveFill(
 ): ResolvedFill | null {
   if (!isFill(fill)) return null
   const isReversed = isKirbyTrue(reverse ?? undefined)
+  // A flat color as a one-color gradient: an image, so it stays valid as a
+  // layer of a multi-layer background (the navigation stacks it over the
+  // page color) — a bare color there drops the whole declaration.
   const background = fill.startsWith('aplat-')
-    ? `var(--${fill})`
+    ? `linear-gradient(var(--${fill}), var(--${fill}))`
     : `linear-gradient(${isReversed ? 'to bottom' : 'to top'}, var(--${fill}))`
   const color = `var(--color-${isTextColor(textColor) ? textColor : TEXT_ON_FILL[fill]})`
   return { background, color }
