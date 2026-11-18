@@ -16,10 +16,15 @@ export type RawToggle = 'true' | 'false' | boolean | ''
 /** Value of a jat.cms fields/fill select ("" = default of the component). */
 export type RawFill = string
 
+/** Bar: colored title bar. Banner: full-screen chapter break. None: no title. */
+export type SectionTitleDisplay = 'bar' | 'banner' | 'none'
+
 export interface SectionContent {
   /** Section name, shown in the anchors bar ("" → not listed). */
   heading: string
-  /** Opens the section with a large banner holding its name. */
+  /** How its name opens the section ("" on sections saved before the field). */
+  title_display?: SectionTitleDisplay | ''
+  /** Before title_display: opens the section with a large banner holding its name. */
   show_hero?: RawToggle
   /** Banner fill (empty = page theme). */
   fill?: RawFill

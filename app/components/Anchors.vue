@@ -1,5 +1,5 @@
 <template>
-  <nav v-if="items.length" class="v-anchors u-gutter-x" :class="`u-theme--${theme}`" :aria-label="t(anchors.length ? 'Sections de la page' : 'Pages de la rubrique')">
+  <nav v-if="items.length" class="v-anchors u-gutter-x" :class="`u-theme--${pageTheme(path)}`" :aria-label="t(anchors.length ? 'Sections de la page' : 'Pages de la rubrique')">
     <ul class="v-anchors__list u-flex u-flex--align-center">
       <li v-for="item in items" :key="item.id">
         <NuxtLink
@@ -23,14 +23,16 @@ import { stripLocale } from '~~/shared/utils/locales'
 /**
  * "Repères" bar under the navigation (mockup G1): the sections of the page
  * when it has named ones, else the listed subpages of its section of the
- * site (e.g. the Espaces).
+ * site (e.g. the Espaces). Mounted once by app.vue, which passes the page
+ * it belongs to: the path is a prop, not the route, so a bar sliding away
+ * keeps the content and colors of the page it is leaving.
  */
 const props = defineProps<{
+  /** Path of the page (current locale) the bar belongs to. */
+  path: string
   blocks?: KqlBlock[]
 }>()
 
-const theme = usePageTheme()
-const route = useRoute()
 const { data: nav } = await useSiteNav()
 
 const anchors = computed(() => sectionAnchors(props.blocks))
@@ -38,7 +40,7 @@ const activeId = ref<string | null>(null)
 
 // Subpages of the top-level page this route belongs to.
 const sectionPages = computed(() => {
-  const slug = stripLocale(route.path).split('/').find(Boolean)
+  const slug = stripLocale(props.path).split('/').find(Boolean)
   const section = (nav.value ?? []).find(item => item.uri === slug)
   return section?.children ?? []
 })
@@ -54,7 +56,7 @@ const items = computed(() => anchors.value.length
       id: page.id,
       label: page.title,
       to: pagePath(page),
-      isActive: stripLocale(route.path) === `/${page.uri}`
+      isActive: stripLocale(props.path) === `/${page.uri}`
     })))
 
 // The active anchor is the last section whose top has scrolled past the
@@ -84,10 +86,13 @@ onBeforeUnmount(() => observer?.disconnect())
 </script>
 
 <style lang="scss" scoped>
-// Sticks right under the navigation menu.
+// Sticks right under the navigation menu, laid over the top of the page:
+// it takes no room (negative margin), so the page doesn't move when it
+// slides in or out (app.vue). Pages with a bar open on a full-screen banner.
 .v-anchors {
   position: sticky;
   top: var(--navigation-menu-height);
+  margin-bottom: calc(-1 * var(--anchors-height));
   z-index: 999;
   background: var(--theme-anchors-background);
   color: var(--theme-anchors-text);

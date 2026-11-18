@@ -27,7 +27,6 @@ const embedUrl = computed(() =>
   width: 100%;
   aspect-ratio: 16 / 9;
   border: 0;
-  border-radius: var(--radius-m);
 
   @media (max-width: $breakpoint-mobile) {
     aspect-ratio: 1;

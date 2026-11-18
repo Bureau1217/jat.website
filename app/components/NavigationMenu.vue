@@ -7,6 +7,15 @@
     :class="[`u-theme--${theme}`, { 'is-open': isOpen }]"
     :style="headerFill ? { '--theme-header-gradient': headerFill.background, '--theme-header-text': headerFill.color } : undefined"
   >
+    <!-- Previous colors, fading out over the new ones at a page change. -->
+    <span
+      v-if="previousBackground"
+      :key="previousBackground.key"
+      class="v-navigation-menu__previous"
+      :style="{ background: previousBackground.value }"
+      aria-hidden="true"
+      @animationend="previousBackground = null"
+    />
     <div class="v-navigation-menu__bar u-flex u-flex--align-center u-gap-5xl u-gutter-x">
       <NuxtLink :to="withLocale('/', locale)" class="v-navigation-menu__logo" :aria-label="t('Jazz à Tours — accueil')" @click="isOpen = false">JÀT</NuxtLink>
 
@@ -65,6 +74,18 @@ const headerFill = computed(() => {
   return fill ? resolveFill(fill.fill, fill.reverse) : null
 })
 
+// At a page change the colors crossfade with the page
+// (utils/pageTransition.ts): the old background is laid over the new one
+// and fades out. Gradients can't be transitioned by CSS themselves.
+const background = computed(() => headerFill.value?.background ?? `var(--theme-${theme.value}-header-gradient)`)
+const previousBackground = shallowRef<{ key: number, value: string } | null>(null)
+let previousKey = 0
+watch(background, (_, old) => {
+  if (import.meta.client && !reducedMotion()) {
+    previousBackground.value = { key: ++previousKey, value: `${old}, var(--color-background)` }
+  }
+})
+
 // Every listed top-level site page, in Panel order (see /api/nav). The home
 // page is left out: the logo already links to "/".
 const { data: navPages } = await useSiteNav()
@@ -89,6 +110,8 @@ watch(isOpen, (open) => {
   // keeps the content from showing through the sticky bar.
   background: var(--theme-header-gradient), var(--color-background);
   color: var(--theme-header-text);
+  // The text color follows the crossfade (see .v-navigation-menu__previous).
+  transition: color 0.7s cubic-bezier(0.65, 0, 0.35, 1);
 
   @media (max-width: $breakpoint-mobile) {
     &.is-open {
@@ -98,6 +121,26 @@ watch(isOpen, (open) => {
       flex-direction: column;
     }
   }
+}
+
+// 0.7s and curve = PAGE_CROSSFADE_MS and EASE_IN_OUT (utils/pageTransition.ts).
+.v-navigation-menu__previous {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  animation: v-navigation-menu-previous-out 0.7s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+@keyframes v-navigation-menu-previous-out {
+  to {
+    opacity: 0;
+  }
+}
+
+// Above the fading layer.
+.v-navigation-menu__bar,
+.v-navigation-menu__mobile-nav {
+  position: relative;
 }
 
 .v-navigation-menu__bar {

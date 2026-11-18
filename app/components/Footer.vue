@@ -39,12 +39,6 @@
           <p v-if="siteInfo?.email"><a :href="`mailto:${siteInfo.email}`">{{ siteInfo.email }}</a></p>
         </section>
 
-        <ul v-if="siteInfo?.legalLinks.length" class="v-footer__legal">
-          <li v-for="link in siteInfo.legalLinks" :key="link.label">
-            <NuxtLink :to="localHref(link.href)" class="v-footer__title">{{ t(link.label) }}</NuxtLink>
-          </li>
-        </ul>
-
         <ul v-if="siteInfo?.socialLinks.length">
           <li v-for="link in siteInfo.socialLinks" :key="link.label">
             <a :href="link.href" target="_blank" rel="noopener">{{ link.label }}</a>
@@ -67,7 +61,16 @@
           </li>
         </ul>
 
-        <UiLanguageSwitcher class="v-footer__languages" />
+        <!-- Last column: FR / EN on top, the legal links at the bottom, on
+             the line of the postal code (first column). -->
+        <div class="v-footer__end">
+          <UiLanguageSwitcher class="v-footer__languages" />
+          <ul v-if="siteInfo?.legalLinks.length" class="v-footer__legal">
+            <li v-for="link in siteInfo.legalLinks" :key="link.label">
+              <NuxtLink :to="localHref(link.href)" class="v-footer__title">{{ t(link.label) }}</NuxtLink>
+            </li>
+          </ul>
+        </div>
       </div>
 
       <div class="v-footer__signature" aria-hidden="true">Jazz à Tours</div>
@@ -183,13 +186,19 @@ const addressLines = computed(() => {
   }
 }
 
+// Desktop: the three fields and « S'inscrire » on one line, the button at
+// its right end. Mobile: the fields stack, the button stays on the right.
 .v-footer__form {
   display: flex;
   flex: 1;
-  flex-wrap: wrap;
   justify-content: flex-end;
   gap: var(--spacing-xl);
-  max-width: 800px;
+  max-width: 900px;
+
+  @media (max-width: $breakpoint-mobile) {
+    flex-wrap: wrap;
+    gap: var(--spacing-m);
+  }
 }
 
 .v-footer__input,
@@ -206,14 +215,27 @@ const addressLines = computed(() => {
 
 .v-footer__input {
   flex: 1 1 200px;
+  min-width: 0;
 
   &::placeholder {
     color: inherit;
   }
 }
 
+// The fields' colors inverted, so the action stands apart from them.
 .v-footer__submit {
+  flex: none;
+  margin-left: auto;
+  border-color: var(--color-footer);
+  background: var(--color-footer);
+  color: var(--color-secondaire-2);
+  font-weight: 700;
   cursor: pointer;
+
+  &:hover {
+    background: var(--color-secondaire-2);
+    color: var(--color-footer);
+  }
 
   &:disabled {
     opacity: 0.6;
@@ -236,51 +258,33 @@ const addressLines = computed(() => {
   color: var(--color-background);
 }
 
-// Desktop: one row of columns spread over the width (mockup), the legal
-// links under « Nous contacter ». Mobile: two left-aligned columns, the
-// legal links and FR / EN side by side on the last row.
+// Desktop: one row of columns spread over the width (mockup). Mobile: two
+// left-aligned columns.
 .v-footer__columns {
   display: grid;
   grid-auto-flow: column;
-  grid-template-rows: auto auto;
   justify-content: space-between;
   gap: var(--spacing-xl) var(--spacing-2xl);
   padding-block: var(--spacing-2xl) var(--spacing-4xl);
 
-  > * {
-    grid-row: 1;
-  }
-
   @media (max-width: $breakpoint-mobile) {
     grid-auto-flow: row;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: none;
     justify-content: stretch;
-
-    > * {
-      grid-row: auto;
-    }
   }
 }
 
-.v-footer__legal {
-  grid-column: 2;
-  grid-row: 2;
-
-  @media (max-width: $breakpoint-mobile) {
-    order: 1;
-    grid-column: 1;
-    grid-row: auto;
-  }
+// As tall as the row (the « Infos pratiques » column, the tallest): the
+// legal links at its bottom sit on the line of the postal code.
+.v-footer__end {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--spacing-xl);
 }
 
 .v-footer__languages {
-  align-self: start;
-
-  @media (max-width: $breakpoint-mobile) {
-    order: 1;
-    grid-column: 2;
-  }
+  align-self: flex-start;
 }
 
 .v-footer__title {

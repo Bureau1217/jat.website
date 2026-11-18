@@ -219,6 +219,14 @@ html {
   scroll-behavior: smooth;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .v-anchors-slide-enter-active,
+  .v-anchors-slide-leave-active {
+    transition-duration: 0.01s;
+    transition-delay: 0s;
+  }
+}
+
 body {
   background: var(--color-background);
   color: var(--color-text);

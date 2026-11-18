@@ -3,32 +3,35 @@
     <div class="ui-practical-info__inner">
       <UiMap v-if="mapAddress" :address="mapAddress" class="ui-practical-info__map" />
 
+      <!-- Left: contact, then hours. Right: transports, then disability. -->
       <div class="ui-practical-info__columns">
-        <section v-if="addressLines.length || siteInfo.email || siteInfo.phone" class="u-flex u-flex--column u-gap-s">
-          <h3 class="ui-practical-info__title">{{ t('Informations pratiques') }}</h3>
-          <p v-if="addressLines.length">
-            <template v-for="line in addressLines" :key="line">{{ line }}<br></template>
-          </p>
-          <p v-if="siteInfo.email">
-            <a :href="`mailto:${siteInfo.email}`">{{ siteInfo.email }}</a>
-          </p>
-          <p v-if="siteInfo.phone">
-            <a :href="`tel:${siteInfo.phone.replace(/\s/g, '')}`">{{ siteInfo.phone }}</a>
-          </p>
-        </section>
-
-        <section v-if="siteInfo.transports.length" class="u-flex u-flex--column u-gap-s">
-          <h3 class="ui-practical-info__title">{{ t('Transports') }}</h3>
-          <p v-for="transport in siteInfo.transports" :key="transport.travelTime + transport.lines">
-            {{ transport.travelTime }} : {{ transport.lines }}
-          </p>
-        </section>
-
         <div class="u-flex u-flex--column u-gap-2xl">
+          <section v-if="addressLines.length || siteInfo.email || siteInfo.phone" class="u-flex u-flex--column u-gap-s">
+            <h3 class="ui-practical-info__title">{{ t('Informations pratiques') }}</h3>
+            <p v-if="addressLines.length">
+              <template v-for="line in addressLines" :key="line">{{ line }}<br></template>
+            </p>
+            <p v-if="siteInfo.email">
+              <a :href="`mailto:${siteInfo.email}`">{{ siteInfo.email }}</a>
+            </p>
+            <p v-if="siteInfo.phone">
+              <a :href="`tel:${siteInfo.phone.replace(/\s/g, '')}`">{{ siteInfo.phone }}</a>
+            </p>
+          </section>
+
           <section v-if="siteInfo.openingHours.length" class="u-flex u-flex--column u-gap-s">
             <h3 class="ui-practical-info__title">{{ t('Horaires d’ouverture') }}</h3>
             <p v-for="slot in siteInfo.openingHours" :key="slot.days">
               {{ slot.days }}<br>{{ slot.hours }}
+            </p>
+          </section>
+        </div>
+
+        <div class="u-flex u-flex--column u-gap-2xl">
+          <section v-if="siteInfo.transports.length" class="u-flex u-flex--column u-gap-s">
+            <h3 class="ui-practical-info__title">{{ t('Transports') }}</h3>
+            <p v-for="transport in siteInfo.transports" :key="transport.travelTime + transport.lines">
+              {{ transport.travelTime }} : {{ transport.lines }}
             </p>
           </section>
 
