@@ -2,6 +2,7 @@ import type { TransitionProps } from 'vue'
 
 /**
  * Page change as a crossfade (plugins/pageTransition.ts), never a blank:
+ * 0. if the page is scrolled down, it first scrolls back up (scrollToTop);
  * 1. the old page stays on screen while the next one loads;
  * 2. at the swap, the old page is pinned where it is (position: fixed),
  *    the window jumps to the top underneath it (router.options.ts) and the
@@ -31,6 +32,31 @@ export function onNextPageSwap(listener: () => void): void {
 
 export function reducedMotion(): boolean {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+}
+
+const easeInOutCubic = (t: number): number => t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2
+
+/**
+ * Scrolls the window back to the top, then resolves. Animated here rather
+ * than with scrollTo({ behavior: 'smooth' }): the browser's smooth scroll
+ * has no end event and takes longer the further down we are; this one lasts
+ * 450 to 900 ms whatever the distance.
+ */
+export function scrollToTop(): Promise<void> {
+  const start = window.scrollY
+  if (start <= 0) return Promise.resolve()
+  const duration = Math.min(900, Math.max(450, start / 4))
+  const startTime = performance.now()
+
+  return new Promise((resolve) => {
+    const step = (now: number) => {
+      const progress = Math.min(1, (now - startTime) / duration)
+      window.scrollTo({ top: start * (1 - easeInOutCubic(progress)), behavior: 'instant' })
+      if (progress < 1) requestAnimationFrame(step)
+      else resolve()
+    }
+    requestAnimationFrame(step)
+  })
 }
 
 /** Set on every page route (plugins/pageTransition.ts). JS-driven: css false, default mode (both at once). */

@@ -14,7 +14,7 @@
 import type { BenefitsContent } from '~~/shared/types/blocks'
 import type { KqlBlock, KqlFile } from '~~/shared/types/kql'
 
-/** "Partenaires / Bénéfices": optional title, then SVG pictogram + label, always centered in the viewport. */
+/** "Partenaires / Bénéfices": optional title, then pictogram (SVG or PNG) + label, always centered in the viewport. */
 const props = defineProps<{
   block: KqlBlock<BenefitsContent>
   files?: KqlFile[]
