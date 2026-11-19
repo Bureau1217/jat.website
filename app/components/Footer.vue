@@ -181,8 +181,10 @@ const addressLines = computed(() => {
   line-height: 1;
   text-transform: uppercase;
 
+  // « NEWSLETTER » is about 6.6 em wide: shrinks with the screen below
+  // ~370 px so it never widens the page.
   @media (max-width: $breakpoint-mobile) {
-    font-size: 44px;
+    font-size: min(44px, 12vw);
   }
 }
 

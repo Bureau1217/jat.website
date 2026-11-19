@@ -48,15 +48,17 @@
       </button>
     </div>
 
-    <transition name="v-navigation-menu-nav">
-      <nav v-if="isOpen" id="v-navigation-menu-nav" class="v-navigation-menu__mobile-nav u-gutter-x" :aria-label="t('Navigation principale')">
+    <!-- Durations: the links' staggered entrance outlasts the panel's own
+         transition (see the styles). -->
+    <Transition name="v-navigation-menu-nav" :duration="{ enter: 900, leave: 350 }" @after-leave="tintScrollbarPlace(false)">
+      <nav v-if="isOpen" id="v-navigation-menu-nav" ref="panel" class="v-navigation-menu__mobile-nav u-gutter-x" :aria-label="t('Navigation principale')">
         <ul class="u-flex u-flex--column u-gap-m">
-          <li v-for="item in navItems" :key="item.id">
+          <li v-for="(item, index) in navItems" :key="item.id" :style="{ '--index': index }">
             <NuxtLink :to="pagePath(item)" class="v-navigation-menu__mobile-link" @click="isOpen = false">{{ item.title }}</NuxtLink>
           </li>
         </ul>
       </nav>
-    </transition>
+    </Transition>
   </header>
 </template>
 
@@ -91,17 +93,31 @@ watch(background, (_, old) => {
 const { data: navPages } = await useSiteNav()
 const navItems = computed(() => (navPages.value ?? []).filter(page => page.uri !== 'home'))
 
-watch(isOpen, (open) => {
-  if (import.meta.client) {
-    document.documentElement.style.overflow = open ? 'hidden' : ''
+// Open: the page behind stops scrolling. Its scrollbar's place stays
+// reserved (scrollbar-gutter: stable, so the bar doesn't move) and shows
+// the root background: tinted like the panel, not a beige strip beside it.
+const panel = useTemplateRef<HTMLElement>('panel')
+function tintScrollbarPlace(open: boolean): void {
+  document.documentElement.style.backgroundColor = open && panel.value ? getComputedStyle(panel.value).backgroundColor : ''
+}
+
+watch(isOpen, async (open) => {
+  if (!import.meta.client) return
+  document.documentElement.style.overflow = open ? 'hidden' : ''
+  if (open) {
+    await nextTick()
+    tintScrollbarPlace(true)
   }
 })
+
+// Leaving the page (a link of the panel, back button…) closes it.
+const route = useRoute()
+watch(() => route.path, () => { isOpen.value = false })
 </script>
 
 <style lang="scss" scoped>
-// Sticky bar; .is-open turns it into a full-screen panel (mobile only). The
-// bar itself is the same element in both states so nothing jumps when the
-// menu opens.
+// Sticky bar. On mobile the burger opens a panel under it
+// (.v-navigation-menu__mobile-nav); the bar itself never moves.
 .v-navigation-menu {
   position: sticky;
   top: 0;
@@ -113,18 +129,6 @@ watch(isOpen, (open) => {
   // The text color follows the crossfade (see .v-navigation-menu__previous).
   transition: color 0.7s cubic-bezier(0.65, 0, 0.35, 1);
 
-  @media (max-width: $breakpoint-mobile) {
-    &.is-open {
-      position: fixed;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      // The gradient keeps the bar's height; the links sit on a solid color.
-      background:
-        var(--theme-header-gradient) top / 100% var(--navigation-menu-height) no-repeat,
-        var(--theme-menu-background);
-    }
-  }
 }
 
 // 0.7s and curve = PAGE_CROSSFADE_MS and EASE_IN_OUT (utils/pageTransition.ts).
@@ -142,8 +146,7 @@ watch(isOpen, (open) => {
 }
 
 // Above the fading layer.
-.v-navigation-menu__bar,
-.v-navigation-menu__mobile-nav {
+.v-navigation-menu__bar {
   position: relative;
 }
 
@@ -269,10 +272,15 @@ watch(isOpen, (open) => {
   }
 }
 
+// Fixed under the bar, down to the bottom of the screen, on a solid color
+// the header text reads on (the gradient would fade under the links).
 .v-navigation-menu__mobile-nav {
-  flex: 1;
+  position: fixed;
+  inset: var(--navigation-menu-height) 0 0;
   padding-block: var(--spacing-4xl);
   overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--theme-menu-background);
 
   // Desktop: the panel can stay open after a resize — hide it.
   @media (width > $breakpoint-mobile) {
@@ -294,13 +302,49 @@ watch(isOpen, (open) => {
   }
 }
 
-.v-navigation-menu-nav-enter-active,
+// Opening: the panel unrolls down from the bar (ease-out), then the links
+// rise in one after the other. Closing: it rolls back up, quicker
+// (ease-in), the links fading at once. Durations: the Transition's.
+.v-navigation-menu-nav-enter-active {
+  transition: clip-path 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+
+  li {
+    transition:
+      opacity 0.45s ease-out,
+      transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: calc(0.15s + var(--index) * 0.06s);
+  }
+}
+
 .v-navigation-menu-nav-leave-active {
-  transition: opacity 0.2s ease;
+  transition: clip-path 0.35s cubic-bezier(0.55, 0, 1, 0.45);
+
+  li {
+    transition: opacity 0.15s ease-in;
+  }
 }
 
 .v-navigation-menu-nav-enter-from,
 .v-navigation-menu-nav-leave-to {
-  opacity: 0;
+  clip-path: inset(0 0 100% 0);
+
+  li {
+    opacity: 0;
+  }
+}
+
+.v-navigation-menu-nav-enter-from li {
+  transform: translateY(24px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v-navigation-menu-nav-enter-active,
+  .v-navigation-menu-nav-leave-active {
+    &,
+    li {
+      transition-duration: 0.01s;
+      transition-delay: 0s;
+    }
+  }
 }
 </style>

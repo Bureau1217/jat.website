@@ -21,6 +21,9 @@ const formatted = computed(() => noWidows(locale.value === 'fr' ? frenchSpacing(
 <style lang="scss" scoped>
 .ui-rich-text {
   max-width: var(--content-max-width);
+  // Last resort: words held by no-break spaces (utils/noWidows.ts) or a long
+  // URL break inside the column rather than widen the page on a phone.
+  overflow-wrap: break-word;
 
   :deep(p),
   :deep(ul),
