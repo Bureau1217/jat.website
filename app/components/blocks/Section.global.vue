@@ -83,13 +83,13 @@ const barVariables = computed(() => fillVariables('bar', resolveFill(props.block
   }
 }
 
+// Fluid: a long word (« PROFESSIONNALISANTES ») fits a phone's width;
+// hyphenation as a last resort.
 .v-block-section__hero-title {
-  font-size: 90px;
+  font-size: fluid(30px, 90px);
   line-height: 1.2;
   text-transform: uppercase;
-
-  @media (max-width: $breakpoint-mobile) {
-    font-size: 44px;
-  }
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 </style>

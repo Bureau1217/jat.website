@@ -119,6 +119,10 @@ watch(isOpen, (open) => {
       inset: 0;
       display: flex;
       flex-direction: column;
+      // The gradient keeps the bar's height; the links sit on a solid color.
+      background:
+        var(--theme-header-gradient) top / 100% var(--navigation-menu-height) no-repeat,
+        var(--theme-menu-background);
     }
   }
 }

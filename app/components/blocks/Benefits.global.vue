@@ -43,12 +43,21 @@ const items = computed(() => (props.block.content.items ?? []).map(item => ({
 .v-block-benefits__item {
   width: 200px;
   text-align: center;
+
+  // Two per row on a phone, not a long single column.
+  @media (max-width: $breakpoint-mobile) {
+    width: calc(50% - var(--spacing-3xl) / 2);
+  }
 }
 
 .v-block-benefits__label {
   font-family: var(--font-body);
   font-size: 20px;
   line-height: 1.24;
+
+  @media (max-width: $breakpoint-mobile) {
+    font-size: 16px;
+  }
 }
 
 // Decorative: the label right below carries the meaning.

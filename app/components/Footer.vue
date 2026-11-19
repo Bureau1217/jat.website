@@ -195,8 +195,9 @@ const addressLines = computed(() => {
   gap: var(--spacing-xl);
   max-width: 900px;
 
+  // Mobile: everything stacks, « S'inscrire » full width under the fields.
   @media (max-width: $breakpoint-mobile) {
-    flex-wrap: wrap;
+    flex-direction: column;
     gap: var(--spacing-m);
   }
 }
@@ -215,6 +216,11 @@ const addressLines = computed(() => {
 
 .v-footer__input {
   flex: 1 1 200px;
+
+  @media (max-width: $breakpoint-mobile) {
+    flex: none;
+  }
+
   min-width: 0;
 
   &::placeholder {
@@ -241,11 +247,19 @@ const addressLines = computed(() => {
     opacity: 0.6;
     cursor: default;
   }
+
+  @media (max-width: $breakpoint-mobile) {
+    margin-left: 0;
+  }
 }
 
 .v-footer__newsletter-status {
   flex-basis: 100%;
   text-align: right;
+
+  @media (max-width: $breakpoint-mobile) {
+    text-align: left;
+  }
 
   &:empty {
     display: none;
@@ -258,8 +272,8 @@ const addressLines = computed(() => {
   color: var(--color-background);
 }
 
-// Desktop: one row of columns spread over the width (mockup). Mobile: two
-// left-aligned columns.
+// Desktop: one row of columns spread over the width (mockup). Mobile: one
+// column (two left addresses and names wrapping word by word).
 .v-footer__columns {
   display: grid;
   grid-auto-flow: column;
@@ -269,7 +283,7 @@ const addressLines = computed(() => {
 
   @media (max-width: $breakpoint-mobile) {
     grid-auto-flow: row;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     justify-content: stretch;
   }
 }
@@ -303,7 +317,8 @@ const addressLines = computed(() => {
   height: 0.62em;
   overflow: hidden;
   font-family: var(--font-heading);
-  font-size: clamp(80px, 19vw, 274px);
+  // Its whole width at any screen size (no lower bound: it'd overflow a phone).
+  font-size: min(18.5vw, 274px);
   font-weight: 400;
   line-height: 1;
   letter-spacing: -0.011em;

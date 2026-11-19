@@ -1,6 +1,6 @@
 <template>
   <nav v-if="items.length" class="v-anchors u-gutter-x" :class="`u-theme--${pageTheme(path)}`" :aria-label="t(anchors.length ? 'Sections de la page' : 'Pages de la rubrique')">
-    <ul class="v-anchors__list u-flex u-flex--align-center">
+    <ul ref="list" class="v-anchors__list u-flex u-flex--align-center">
       <li v-for="item in items" :key="item.id">
         <NuxtLink
           :to="item.to"
@@ -80,7 +80,23 @@ function observeSections(): void {
   }
 }
 
-onMounted(observeSections)
+// On a phone the bar scrolls sideways: keep the current item in view.
+const list = useTemplateRef<HTMLUListElement>('list')
+
+function revealActive(): void {
+  const active = list.value?.querySelector<HTMLElement>('.is-active')
+  if (!list.value || !active || list.value.scrollWidth <= list.value.clientWidth) return
+  const item = active.getBoundingClientRect()
+  const bar = list.value.getBoundingClientRect()
+  const offset = item.left + item.width / 2 - (bar.left + bar.width / 2)
+  list.value.scrollBy({ left: offset, behavior: reducedMotion() ? 'auto' : 'smooth' })
+}
+
+watch(activeId, () => nextTick(revealActive))
+onMounted(() => {
+  observeSections()
+  revealActive()
+})
 watch(anchors, () => nextTick(observeSections))
 onBeforeUnmount(() => observer?.disconnect())
 </script>
@@ -114,8 +130,20 @@ onBeforeUnmount(() => observer?.disconnect())
   }
 }
 
+// One line each: the bar scrolls sideways (flex items wrap their text
+// otherwise, nowrap on the list doesn't reach them).
+.v-anchors__list > li {
+  flex-shrink: 0;
+}
+
 .v-anchors__link {
+  white-space: nowrap;
   font-size: 16px;
+
+  @media (max-width: $breakpoint-mobile) {
+    font-size: 14px;
+  }
+
   font-weight: 700;
   line-height: 1.28;
   text-decoration: none;

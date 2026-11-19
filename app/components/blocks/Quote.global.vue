@@ -18,7 +18,7 @@ const props = defineProps<{
 }>()
 
 const locale = useLocale()
-const text = computed(() => (locale.value === 'fr' ? frenchSpacing(props.block.content.text) : props.block.content.text))
+const text = computed(() => noWidows(locale.value === 'fr' ? frenchSpacing(props.block.content.text) : props.block.content.text))
 
 const alignment = computed(() => {
   const value = props.block.content.alignment
@@ -45,6 +45,11 @@ const textColor = computed(() => {
   justify-content: center;
   min-height: calc(100svh - var(--navigation-menu-height));
   padding-block: var(--spacing-6xl);
+
+  // On a phone a screen-tall band is mostly empty color: the text sets it.
+  @media (max-width: $breakpoint-mobile) {
+    min-height: 0;
+  }
 }
 
 .v-block-quote--center {
@@ -90,7 +95,7 @@ const textColor = computed(() => {
   line-height: 1.28;
 
   @media (max-width: $breakpoint-mobile) {
-    font-size: 36px;
+    font-size: 32px;
   }
 }
 

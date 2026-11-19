@@ -110,6 +110,15 @@
   --theme-spaces-header-gradient: linear-gradient(to bottom, var(--degrade-espace-etudiant));
   --theme-spaces-header-text: var(--color-secondaire-3);
 
+  // Mobile menu opened full screen: a solid color the header text reads on
+  // (the header gradient, stretched to the screen, fades under the links).
+  --theme-home-menu-background: var(--color-accueil);
+  --theme-news-menu-background: var(--color-secondaire-9);
+  --theme-training-menu-background: var(--color-se-former);
+  --theme-school-menu-background: var(--color-ecole);
+  --theme-concerts-menu-background: var(--color-concerts-projets);
+  --theme-spaces-menu-background: var(--color-espaces);
+
   // Title / accordion bars: the theme gradient, reversed (mockup).
   --theme-home-bar-gradient: linear-gradient(to bottom, var(--degrade-accueil));
   --theme-news-bar-gradient: linear-gradient(to bottom, var(--degrade-agenda));
@@ -188,6 +197,7 @@ $page-themes: home, news, training, school, concerts, spaces;
     --theme-text: var(--theme-#{$theme}-text);
     --theme-header-gradient: var(--theme-#{$theme}-header-gradient);
     --theme-header-text: var(--theme-#{$theme}-header-text);
+    --theme-menu-background: var(--theme-#{$theme}-menu-background);
     --theme-anchors-background: var(--theme-#{$theme}-anchors-background);
     --theme-anchors-text: var(--theme-#{$theme}-anchors-text);
     --theme-ink: var(--theme-#{$theme}-ink);

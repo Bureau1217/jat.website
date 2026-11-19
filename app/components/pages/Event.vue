@@ -43,8 +43,10 @@ const keyInfo = computed(() => {
 .v-page-event__cover {
   aspect-ratio: 1440 / 548;
 
+  // A poster cropped to a phone's width loses its text: shown whole.
   @media (max-width: $breakpoint-mobile) {
-    aspect-ratio: 4 / 3;
+    aspect-ratio: auto;
+    height: auto;
   }
 }
 

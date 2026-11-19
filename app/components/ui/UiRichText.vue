@@ -6,7 +6,7 @@
 /**
  * HTML of a Kirby writer field (paragraphs, lists, bold, italic, links),
  * with the list markers the global reset strips (typo.scss) restored and
- * French punctuation spacing in French.
+ * French punctuation spacing in French, and no widow or orphan (noWidows).
  */
 const props = defineProps<{
   html: string
@@ -15,7 +15,7 @@ const props = defineProps<{
 }>()
 
 const locale = useLocale()
-const formatted = computed(() => (locale.value === 'fr' ? frenchSpacing(props.html) : props.html))
+const formatted = computed(() => noWidows(locale.value === 'fr' ? frenchSpacing(props.html) : props.html))
 </script>
 
 <style lang="scss" scoped>
